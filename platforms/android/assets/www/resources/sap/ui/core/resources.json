@@ -1840,14 +1840,16 @@
       "module": "sap/ui/model/SorterProcessor.js",
       "isDebug": true,
       "required": [
-        "jquery.sap.global.js"
+        "jquery.sap.global.js",
+        "sap/ui/model/Sorter.js"
       ]
     },
     {
       "name": "../model/SorterProcessor.js",
       "module": "sap/ui/model/SorterProcessor.js",
       "required": [
-        "jquery.sap.global.js"
+        "jquery.sap.global.js",
+        "sap/ui/model/Sorter.js"
       ]
     },
     {
@@ -8957,6 +8959,7 @@
       "required": [
         "jquery.sap.global.js",
         "sap/ui/core/Control.js",
+        "sap/ui/core/UIArea.js",
         "sap/ui/core/DeclarativeSupport.js",
         "sap/ui/core/library.js",
         "sap/ui/core/tmpl/DOMElement.js"
@@ -8972,6 +8975,7 @@
       "required": [
         "jquery.sap.global.js",
         "sap/ui/core/Control.js",
+        "sap/ui/core/UIArea.js",
         "sap/ui/core/DeclarativeSupport.js",
         "sap/ui/core/library.js",
         "sap/ui/core/tmpl/DOMElement.js"

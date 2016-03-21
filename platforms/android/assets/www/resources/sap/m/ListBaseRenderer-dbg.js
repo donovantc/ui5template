@@ -4,8 +4,8 @@
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
-	function(jQuery, Parameters) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters', './ListItemBaseRenderer'],
+	function(jQuery, Parameters, ListItemBaseRenderer) {
 	"use strict";
 
 
@@ -290,6 +290,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/theming/Parameters'],
 		rm.writeAttribute("tabindex", "-1");
 		rm.writeAttribute("id", oControl.getId("nodata"));
 		rm.addClass("sapMLIB sapMListNoData sapMLIBTypeInactive");
+		ListItemBaseRenderer.addFocusableClasses.call(ListItemBaseRenderer, rm);
 		rm.writeClasses();
 		rm.write(">");
 

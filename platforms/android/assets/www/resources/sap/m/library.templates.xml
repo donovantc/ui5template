@@ -7778,7 +7778,10 @@
 	tooltip: undefined, // sap.ui.core.TooltipBase
 	customData: [], // sap.ui.core.CustomData
 	dependents: [], // sap.ui.core.Control, since 1.19
-	customControl: undefined // sap.ui.core.Control
+	customControl: undefined, // sap.ui.core.Control
+	itemPropertyChanged: [function (oEvent) {
+		var ${control} = oEvent.getSource();
+	}, this]
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<ViewSettingsCustomItem xmlns="sap.m"
@@ -7788,7 +7791,8 @@
 	textDirection="Inherit"
 	key=""
 	selected="false"
-	filterCount="0">
+	filterCount="0"
+	itemPropertyChanged="">
 		<tooltip></tooltip> <!-- sap.ui.core.TooltipBase -->
 		<dependents></dependents> <!-- sap.ui.core.Control, since 1.19 -->
 		<customControl></customControl> <!-- sap.ui.core.Control -->
@@ -7897,7 +7901,13 @@
 	tooltip: undefined, // sap.ui.core.TooltipBase
 	customData: [], // sap.ui.core.CustomData
 	dependents: [], // sap.ui.core.Control, since 1.19
-	items: [] // sap.m.ViewSettingsItem
+	items: [], // sap.m.ViewSettingsItem
+	itemPropertyChanged: [function (oEvent) {
+		var ${control} = oEvent.getSource();
+	}, this],
+	filterDetailItemsAggregationChange: [function (oEvent) {
+		var ${control} = oEvent.getSource();
+	}, this]
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<ViewSettingsFilterItem xmlns="sap.m"
@@ -7907,7 +7917,9 @@
 	textDirection="Inherit"
 	key=""
 	selected="false"
-	multiSelect="true">
+	multiSelect="true"
+	itemPropertyChanged=""
+	filterDetailItemsAggregationChange="">
 		<tooltip></tooltip> <!-- sap.ui.core.TooltipBase -->
 		<dependents></dependents> <!-- sap.ui.core.Control, since 1.19 -->
 		<items></items> <!-- sap.m.ViewSettingsItem -->
@@ -7924,7 +7936,10 @@
 	selected: false, // boolean
 	tooltip: undefined, // sap.ui.core.TooltipBase
 	customData: [], // sap.ui.core.CustomData
-	dependents: [] // sap.ui.core.Control, since 1.19
+	dependents: [], // sap.ui.core.Control, since 1.19
+	itemPropertyChanged: [function (oEvent) {
+		var ${control} = oEvent.getSource();
+	}, this]
 })
 ]]></jsTemplate>
 	<xmlTemplate><![CDATA[<ViewSettingsItem xmlns="sap.m"
@@ -7933,7 +7948,8 @@
 	enabled="true"
 	textDirection="Inherit"
 	key=""
-	selected="false">
+	selected="false"
+	itemPropertyChanged="">
 		<tooltip></tooltip> <!-- sap.ui.core.TooltipBase -->
 		<dependents></dependents> <!-- sap.ui.core.Control, since 1.19 -->
 </ViewSettingsItem>

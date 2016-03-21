@@ -19,7 +19,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'jquery.sap.strings']
 	 *
 	 * @class Control Tree used for the Test Environment
 	 * @author SAPUI5 Designtime
-	 * @version 1.34.8
+	 * @version 1.34.9
 	 *
 	 * @param {sap.ui.core.Core}
 	 *            oCore the core instance to use for analysis

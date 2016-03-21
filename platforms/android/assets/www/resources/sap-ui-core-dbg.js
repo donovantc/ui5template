@@ -994,7 +994,7 @@
  * This API is independent from any other part of the UI5 framework. This allows it to be loaded beforehand, if it is needed, to create the UI5 bootstrap
  * dynamically depending on the capabilities of the browser or device.
  *
- * @version 1.34.8
+ * @version 1.34.9
  * @namespace
  * @name sap.ui.Device
  * @public
@@ -1020,7 +1020,7 @@ if (typeof window.sap.ui !== "object") {
 
 	//Skip initialization if API is already available
 	if (typeof window.sap.ui.Device === "object" || typeof window.sap.ui.Device === "function" ) {
-		var apiVersion = "1.34.8";
+		var apiVersion = "1.34.9";
 		window.sap.ui.Device._checkAPIVersion(apiVersion);
 		return;
 	}
@@ -1078,7 +1078,7 @@ if (typeof window.sap.ui !== "object") {
 
 	//Only used internal to make clear when Device API is loaded in wrong version
 	device._checkAPIVersion = function(sVersion){
-		var v = "1.34.8";
+		var v = "1.34.9";
 		if (v != sVersion) {
 			logger.log(WARNING, "Device API version differs: " + v + " <-> " + sVersion);
 		}
@@ -15785,7 +15785,7 @@ $.ui.position = {
 	 * @class Represents a version consisting of major, minor, patch version and suffix, e.g. '1.2.7-SNAPSHOT'.
 	 *
 	 * @author SAP SE
-	 * @version 1.34.8
+	 * @version 1.34.9
 	 * @constructor
 	 * @public
 	 * @since 1.15.0
@@ -16233,7 +16233,7 @@ $.ui.position = {
 	/**
 	 * Root Namespace for the jQuery plug-in provided by SAP SE.
 	 *
-	 * @version 1.34.8
+	 * @version 1.34.9
 	 * @namespace
 	 * @public
 	 * @static
@@ -25493,7 +25493,7 @@ sap.ui.predefine('jquery.sap.properties',['jquery.sap.global', 'jquery.sap.sjax'
 	 * currently in the list.
 	 *
 	 * @author SAP SE
-	 * @version 1.34.8
+	 * @version 1.34.9
 	 * @since 0.9.0
 	 * @name jQuery.sap.util.Properties
 	 * @public
@@ -25819,7 +25819,7 @@ sap.ui.predefine('jquery.sap.resources',['jquery.sap.global', 'jquery.sap.proper
 	 * Exception: Fallback for "zh_HK" is "zh_TW" before zh.
 	 *
 	 * @author SAP SE
-	 * @version 1.34.8
+	 * @version 1.34.9
 	 * @since 0.9.0
 	 * @name jQuery.sap.util.ResourceBundle
 	 * @public
@@ -26389,7 +26389,7 @@ sap.ui.predefine('jquery.sap.script',['jquery.sap.global'],
 	 * Use {@link jQuery.sap.getUriParameters} to create an instance of jQuery.sap.util.UriParameters.
 	 *
 	 * @author SAP SE
-	 * @version 1.34.8
+	 * @version 1.34.9
 	 * @since 0.9.0
 	 * @name jQuery.sap.util.UriParameters
 	 * @public
@@ -28444,7 +28444,7 @@ sap.ui.predefine('jquery.sap.ui',['jquery.sap.global', 'sap/ui/Global' /* cyclic
  * sap.ui.lazyRequire("sap.ui.core.Control");
  * sap.ui.lazyRequire("sap.ui.commons.Button");
  *
- * @version 1.34.8
+ * @version 1.34.9
  * @author  Martin Schaus, Daniel Brinkmann
  * @public
  */
@@ -28466,7 +28466,7 @@ sap.ui.predefine('sap/ui/Global',['jquery.sap.global', 'jquery.sap.trace', 'jque
 	 * The <code>sap</code> namespace is automatically registered with the
 	 * OpenAjax hub if it exists.
 	 *
-	 * @version 1.34.8
+	 * @version 1.34.9
 	 * @namespace
 	 * @public
 	 * @name sap
@@ -28479,7 +28479,7 @@ sap.ui.predefine('sap/ui/Global',['jquery.sap.global', 'jquery.sap.trace', 'jque
 	 * The <code>sap.ui</code> namespace is the central OpenAjax compliant entry
 	 * point for UI related JavaScript functionality provided by SAP.
 	 *
-	 * @version 1.34.8
+	 * @version 1.34.9
 	 * @namespace
 	 * @name sap.ui
 	 * @public
@@ -28492,8 +28492,8 @@ sap.ui.predefine('sap/ui/Global',['jquery.sap.global', 'jquery.sap.trace', 'jque
 			 * The version of the SAP UI Library
 			 * @type string
 			 */
-			version: "1.34.8",
-			buildinfo : { lastchange : "", buildtime : "20160226-0945" }
+			version: "1.34.9",
+			buildinfo : { lastchange : "", buildtime : "20160314-1152" }
 		});
 
 	/**
@@ -29829,7 +29829,7 @@ sap.ui.predefine('sap/ui/base/Event',['jquery.sap.global', './Object'],
 	 * @extends sap.ui.base.Object
 	 * @implements sap.ui.base.Poolable
 	 * @author SAP SE
-	 * @version 1.34.8
+	 * @version 1.34.9
 	 * @alias sap.ui.base.Event
 	 * @public
 	 */
@@ -29987,7 +29987,7 @@ sap.ui.predefine('sap/ui/base/EventProvider',['jquery.sap.global', './Event', '.
 	 * @abstract
 	 * @extends sap.ui.base.Object
 	 * @author SAP SE
-	 * @version 1.34.8
+	 * @version 1.34.9
 	 * @constructor
 	 * @public
 	 * @alias sap.ui.base.EventProvider
@@ -31147,7 +31147,7 @@ sap.ui.predefine('sap/ui/base/Interface',['jquery.sap.global'],
 	 *        only the defined functions will be visible, no internals of the class can be accessed.
 	 *
 	 * @author Malte Wedel, Daniel Brinkmann
-	 * @version 1.34.8
+	 * @version 1.34.9
 	 * @param {sap.ui.base.Object}
 	 *            oObject the instance that needs an interface created
 	 * @param {string[]}
@@ -31368,7 +31368,7 @@ sap.ui.predefine('sap/ui/base/ManagedObject',[
 	 *
 	 * @extends sap.ui.base.EventProvider
 	 * @author SAP SE
-	 * @version 1.34.8
+	 * @version 1.34.9
 	 * @public
 	 * @alias sap.ui.base.ManagedObject
 	 * @experimental Since 1.11.2. ManagedObject as such is public and usable. Only the support for the optional parameter
@@ -34404,6 +34404,14 @@ sap.ui.predefine('sap/ui/base/ManagedObject',[
 
 			// if there is a binding and if it became invalid through the current model change, then remove it
 			if ( oBindingInfo.binding && becameInvalid(oBindingInfo) ) {
+				// Remove the validation controlMessages for this Binding from the MessageManager so they will not be propagated again
+				var oDataState = oBindingInfo.binding.getDataState();
+				sap.ui.getCore().getMessageManager().removeMessages(oDataState.getControlMessages(), true);
+				// Also tell the Control that the messages have been removed (if any)
+				if (this.refreshDataState) {
+					this.refreshDataState(sName, oDataState);
+				}
+
 				oBindingInfo.binding.detachChange(oBindingInfo.modelChangeHandler);
 				if (oBindingInfo.modelRefreshHandler) { // only list bindings currently have a refresh handler attached
 					oBindingInfo.binding.detachRefresh(oBindingInfo.modelRefreshHandler);
@@ -35147,7 +35155,7 @@ sap.ui.predefine('sap/ui/base/ManagedObjectMetadata',['jquery.sap.global', './Da
 	 * </ul>
 	 *
 	 * @author Frank Weigel
-	 * @version 1.34.8
+	 * @version 1.34.9
 	 * @since 0.8.6
 	 * @alias sap.ui.base.ManagedObjectMetadata
 	 */
@@ -36301,7 +36309,7 @@ sap.ui.predefine('sap/ui/base/Metadata',['jquery.sap.global', 'jquery.sap.script
 	 *
 	 * @class Metadata for a class.
 	 * @author Frank Weigel
-	 * @version 1.34.8
+	 * @version 1.34.9
 	 * @since 0.8.6
 	 * @public
 	 * @alias sap.ui.base.Metadata
@@ -36688,7 +36696,7 @@ sap.ui.predefine('sap/ui/base/Object',['jquery.sap.global', './Interface', './Me
 	 * @class Base class for all SAPUI5 Objects
 	 * @abstract
 	 * @author Malte Wedel
-	 * @version 1.34.8
+	 * @version 1.34.9
 	 * @public
 	 * @alias sap.ui.base.Object
 	 */
@@ -36882,7 +36890,7 @@ sap.ui.predefine('sap/ui/base/ObjectPool',['./Object'],
 	 *
 	 * @extends sap.ui.base.Object
 	 * @author Malte Wedel
-	 * @version 1.34.8
+	 * @version 1.34.9
 	 * @constructor
 	 * @alias sap.ui.base.ObjectPool
 	 * @public
@@ -37061,7 +37069,7 @@ sap.ui.predefine('sap/ui/core/BusyIndicatorUtils',['jquery.sap.global', 'sap/ui/
 		// calculated the size of the indicator we need to know the pixel-size of
 		// 3rem, under which the indicator will animate differently
 		if ($control[0].offsetWidth < iWidth) {
-			vAnimation.className = "sapUiLocalBusyIndicatorAnimation sapUiLocalBusyIndicatorAnimStandard";
+			vAnimation.className = "sapUiLocalBusyIndicatorAnimation sapUiLocalBusyIndicatorAnimSmall";
 		}
 
 		//Set the actual DOM Element to 'aria-busy'
@@ -37201,7 +37209,7 @@ sap.ui.predefine('sap/ui/core/Component',['jquery.sap.global', 'sap/ui/base/Mana
 	 * @extends sap.ui.base.ManagedObject
 	 * @abstract
 	 * @author SAP SE
-	 * @version 1.34.8
+	 * @version 1.34.9
 	 * @alias sap.ui.core.Component
 	 * @since 1.9.2
 	 */
@@ -38569,7 +38577,7 @@ sap.ui.predefine('sap/ui/core/ComponentMetadata',['jquery.sap.global', 'sap/ui/b
 	 * @public
 	 * @class
 	 * @author SAP SE
-	 * @version 1.34.8
+	 * @version 1.34.9
 	 * @since 1.9.2
 	 * @alias sap.ui.core.ComponentMetadata
 	 */
@@ -40938,7 +40946,7 @@ sap.ui.predefine('sap/ui/core/Control',['jquery.sap.global', './CustomStyleClass
 	 * @extends sap.ui.core.Element
 	 * @abstract
 	 * @author Martin Schaus, Daniel Brinkmann
-	 * @version 1.34.8
+	 * @version 1.34.9
 	 * @alias sap.ui.core.Control
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -41502,10 +41510,19 @@ sap.ui.predefine('sap/ui/core/Control',['jquery.sap.global', './CustomStyleClass
 			oBusyIndicatorDelegate = {
 				onAfterRendering: function() {
 					if (this.getBusy() && this.$() && !this._busyIndicatorDelayedCallId && !this.$("busyIndicator").length) {
-						// Also use the BusyIndicatorDelay when a control is initialized with "busy = true"
-						// If the delayed call was already initialized skip any further call if the control was re-rendered while
-						// the delay is on its way.
-						this._busyIndicatorDelayedCallId = jQuery.sap.delayedCall(this.getBusyIndicatorDelay(), this, fnAppendBusyIndicator);
+						// Also use the BusyIndicatorDelay when a control is initialized
+						// with "busy = true". If the delayed call was already initialized
+						// skip any further call if the control was re-rendered while
+						// the delay is running.
+						var iDelay = this.getBusyIndicatorDelay();
+
+						// Only do it via timeout if there is a delay. Otherwise append the
+						// BusyIndicator immediately
+						if (iDelay) {
+							this._busyIndicatorDelayedCallId = jQuery.sap.delayedCall(iDelay, this, fnAppendBusyIndicator);
+						} else {
+							fnAppendBusyIndicator.call(this);
+						}
 					}
 				}
 			},
@@ -41846,7 +41863,7 @@ sap.ui.predefine('sap/ui/core/Core',['jquery.sap.global', 'sap/ui/Device', 'sap/
 	 * @extends sap.ui.base.Object
 	 * @final
 	 * @author SAP SE
-	 * @version 1.34.8
+	 * @version 1.34.9
 	 * @constructor
 	 * @alias sap.ui.core.Core
 	 * @public
@@ -45116,7 +45133,7 @@ sap.ui.predefine('sap/ui/core/Element',['jquery.sap.global', '../base/Object', '
 	 * @class Base Class for Elements.
 	 * @extends sap.ui.base.ManagedObject
 	 * @author SAP SE
-	 * @version 1.34.8
+	 * @version 1.34.9
 	 * @public
 	 * @alias sap.ui.core.Element
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
@@ -46197,7 +46214,7 @@ sap.ui.predefine('sap/ui/core/ElementMetadata',['jquery.sap.global', 'sap/ui/bas
 	 *
 	 * @class
 	 * @author SAP SE
-	 * @version 1.34.8
+	 * @version 1.34.9
 	 * @since 0.8.6
 	 * @alias sap.ui.core.ElementMetadata
 	 */
@@ -46801,7 +46818,7 @@ sap.ui.predefine('sap/ui/core/LabelEnablement',['jquery.sap.global', '../base/Ma
 	 * @see sap.ui.core.LabelEnablement#enrich
 	 *
 	 * @author SAP SE
-	 * @version 1.34.8
+	 * @version 1.34.9
 	 * @protected
 	 * @alias sap.ui.core.LabelEnablement
 	 * @namespace
@@ -47014,7 +47031,7 @@ sap.ui.predefine('sap/ui/core/Locale',['jquery.sap.global', 'sap/ui/base/Object'
 		 *
 		 * @extends sap.ui.base.Object
 		 * @author SAP SE
-		 * @version 1.34.8
+		 * @version 1.34.9
 		 * @constructor
 		 * @public
 		 * @alias sap.ui.core.Locale
@@ -47449,7 +47466,7 @@ sap.ui.predefine('sap/ui/core/Manifest',['jquery.sap.global', 'sap/ui/base/Objec
 	 * @class The Manifest class.
 	 * @extends sap.ui.base.Object
 	 * @author SAP SE
-	 * @version 1.34.8
+	 * @version 1.34.9
 	 * @alias sap.ui.core.Manifest
 	 * @since 1.33.0
 	 */
@@ -47916,7 +47933,7 @@ sap.ui.predefine('sap/ui/core/RenderManager',[
 	 *
 	 * @extends sap.ui.base.Object
 	 * @author Jens Pflueger
-	 * @version 1.34.8
+	 * @version 1.34.9
 	 * @constructor
 	 * @alias sap.ui.core.RenderManager
 	 * @public
@@ -49263,7 +49280,7 @@ sap.ui.predefine('sap/ui/core/ResizeHandler',['jquery.sap.global', 'sap/ui/base/
 	 * @namespace
 	 * @alias sap.ui.core.ResizeHandler
 	 * @author SAP SE
-	 * @version 1.34.8
+	 * @version 1.34.9
 	 * @public
 	 */
 
@@ -49891,7 +49908,7 @@ sap.ui.predefine('sap/ui/core/UIArea',['jquery.sap.global', 'sap/ui/base/Managed
 	 *
 	 * @extends sap.ui.base.ManagedObject
 	 * @author SAP SE
-	 * @version 1.34.8
+	 * @version 1.34.9
 	 * @param {sap.ui.core.Core} oCore internal API of the <core>Core</code> that manages this UIArea
 	 * @param {object} [oRootNode] reference to the Dom Node that should be 'hosting' the UI Area.
 	 * @public
@@ -50350,7 +50367,9 @@ sap.ui.predefine('sap/ui/core/UIArea',['jquery.sap.global', 'sap/ui/base/Managed
 		} else { // only partial update (invalidated controls)
 
 			var isRenderedTogetherWithAncestor = function(oCandidate) {
-				do {
+
+				for (;;) {
+
 					// Controls that implement marker interface sap.ui.core.PopupInterface are by contract not rendered by their parent.
 					// Therefore the search for to-be-rendered ancestors must be stopped when such a control is reached.
 					if ( oCandidate.getMetadata && oCandidate.getMetadata().isInstanceOf("sap.ui.core.PopupInterface") ) {
@@ -50359,13 +50378,24 @@ sap.ui.predefine('sap/ui/core/UIArea',['jquery.sap.global', 'sap/ui/base/Managed
 
 					oCandidate = oCandidate.getParent();
 
-					if ( oCandidate && mInvalidatedControls.hasOwnProperty(oCandidate.getId()) ) {
+					// If the candidate is null/undefined or the UIArea itself
+					// they do-while loop will be interrupted
+					if ( !oCandidate || oCandidate === that ) {
+						return false;
+					}
+
+					// If the candidate is listed in the invalidated controls map
+					// it will be re-rendered together with the UIArea. Inline
+					// templates are a special case because they share their ID
+					// with the UIArea and therefore the detection will ignore
+					// the inline templates since they should be re-rendered with
+					// their UIArea.
+					if ( mInvalidatedControls.hasOwnProperty(oCandidate.getId()) ) {
 						return true;
 					}
 
-				} while ( oCandidate && oCandidate !== that )
+				}
 
-				return false;
 			};
 
 			for (var n in mInvalidatedControls) {
@@ -50858,7 +50888,7 @@ sap.ui.predefine('sap/ui/core/message/ControlMessageProcessor',['jquery.sap.glob
 	 * @extends sap.ui.core.message.MessageProcessor
 	 *
 	 * @author SAP SE
-	 * @version 1.34.8
+	 * @version 1.34.9
 	 *
 	 * @constructor
 	 * @public
@@ -50959,7 +50989,7 @@ sap.ui.predefine('sap/ui/core/message/Message',['jquery.sap.global', 'sap/ui/bas
 	 * @extends sap.ui.base.Object
 	 *
 	 * @author SAP SE
-	 * @version 1.34.8
+	 * @version 1.34.9
 	 *
 	 * @constructor
 	 *
@@ -51243,7 +51273,7 @@ sap.ui.predefine('sap/ui/core/message/MessageManager',[
 	 * @extends sap.ui.base.EventProvider
 	 *
 	 * @author SAP SE
-	 * @version 1.34.8
+	 * @version 1.34.9
 	 *
 	 * @constructor
 	 * @public
@@ -51384,7 +51414,8 @@ sap.ui.predefine('sap/ui/core/message/MessageManager',[
 			var vMessages = that.mMessages[sId] ? that.mMessages[sId] : {};
 			that._sortMessages(vMessages);
 			//push a copy
-			oProcessor.setMessages(jQuery.extend(true, {}, vMessages));
+			vMessages = Object.keys(vMessages).length === 0 ? null : jQuery.extend(true, {}, vMessages);
+			oProcessor.setMessages(vMessages);
 		});
 	};
 
@@ -51397,9 +51428,11 @@ sap.ui.predefine('sap/ui/core/message/MessageManager',[
 	MessageManager.prototype._sortMessages = function(mMessages) {
 		var mSortOrder = {'Error': 0,'Warning':1,'Success':2,'Info':3};
 		jQuery.each(mMessages, function(sTarget, aMessages){
-			aMessages.sort(function(a, b){
-				return mSortOrder[a.type] - mSortOrder[b.type];
-			});
+			if (!aMessages.length === 0) {
+				aMessages.sort(function(a, b){
+					return mSortOrder[a.type] - mSortOrder[b.type];
+				});
+			}
 		});
 	};
 
@@ -51438,7 +51471,8 @@ sap.ui.predefine('sap/ui/core/message/MessageManager',[
 	 * @public
 	 */
 	MessageManager.prototype.removeMessages = function(vMessages) {
-		this._removeMessages(vMessages);
+		// Do not expose bOnlyValidationMessages to public API
+		return this._removeMessages.apply(this, arguments);
 	};
 
 	/**
@@ -51631,7 +51665,7 @@ sap.ui.predefine('sap/ui/core/message/MessageProcessor',['jquery.sap.global', 's
 	 * @extends sap.ui.base.EventProvider
 	 *
 	 * @author SAP SE
-	 * @version 1.34.8
+	 * @version 1.34.9
 	 *
 	 * @constructor
 	 * @public
@@ -52102,47 +52136,6 @@ sap.ui.predefine('sap/ui/model/Binding',['jquery.sap.global', 'sap/ui/base/Event
 			return;
 		}
 		this._fireChange({reason: ChangeReason.Change});
-	};
-
-	/**
-	 * Checks whether an update of the data state of this binding is required.
-	 *
-	 * @private
-	 */
-	Binding.prototype.checkDataState = function() {
-		var oDataState = this._updateDataState();
-
-		if (oDataState && oDataState.changed()) {
-			this.fireEvent("DataStateChange", { dataState: oDataState });
-
-			if (!this._sDataStateTimout) {
-				this._sDataStateTimout = setTimeout(function() {
-					//console.info("[DS]" + JSON.stringify(jQuery.extend({}, oDataState), null, 4));
-					oDataState.calculateChanges();
-					this.fireEvent("AggregatedDataStateChange", { dataState: oDataState });
-					oDataState.changed(false);
-					this._sDataStateTimout = null;
-				}.bind(this), 0);
-			}
-		}
-	};
-
-	/**
-	 * Updates the data state and returns it.
-	 *
-	 * @returns {sap.ui.model.DataStata} The data state
-	 * @private
-	 */
-	Binding.prototype._updateDataState = function() {
-		var oDataState = this.getDataState();
-		if (this.oModel && this.sPath) {
-			var sResolvedPath = this.oModel.resolve(this.sPath, this.oContext);
-			if (sResolvedPath) {
-				oDataState.setModelMessages(this.oModel.getMessagesByPath(sResolvedPath));
-				oDataState.setLaundering(this.oModel.isLaundering(this.sPath, this.oContext));
-			}
-		}
-		return oDataState;
 	};
 
 	/**
@@ -52799,7 +52792,7 @@ sap.ui.predefine('sap/ui/model/ClientModel',['jquery.sap.global', './ClientConte
 	 * @extends sap.ui.model.Model
 	 *
 	 * @author SAP SE
-	 * @version 1.34.8
+	 * @version 1.34.9
 	 *
 	 * @param {object} oData URL where to load the data from
 	 * @constructor
@@ -53318,6 +53311,10 @@ sap.ui.predefine('sap/ui/model/ClientTreeBinding',['jquery.sap.global', './Chang
 		var that = this,
 			aFilteredContexts = [];
 
+		if (jQuery.isEmptyObject(this.aAllFilters)) {
+			return;
+		}
+
 		this.bIsFiltering = true;
 		var aUnfilteredContexts = this.getNodeContexts(oParentContext);
 		this.bIsFiltering = false;
@@ -53326,10 +53323,6 @@ sap.ui.predefine('sap/ui/model/ClientTreeBinding',['jquery.sap.global', './Chang
 			jQuery.each(aUnfilteredContexts, function(i, oContext){
 				that._applyFilterRecursive(oContext);
 			});
-
-			if (jQuery.isEmptyObject(this.aAllFilters)) {
-				return;
-			}
 
 			aFilteredContexts = FilterProcessor.apply(aUnfilteredContexts, this.aAllFilters, function (oContext, sPath) {
 				return that.oModel.getProperty(sPath, oContext);
@@ -53544,6 +53537,18 @@ sap.ui.predefine('sap/ui/model/CompositeBinding',['jquery.sap.global', './Bindin
 
 		jQuery.each(this.aBindings, function(i, oBinding) {
 			oValue = oBinding.getValue();
+			aValues.push(oValue);
+		});
+
+		return aValues;
+	};
+
+	CompositeBinding.prototype.getOriginalValue = function() {
+		var aValues = [],
+		oValue;
+
+		jQuery.each(this.aBindings, function(i, oBinding) {
+			oValue = oBinding.getDataState().getOriginalValue();
 			aValues.push(oValue);
 		});
 
@@ -53882,79 +53887,29 @@ sap.ui.predefine('sap/ui/model/CompositeBinding',['jquery.sap.global', './Bindin
 	 * @param {boolean} bForceupdate
 	 *
 	 */
-	CompositeBinding.prototype.checkUpdate = function(bForceupdate){
+	CompositeBinding.prototype.checkUpdate = function(bForceUpdate){
+		var bChanged = false;
 		if (this.bPreventUpdate) {
 			return;
 		}
+		var oDataState = this.getDataState();
+		var aOriginalValues = this.getOriginalValue();
+		if (bForceUpdate || !jQuery.sap.equal(aOriginalValues, this.aOriginalValues)) {
+			this.aOriginalValues = aOriginalValues;
+			oDataState.setOriginalValue(aOriginalValues);
+			bChanged = true;
+		}
 		var aValues = this.getValue();
-		if (!jQuery.sap.equal(aValues, this.aValues) || bForceupdate) {// optimize for not firing the events when unneeded
+		if (!jQuery.sap.equal(aValues, this.aValues) || bForceUpdate) {// optimize for not firing the events when unneeded
 			this.aValues = aValues;
-			this.getDataState().setValue(aValues);
+			oDataState.setValue(aValues);
 			this._fireChange({reason: ChangeReason.Change});
+			bChanged = true;
+		}
+		if (bChanged) {
+			this.checkDataState();
 		}
 	};
-
-	CompositeBinding.prototype._updateDataState = function() {
-		var oDataState = PropertyBinding.prototype._updateDataState.apply(this, arguments);
-
-		var mChanges = oDataState.getChanges();
-
-		for (var sKey in mChanges) {
-			switch (sKey) {
-
-				case "originalValue":
-					oDataState.setOriginalValue(mChanges[sKey]);
-					break;
-
-				case "value":
-				case "invalidValue":
-				case "controlMessages":
-				case "modelMessages":
-				case "messages":
-				case "dirty":
-					// Ignore!!
-					break;
-
-				default:
-					oDataState.setProperty(sKey, mChanges[sKey]);
-					break;
-			}
-		}
-
-		if (!oDataState.getInvalidValue()) {
-			var aInvalidValues = oDataState.getInternalProperty("invalidValue");
-			if (aInvalidValues && containsValues(aInvalidValues)) {
-				oDataState.setInvalidValue(aInvalidValues);
-			} else {
-				oDataState.setInvalidValue(null);
-			}
-		}
-
-		return oDataState;
-	};
-
-
-	/**
-	 * Returns false if the given value is null, invalid or an array consisting entirely of null values
-	 *
-	 * @param {any} vValue - A value or an array of values
-	 * @returns {boolean} Whether there were any non-falsy values in the given argument
-	 * @private
-	 */
-	function containsValues(vValue) {
-		if (Array.isArray(vValue)) {
-			for (var i = 0; i < vValue.length; i++) {
-				if (vValue[i] !== null && vValue[i] !== undefined) {
-					return true;
-				}
-			}
-			return false;
-		} else {
-			return !!vValue;
-		}
-
-	}
-
 
 	return CompositeBinding;
 
@@ -54013,7 +53968,7 @@ sap.ui.predefine('sap/ui/model/CompositeDataState',[ 'jquery.sap.global', './Dat
 	 * @extends sap.ui.model.DataState
 	 *
 	 * @author SAP SE
-	 * @version 1.34.8
+	 * @version 1.34.9
 	 *
 	 * @constructor
 	 * @public
@@ -54028,6 +53983,8 @@ sap.ui.predefine('sap/ui/model/CompositeDataState',[ 'jquery.sap.global', './Dat
 			this.mProperties.value = [];
 			this.mProperties.invalidValue = null;
 			this.mProperties.internalValue = [];
+
+			this.mChangedProperties = jQuery.extend({},this.mProperties);
 
 			this.aDataStates = aDataStates;
 		}
@@ -54082,7 +54039,6 @@ sap.ui.predefine('sap/ui/model/CompositeDataState',[ 'jquery.sap.global', './Dat
 
 		var vReturnValue;
 		switch (sProperty) {
-			case "messages":
 			case "modelMessages":
 			case "controlMessages":
 				vReturnValue = vValue;
@@ -54092,12 +54048,137 @@ sap.ui.predefine('sap/ui/model/CompositeDataState',[ 'jquery.sap.global', './Dat
 				break;
 
 			default:
-				vReturnValue = vValue;
+				vReturnValue = aInnerValues || vValue;
 		}
 
 		return vReturnValue;
 	};
 
+	/**
+	 * Returns the array of state messages of the model or undefined
+	 *
+	 * @returns {sap.ui.core.Message[]} the array of messages of the model or null if no {link:sap.ui.core.messages.ModelManager ModelManager} is used.
+	 * @public
+	 */
+	CompositeDataState.prototype.getModelMessages = function() {
+		return this.getProperty("modelMessages");
+	};
+
+	/**
+	 * Sets an array of control state messages.
+	 *
+	 * @param {sap.ui.core.Message[]} the control messages
+	 * @return {sap.ui.model.DataState} <code>this</code> to allow method chaining
+	 * @protected
+	 */
+	CompositeDataState.prototype.getControlMessages = function() {
+		return this.getProperty("controlMessages");
+	};
+
+	/**
+	 * Returns the array of all state messages or null.
+	 * This combines the model and control messages.
+	 *
+	 * @returns {sap.ui.core.Message[]} the array of all messages or null if no {link:sap.ui.core.messages.ModelManager ModelManager} is used.
+	 * @public
+	 */
+	CompositeDataState.prototype.getMessages = function() {
+		return this.aDataStates.reduce(function(aMessages, oDataState) {
+			return aMessages.concat(oDataState.getMessages());
+		}, DataState.prototype.getMessages.apply(this, arguments));
+	};
+
+	/**
+	 * Check if an Array contains values
+	 *
+	 * @param {array} vValue Array for check
+	 * @returns {boolean} bContains Containing inner values
+	 * @private
+	 */
+	CompositeDataState.prototype.containsValues = function(vValue) {
+		if (Array.isArray(vValue)) {
+			for (var i = 0; i < vValue.length; i++) {
+				if (vValue[i] !== null && vValue[i] !== undefined) {
+					return true;
+				}
+			}
+			return false;
+		} else {
+			return !!vValue;
+		}
+	};
+
+	/**
+	 * Returns whether the data state is dirty.
+	 * A data state is dirty if the value was changed
+	 * but is not yet confirmed by a server or the entered value did not yet pass the type validation.
+	 *
+	 * @returns {boolean} true if the data state is dirty
+	 * @public
+	 */
+	CompositeDataState.prototype.isDirty = function() {
+		return this.aDataStates.reduce(function(bIsInvalid, oDataState) {
+			if (oDataState.isDirty()) {
+				return true;
+			} else {
+				return bIsInvalid;
+			}
+		}, DataState.prototype.isDirty.apply(this, arguments));
+	};
+
+	/**
+	 * Returns whether the data state is dirty in the UI control.
+	 * A data state is dirty in the UI control if the entered value did not yet pass the type validation.
+	 *
+	 * @returns {boolean} true if the data state is dirty
+	 * @public
+	 */
+	CompositeDataState.prototype.isControlDirty = function() {
+		return this.aDataStates.reduce(function(bIsInvalid, oDataState) {
+			if (oDataState.isControlDirty()) {
+				return true;
+			} else {
+				return bIsInvalid;
+			}
+		}, DataState.prototype.isControlDirty.apply(this, arguments));
+	};
+
+	/**
+	 * Returns whether the data state is in laundering.
+	 * If data is send to the server the data state becomes laundering until the
+	 * data was accepted or rejected.
+	 *
+	 * @returns {boolean} true if the data is laundering
+	 * @public
+	 */
+	CompositeDataState.prototype.isLaundering = function() {
+		return this.aDataStates.reduce(function(bIsInvalid, oDataState) {
+			if (oDataState.isLaundering()) {
+				return true;
+			} else {
+				return bIsInvalid;
+			}
+		}, DataState.prototype.isLaundering.apply(this, arguments));
+	};
+
+	/**
+	 * Returns the dirty value of a binding that was rejected by a type validation.
+	 * This value was of an incorrect type and could not be applied to the model. If the
+	 * value was not rejected it will return null. In this case the current
+	 * model value can be accessed using the <code>getValue</code> method.
+	 *
+	 * @returns {any} the value that was rejected or null
+	 * @public
+	 */
+	CompositeDataState.prototype.getInvalidValue = function() {
+		var vValue = this.mChangedProperties["invalidValue"];
+		var aInvalidValues = this.getInternalProperty("invalidValue");
+		if (aInvalidValues && this.containsValues(aInvalidValues)) {
+			vValue = aInvalidValues;
+			this.setInvalidValue(aInvalidValues);
+		}
+		return vValue;
+	};
 	/**
 	 * Returns or sets whether the data state is changed.
 	 * As long as changed was not set to false the data state is dirty
@@ -54110,7 +54191,7 @@ sap.ui.predefine('sap/ui/model/CompositeDataState',[ 'jquery.sap.global', './Dat
 	CompositeDataState.prototype.changed = function(bNewState) {
 		if (bNewState === false) {
 			//clear the changed properties as changed was reset;
-			this.mChangedProperties = {};
+			this.mProperties = jQuery.extend({},this.mChangedProperties);
 
 			this.aDataStates.forEach(function(oDataState) {
 				oDataState.changed(false);
@@ -54124,11 +54205,8 @@ sap.ui.predefine('sap/ui/model/CompositeDataState',[ 'jquery.sap.global', './Dat
 			} else {
 				return oDataState.changed();
 			}
-		}, !jQuery.isEmptyObject(this.mChangedProperties));
+		}, !jQuery.sap.equal(this.mProperties, this.mChangedProperties));
 	};
-
-
-
 
 	/**
 	 * Returns the changes of the data state in a map that the control can use in the
@@ -54152,7 +54230,6 @@ sap.ui.predefine('sap/ui/model/CompositeDataState',[ 'jquery.sap.global', './Dat
 
 		var aInnerChanges = [];
 		for (i = 0; i < this.aDataStates.length; ++i) {
-			this.aDataStates[i].calculateChanges();
 			mChanges = this.aDataStates[i].getChanges();
 
 			for (sKey in mChanges) {
@@ -54186,6 +54263,21 @@ sap.ui.predefine('sap/ui/model/CompositeDataState',[ 'jquery.sap.global', './Dat
 			}
 		}
 
+		jQuery.each(this.mChangedProperties,function(sProperty, vValue) {
+			if (this.mChangedProperties[sProperty] &&
+					!jQuery.sap.equal(this.mChangedProperties[sProperty],this.mProperties[sProperty])) {
+				mAllChanges[sProperty] = {};
+				mAllChanges[sProperty].value = this.mChangedProperties[sProperty];
+				mAllChanges[sProperty].oldValue = this.mProperties[sProperty];
+			}
+		}.bind(this));
+		var aMessages = this.getMessages();
+		var aOldMessages = this._getOldMessages();
+		if (aMessages.length > 0 || aOldMessages.length > 0) {
+			mAllChanges["messages"] = {};
+			mAllChanges["messages"].oldValue = aOldMessages;
+			mAllChanges["messages"].value = aMessages;
+		}
 		return mAllChanges;
 	};
 
@@ -54218,7 +54310,7 @@ sap.ui.predefine('sap/ui/model/CompositeType',['./FormatException', './ParseExce
 	 * @extends sap.ui.model.SimpleType
 	 *
 	 * @author SAP SE
-	 * @version 1.34.8
+	 * @version 1.34.9
 	 *
 	 * @constructor
 	 * @param {object} [oFormatOptions] options as provided by concrete subclasses
@@ -54525,7 +54617,7 @@ sap.ui.predefine('sap/ui/model/DataState',[ 'jquery.sap.global', '../base/Object
 	 * @extends sap.ui.base.Object
 	 *
 	 * @author SAP SE
-	 * @version 1.34.8
+	 * @version 1.34.9
 	 *
 	 * @constructor
 	 * @public
@@ -54543,10 +54635,12 @@ sap.ui.predefine('sap/ui/model/DataState',[ 'jquery.sap.global', '../base/Object
 				value : null,
 				invalidValue: null,
 				internalValue: null,
-				dirty: false
+				dirty: false,
+				messages: []
+
 			};
 			//the resolved path of the binding to check for binding context changes
-			this.mChangedProperties = {};
+			this.mChangedProperties = jQuery.extend({},this.mProperties);
 		}
 	});
 
@@ -54572,47 +54666,7 @@ sap.ui.predefine('sap/ui/model/DataState',[ 'jquery.sap.global', '../base/Object
 	 * @private
 	 */
 	DataState.prototype.setProperty = function(sProperty, vValue) {
-		if (sProperty === "modelMessages" || sProperty === "controlMessages") {
-			vValue = vValue || [];
-		}
-
-		vValue = vValue === undefined ? null : vValue;
-
-		if (jQuery.sap.equal(this.mProperties[sProperty], vValue)) {
-			delete this.mChangedProperties[sProperty];
-		} else {
-			if (!this.mChangedProperties[sProperty]) {
-				this.mChangedProperties[sProperty] = {};
-			}
-
-			this.mChangedProperties[sProperty] = {
-				oldValue : jQuery.isArray(this.mProperties[sProperty]) ? this.mProperties[sProperty].slice(0) : this.mProperties[sProperty],
-				value: vValue
-			};
-		}
-
-		if (sProperty === "modelMessages" || sProperty === "controlMessages") {
-			var aOldMessages = [].concat(this.mProperties["modelMessages"], this.mProperties["controlMessages"]);
-			this._sortMessages(aOldMessages);
-			this.mChangedProperties["messages"] = {
-				oldValue : aOldMessages,
-				value: this.getMessages().slice(0)
-			};
-
-			if (this.mChangedProperties["messages"].oldValue.length === 0 && this.mChangedProperties["messages"].value.length === 0) {
-				delete this.mChangedProperties["messages"];
-			}
-		}
-
-		if (this.isDirty() !== this.mProperties["dirty"]) {
-			this.mChangedProperties.dirty = {
-				oldValue: !this.isDirty(),
-				value: this.isDirty()
-			};
-		} else {
-			delete this.mChangedProperties.dirty;
-		}
-
+		this.mChangedProperties[sProperty] = vValue;
 		return this;
 	};
 
@@ -54639,39 +54693,7 @@ sap.ui.predefine('sap/ui/model/DataState',[ 'jquery.sap.global', '../base/Object
 	 * @private
 	 */
 	DataState.prototype.getProperty = function(sProperty) {
-		var vReturnValue;
-		var vControlDirty;
-
-		var fnGetCurrentValue = function(sName) {
-			return ((this.mChangedProperties[sName] && "value" in this.mChangedProperties[sName]) ? this.mChangedProperties[sName].value : this.mProperties[sName]);
-		}.bind(this);
-
-		switch (sProperty) {
-			case 'messages':
-				var aMessages = [],
-					aControlMessages = fnGetCurrentValue('controlMessages'),
-					aModelMessages = fnGetCurrentValue('modelMessages');
-
-				if (aModelMessages || aControlMessages) {
-					aMessages = aMessages.concat(aModelMessages ? aModelMessages : [], aControlMessages ? aControlMessages : []);
-					this._sortMessages(aMessages);
-				}
-				vReturnValue = aMessages; //combine all messages
-				break;
-			case 'controlDirty':
-				vControlDirty = !!(this.mChangedProperties.invalidValue && this.mChangedProperties.invalidValue.value);
-				vReturnValue = vControlDirty;
-				break;
-			case 'dirty':
-				var vValue = this.mChangedProperties && this.mChangedProperties.value && ("value" in this.mChangedProperties.value) ? this.mChangedProperties.value.value : this.mProperties.value;
-				var vOriginalValue = this.mChangedProperties && this.mChangedProperties.originalValue && ("value" in this.mChangedProperties.originalValue) ? this.mChangedProperties.originalValue.value : this.mProperties.originalValue;
-				vControlDirty = !!(this.mChangedProperties.invalidValue && this.mChangedProperties.invalidValue.value);
-				vReturnValue = vControlDirty || !jQuery.sap.equal(vValue, vOriginalValue);
-				break;
-			default:
-				vReturnValue = fnGetCurrentValue(sProperty);
-		}
-		return vReturnValue;
+		return this.mChangedProperties[sProperty];
 	};
 
 	/**
@@ -54682,7 +54704,32 @@ sap.ui.predefine('sap/ui/model/DataState',[ 'jquery.sap.global', '../base/Object
 	 * @public
 	 */
 	DataState.prototype.getMessages = function() {
-		return this.getProperty("messages");
+		var aMessages = [];
+		var aControlMessages = this.mChangedProperties['controlMessages'];
+		var aModelMessages = this.mChangedProperties['modelMessages'];
+		if (aModelMessages || aControlMessages) {
+			aMessages = aMessages.concat(aModelMessages ? aModelMessages : [], aControlMessages ? aControlMessages : []);
+			this._sortMessages(aMessages);
+		}
+		return aMessages;
+	};
+
+	/**
+	 * Returns the array of all old state messages or null.
+	 * This combines the model and control messages.
+	 *
+	 * @returns {sap.ui.core.Message[]} the array of all messages or null if no {link:sap.ui.core.messages.ModelManager ModelManager} is used.
+	 * @private
+	 */
+	DataState.prototype._getOldMessages = function() {
+		var aMessages = [];
+		var aControlMessages = this.mProperties['controlMessages'];
+		var aModelMessages = this.mProperties['modelMessages'];
+		if (aModelMessages || aControlMessages) {
+			aMessages = aMessages.concat(aModelMessages ? aModelMessages : [], aControlMessages ? aControlMessages : []);
+			this._sortMessages(aMessages);
+		}
+		return aMessages;
 	};
 
 	/**
@@ -54693,7 +54740,8 @@ sap.ui.predefine('sap/ui/model/DataState',[ 'jquery.sap.global', '../base/Object
 	 * @public
 	 */
 	DataState.prototype.setModelMessages = function(aMessages) {
-		return this.setProperty("modelMessages", aMessages);
+		this.mChangedProperties["modelMessages"] = aMessages || [];
+		return this;
 	};
 
 	/**
@@ -54714,7 +54762,8 @@ sap.ui.predefine('sap/ui/model/DataState',[ 'jquery.sap.global', '../base/Object
 	 * @protected
 	 */
 	DataState.prototype.setControlMessages = function(aMessages) {
-		return this.setProperty("controlMessages", aMessages);
+		this.mChangedProperties["controlMessages"] = aMessages || [];
+		return this;
 	};
 
 	/**
@@ -54737,7 +54786,11 @@ sap.ui.predefine('sap/ui/model/DataState',[ 'jquery.sap.global', '../base/Object
 	 * @public
 	 */
 	DataState.prototype.isDirty = function() {
-		return this.getProperty("dirty");
+		var vValue = this.mChangedProperties["value"];
+		var vOriginalValue = this.mChangedProperties["originalValue"];
+		var vControlDirty = this.mChangedProperties["invalidValue"];
+
+		return !!vControlDirty || !jQuery.sap.equal(vValue, vOriginalValue);
 	};
 
 	/**
@@ -54748,9 +54801,8 @@ sap.ui.predefine('sap/ui/model/DataState',[ 'jquery.sap.global', '../base/Object
 	 * @public
 	 */
 	DataState.prototype.isControlDirty = function() {
-		return this.getProperty("controlDirty");
+		return !!this.mChangedProperties["invalidValue"];
 	};
-
 
 	/**
 	 * Returns whether the data state is in laundering.
@@ -54761,7 +54813,7 @@ sap.ui.predefine('sap/ui/model/DataState',[ 'jquery.sap.global', '../base/Object
 	 * @public
 	 */
 	 DataState.prototype.isLaundering = function() {
-		return this.getProperty("laundering");
+		return this.mChangedProperties["laundering"];
 	};
 
 	/**
@@ -54772,7 +54824,8 @@ sap.ui.predefine('sap/ui/model/DataState',[ 'jquery.sap.global', '../base/Object
 	 * @protected
 	 */
 	DataState.prototype.setLaundering = function(bLaundering) {
-		return this.setProperty("laundering",bLaundering);
+		this.mChangedProperties["laundering"] = bLaundering;
+		return this;
 	};
 
 	/**
@@ -54793,7 +54846,8 @@ sap.ui.predefine('sap/ui/model/DataState',[ 'jquery.sap.global', '../base/Object
 	 * @protected
 	 */
 	DataState.prototype.setValue = function(vValue) {
-		return this.setProperty("value", vValue);
+		this.mChangedProperties["value"] = vValue || null;
+		return this;
 	};
 
 	/**
@@ -54817,7 +54871,8 @@ sap.ui.predefine('sap/ui/model/DataState',[ 'jquery.sap.global', '../base/Object
 	 * @protected
 	 */
 	DataState.prototype.setInvalidValue = function(vInvalidValue) {
-		return this.setProperty("invalidValue",vInvalidValue);
+		this.mChangedProperties["invalidValue"] = vInvalidValue || null;
+		return this;
 	};
 
 	/**
@@ -54839,7 +54894,8 @@ sap.ui.predefine('sap/ui/model/DataState',[ 'jquery.sap.global', '../base/Object
 	 * @protected
 	 */
 	DataState.prototype.setOriginalValue = function(vOriginalValue) {
-		return this.setProperty("originalValue",vOriginalValue);
+		this.mChangedProperties["originalValue"] = vOriginalValue || null;
+		return this;
 	};
 
 	/**
@@ -54854,9 +54910,9 @@ sap.ui.predefine('sap/ui/model/DataState',[ 'jquery.sap.global', '../base/Object
 	DataState.prototype.changed = function(bNewState) {
 		if (bNewState === false) {
 			//clear the changed properties as changed was reset;
-			this.mChangedProperties = {};
+			this.mProperties = jQuery.extend({},this.mChangedProperties);
 		}
-		return !jQuery.isEmptyObject(this.mChangedProperties);
+		return !jQuery.sap.equal(this.mChangedProperties,this.mProperties);
 	};
 
 	/**
@@ -54875,7 +54931,22 @@ sap.ui.predefine('sap/ui/model/DataState',[ 'jquery.sap.global', '../base/Object
 	 * @public
 	 */
 	DataState.prototype.getChanges = function() {
-		return this.mChangedProperties;
+		var mChanges = {};
+		jQuery.each(this.mChangedProperties,function(sProperty, vValue) {
+			if (!jQuery.sap.equal(this.mChangedProperties[sProperty],this.mProperties[sProperty])) {
+				mChanges[sProperty] = {};
+				mChanges[sProperty].value = this.mChangedProperties[sProperty];
+				mChanges[sProperty].oldValue = this.mProperties[sProperty];
+			}
+		}.bind(this));
+		var aMessages = this.getMessages();
+		var aOldMessages = this._getOldMessages();
+		if (aMessages.length > 0 || aOldMessages.length > 0) {
+			mChanges["messages"] = {};
+			mChanges["messages"].oldValue = aOldMessages;
+			mChanges["messages"].value = aMessages;
+		}
+		return mChanges;
 	};
 
 	return DataState;
@@ -55124,12 +55195,13 @@ sap.ui.predefine('sap/ui/model/FilterProcessor',['jquery.sap.global'],
 	 * @param {array} aData the data array to be filtered
 	 * @param {array} aFilters the filter array
 	 * @param {function} fnGetValue the method to get the actual value to filter on
+	 * @return {array} a new array instance containing the filtered data set
 	 *
 	 * @public
 	 */
 	FilterProcessor.apply = function(aData, aFilters, fnGetValue){
 		if (!aFilters || aFilters.length == 0) {
-			return aData;
+			return aData.slice();
 		}
 		var that = this,
 			oFilterGroups = {},
@@ -55677,7 +55749,7 @@ sap.ui.predefine('sap/ui/model/Model',['jquery.sap.global', 'sap/ui/core/message
 	 * @extends sap.ui.core.message.MessageProcessor
 	 *
 	 * @author SAP SE
-	 * @version 1.34.8
+	 * @version 1.34.9
 	 *
 	 * @constructor
 	 * @public
@@ -56404,7 +56476,6 @@ sap.ui.predefine('sap/ui/model/Model',['jquery.sap.global', 'sap/ui/core/message
 		var aBindings = this.aBindings.slice(0);
 		jQuery.each(aBindings, function(iIndex, oBinding) {
 			oBinding.checkUpdate(bForceUpdate);
-			oBinding.checkDataState(bForceUpdate);
 		});
 	};
 
@@ -56415,8 +56486,12 @@ sap.ui.predefine('sap/ui/model/Model',['jquery.sap.global', 'sap/ui/core/message
 	 * @public
 	 */
 	Model.prototype.setMessages = function(mMessages) {
+		//jQuery.sap.assert(!jQuery.isEmptyObject(mMessages), this + ": mMessages passed as emptyObject( {} ). Use null instead!");
+
 		this.mMessages = mMessages || {};
-		this.checkMessages();
+		if (mMessages !== null || !jQuery.sap.equal(this.mMessages, mMessages)) {
+			this.checkMessages();
+		}
 	};
 
 	/**
@@ -56438,7 +56513,9 @@ sap.ui.predefine('sap/ui/model/Model',['jquery.sap.global', 'sap/ui/core/message
 	 */
 	Model.prototype.checkMessages = function() {
 		jQuery.each(this.aBindings, function(iIndex, oBinding) {
-			oBinding.checkDataState();
+			if (oBinding.checkDataState) {
+				oBinding.checkDataState();
+			}
 		});
 	};
 
@@ -56724,6 +56801,37 @@ sap.ui.predefine('sap/ui/model/PropertyBinding',['jquery.sap.global', './Binding
 		this.sMode = sBindingMode;
 	};
 
+	/**
+	 * Checks whether an update of the data state of this binding is required.
+	 *
+	 * @param {map} mPaths A Map of paths to check if update needed
+	 * @private
+	 */
+	PropertyBinding.prototype.checkDataState = function(mPaths) {
+		var sResolvedPath = this.oModel ? this.oModel.resolve(this.sPath, this.oContext) : null;
+		var that = this;
+		if (!mPaths || sResolvedPath && sResolvedPath in mPaths) {
+			var oDataState = this.getDataState();
+			if (sResolvedPath) {
+				oDataState.setModelMessages(this.oModel.getMessagesByPath(sResolvedPath));
+			}
+			if (oDataState && oDataState.changed()) {
+				if (this.mEventRegistry["DataStateChange"]) {
+					this.fireEvent("DataStateChange", { dataState: oDataState });
+				}
+				if (this.mEventRegistry["AggregatedDataStateChange"]) {
+					if (!this._sDataStateTimout) {
+						this._sDataStateTimout = setTimeout(function() {
+							that.fireEvent("AggregatedDataStateChange", { dataState: oDataState });
+							oDataState.changed(false);
+							that._sDataStateTimout = null;
+						}, 0);
+					}
+				}
+			}
+		}
+	};
+
 	return PropertyBinding;
 
 });
@@ -56750,7 +56858,7 @@ sap.ui.predefine('sap/ui/model/SimpleType',['sap/ui/base/DataType', './FormatExc
 	 * @extends sap.ui.model.Type
 	 *
 	 * @author SAP SE
-	 * @version 1.34.8
+	 * @version 1.34.9
 	 *
 	 * @constructor
 	 * @param {object} [oFormatOptions] options as provided by concrete subclasses
@@ -56881,23 +56989,26 @@ sap.ui.predefine('sap/ui/model/Sorter',['sap/ui/base/Object'],
 	 *
 	 * @param {String} sPath the binding path used for sorting
 	 * @param {boolean} [bDescending=false] whether the sort order should be descending
-	 * @param {boolean|function} vGroup configure grouping of the content, can either be true to enable grouping
+	 * @param {boolean|function} [vGroup] configure grouping of the content, can either be true to enable grouping
 	 *        based on the raw model property value, or a function which calculates the group value out of the
 	 *        context (e.g. oContext.getProperty("date").getYear() for year grouping). The control needs to
 	 *        implement the grouping behaviour for the aggregation which you want to group. In case a function
 	 *        is provided it must either return a primitive type value as the group key or an object containing
 	 *        a "key" property an may contain additional properties needed for group visualization.
+	 * @param {function} [fnComparator] a custom comparator function, which is used for clientside sorting instead
+	 *        of the default comparator method.
 	 * @public
 	 * @alias sap.ui.model.Sorter
 	 */
 	var Sorter = BaseObject.extend("sap.ui.model.Sorter", /** @lends sap.ui.model.Sorter.prototype */ {
 
-		constructor : function(sPath, bDescending, vGroup){
+		constructor : function(sPath, bDescending, vGroup, fnComparator){
 			if (typeof sPath === "object") {
 				var oSorterData = sPath;
 				sPath = oSorterData.path;
 				bDescending = oSorterData.descending;
 				vGroup = oSorterData.group;
+				fnComparator = oSorterData.comparator;
 			}
 			this.sPath = sPath;
 
@@ -56917,6 +57028,7 @@ sap.ui.predefine('sap/ui/model/Sorter',['sap/ui/base/Object'],
 			if (typeof vGroup == "function") {
 				this.fnGroup = vGroup;
 			}
+			this.fnCompare = fnComparator;
 		},
 
 		/**
@@ -56939,6 +57051,43 @@ sap.ui.predefine('sap/ui/model/Sorter',['sap/ui/base/Object'],
 
 	});
 
+	/**
+	 * Compares two values
+	 *
+	 * This is the default comparator function used for clientside sorting, if no custom comparator is given in the
+	 * constructor. It does compare just by using equal/less than/greater than with automatic type casting, except
+	 * for null values, which are always last, and string values where localeCompare is used.
+	 *
+	 * The comparator method returns -1, 0 or 1, depending on the order of the two items and is
+	 * suitable to be used as a comparator method for Array.sort.
+	 *
+	 * @param {any} a the first value to compare
+	 * @param {any} b the second value to compare
+	 * @returns {integer} -1, 0 or 1 depending on the compare result
+	 * @public
+	 */
+	Sorter.defaultComparator = function(a, b) {
+		if (a == b) {
+			return 0;
+		}
+		if (b == null) {
+			return -1;
+		}
+		if (a == null) {
+			return 1;
+		}
+		if (typeof a == "string" && typeof b == "string") {
+			return a.localeCompare(b);
+		}
+		if (a < b) {
+			return -1;
+		}
+		if (a > b) {
+			return 1;
+		}
+		return 0;
+	};
+
 	return Sorter;
 
 });
@@ -56948,8 +57097,8 @@ sap.ui.predefine('sap/ui/model/Sorter',['sap/ui/base/Object'],
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
-sap.ui.predefine('sap/ui/model/SorterProcessor',['jquery.sap.global'],
-	function(jQuery) {
+sap.ui.predefine('sap/ui/model/SorterProcessor',['jquery.sap.global', './Sorter'],
+	function(jQuery, Sorter) {
 	"use strict";
 
 	/**
@@ -56967,6 +57116,8 @@ sap.ui.predefine('sap/ui/model/SorterProcessor',['jquery.sap.global'],
 	 * @param {array} aSorters the sorter array
 	 * @param {function} fnGetValue the method to get the actual value use for sorting
 	 * @param {function} [fnGetKey] method to get a key value for the given data entry
+	 * @return {array} the given array instance after applying the sort order
+	 *
 	 * @public
 	 */
 	SorterProcessor.apply = function(aData, aSorters, fnGetValue, fnGetKey){
@@ -56980,35 +57131,10 @@ sap.ui.predefine('sap/ui/model/SorterProcessor',['jquery.sap.global'],
 			return aData;
 		}
 
-		function fnCompare(a, b) {
-			if (a == b) {
-				return 0;
-			}
-			if (b == null) {
-				return -1;
-			}
-			if (a == null) {
-				return 1;
-			}
-			if (typeof a == "string" && typeof b == "string") {
-				return a.localeCompare(b);
-			}
-			if (a < b) {
-				return -1;
-			}
-			if (a > b) {
-				return 1;
-			}
-			return 0;
-		}
-
 		for (var j = 0; j < aSorters.length; j++) {
 			oSorter = aSorters[j];
-			aCompareFunctions[j] = oSorter.fnCompare;
+			aCompareFunctions[j] = oSorter.fnCompare || Sorter.defaultComparator;
 
-			if (!aCompareFunctions[j]) {
-				aCompareFunctions[j] = fnCompare;
-			}
 			/*eslint-disable no-loop-func */
 			jQuery.each(aData, function(i, vRef) {
 				oValue = fnGetValue(vRef, oSorter.sPath);
@@ -57262,7 +57388,7 @@ sap.ui.predefine('sap/ui/model/Type',['sap/ui/base/Object'],
 	 * @extends sap.ui.base.Object
 	 *
 	 * @author SAP SE
-	 * @version 1.34.8
+	 * @version 1.34.9
 	 *
 	 * @constructor
 	 * @public
@@ -57515,7 +57641,7 @@ sap.ui.predefine('sap/ui/model/message/MessageModel',['jquery.sap.global', 'sap/
 	 * @extends sap.ui.model.Model
 	 *
 	 * @author SAP SE
-	 * @version 1.34.8
+	 * @version 1.34.9
 	 *
 	 * @param {sap.ui.core.message.MessageManager} oMessageManager The MessageManager instance
 	 * @constructor

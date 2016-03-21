@@ -2226,7 +2226,8 @@
       "isDebug": true,
       "required": [
         "jquery.sap.global.js",
-        "sap/ui/core/theming/Parameters.js"
+        "sap/ui/core/theming/Parameters.js",
+        "sap/m/ListItemBaseRenderer.js"
       ]
     },
     {
@@ -2234,7 +2235,8 @@
       "module": "sap/m/ListBaseRenderer.js",
       "required": [
         "jquery.sap.global.js",
-        "sap/ui/core/theming/Parameters.js"
+        "sap/ui/core/theming/Parameters.js",
+        "sap/m/ListItemBaseRenderer.js"
       ]
     },
     {
@@ -5602,7 +5604,8 @@
       "required": [
         "jquery.sap.global.js",
         "sap/ui/core/Renderer.js",
-        "sap/m/ListBaseRenderer.js"
+        "sap/m/ListBaseRenderer.js",
+        "sap/m/ColumnListItemRenderer.js"
       ]
     },
     {
@@ -5611,7 +5614,8 @@
       "required": [
         "jquery.sap.global.js",
         "sap/ui/core/Renderer.js",
-        "sap/m/ListBaseRenderer.js"
+        "sap/m/ListBaseRenderer.js",
+        "sap/m/ColumnListItemRenderer.js"
       ]
     },
     {

@@ -22,7 +22,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.34.8
+	 * @version 1.34.9
 	 *
 	 * @constructor
 	 * @public
@@ -483,6 +483,16 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	/**
+	 * Called whenever the model is updated
+	 *
+	 * @private
+	 */
+	TileContainer.prototype.updateTiles = function (sReason) {
+		this.destroyTiles();
+		this.updateAggregation('tiles');
+	};
+
+	/**
 	 * Applies the container's dimensions.
 	 *
 	 * @private
@@ -711,7 +721,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				oRm.destroy();
 			}
 
-			//this._applyPageStartIndex(iIndex);
 			this._update(false);
 
 			// When the control is initialized/updated with data binding and optimization for rendering
@@ -789,7 +798,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		var iTileUnderDeletionIndex = this.indexOfAggregation("tiles",oTile);
 
 		if (this.getDomRef()) {
-			var iPreviousTileIndex = iTileUnderDeletionIndex - 1;
 			this.removeAggregation("tiles",oTile,true);
 
 			if (!this._oDragSession) {
@@ -801,7 +809,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				}
 			}
 
-			this._applyPageStartIndex(iPreviousTileIndex < 0 ? 0 : iPreviousTileIndex);
 			this._update(false);
 		} else {
 			this.removeAggregation("tiles",oTile,false);

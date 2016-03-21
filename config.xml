@@ -25,4 +25,7 @@
     </platform>
     <engine name="ios" spec="~4.0.1" />
     <engine name="android" spec="~5.1.1" />
+    <allow-navigation href="http://*/*" />
+    <allow-navigation href="https://*/*" />
+    <allow-navigation href="data:*" />
 </widget>

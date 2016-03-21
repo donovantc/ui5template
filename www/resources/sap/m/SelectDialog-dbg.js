@@ -30,7 +30,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './List', './SearchF
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.34.8
+	 * @version 1.34.9
 	 *
 	 * @constructor
 	 * @public

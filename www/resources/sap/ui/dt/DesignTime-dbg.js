@@ -30,7 +30,7 @@ function(ManagedObject, ElementOverlay, OverlayRegistry, Selection, ElementDesig
 	 * @extends sap.ui.core.ManagedObject
 	 *
 	 * @author SAP SE
-	 * @version 1.34.8
+	 * @version 1.34.9
 	 *
 	 * @constructor
 	 * @private
@@ -371,6 +371,16 @@ function(ManagedObject, ElementOverlay, OverlayRegistry, Selection, ElementDesig
 
 			}
 		}
+	};
+
+	/**
+	 * Create an overlay for an element and register it in the DesignTime
+	 * @param {sap.ui.core.Element} oElement element
+	 * @return {sap.ui.dt.ElementOverlay} created ElementOverlay
+	 * @public
+	 */
+	DesignTime.prototype.createOverlay = function(oElement) {
+		return this._createElementOverlay(oElement);
 	};
 
 	/**

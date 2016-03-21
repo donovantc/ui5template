@@ -26,7 +26,7 @@ sap.ui.predefine('sap/ui/debug/ControlTree', ['jquery.sap.global', 'sap/ui/base/
 	 * @class Control Tree used for the Debug Environment
 	 * @extends sap.ui.base.EventProvider
 	 * @author Martin Schaus, Frank Weigel
-	 * @version 1.34.8
+	 * @version 1.34.9
 	 * @alias sap.ui.debug.ControlTree
 	 * @private
 	 */
@@ -416,7 +416,7 @@ sap.ui.predefine('sap/ui/debug/DebugEnv', ['jquery.sap.global', 'sap/ui/base/Int
 	 * @class Central Class for the Debug Environment
 	 *
 	 * @author Martin Schaus, Frank Weigel
-	 * @version 1.34.8
+	 * @version 1.34.9
 	 * @private
 	 * @alias sap.ui.debug.DebugEnv
 	 */
@@ -1021,7 +1021,7 @@ sap.ui.predefine('sap/ui/debug/PropertyList', ['jquery.sap.global', 'sap/ui/base
 	 *
 	 * @extends sap.ui.base.EventProvider
 	 * @author Martin Schaus
-	 * @version 1.34.8
+	 * @version 1.34.9
 	 *
 	 * @param {sap.ui.core.Core}
 	 *            oCore the core instance to use for analysis

@@ -30,7 +30,7 @@ function(jQuery, Control, ElementUtil, OverlayUtil, DOMUtil) {
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.34.8
+	 * @version 1.34.9
 	 *
 	 * @constructor
 	 * @private
@@ -51,6 +51,13 @@ function(jQuery, Control, ElementUtil, OverlayUtil, DOMUtil) {
 				 * We are overriding Control's property to prevent RenderManager from rendering of an invisible placeholder
 				 */
 				visible : {
+					type : "boolean",
+					defaultValue : true
+				},
+				/**
+				 * Render overlay only if associated element is visible
+				 */
+				lazyRendering : {
 					type : "boolean",
 					defaultValue : true
 				},

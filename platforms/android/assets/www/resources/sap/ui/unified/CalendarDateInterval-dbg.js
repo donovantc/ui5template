@@ -19,7 +19,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 	 * @class
 	 * Calendar with dates displayed in one line.
 	 * @extends sap.ui.unified.Calendar
-	 * @version 1.34.8
+	 * @version 1.34.9
 	 *
 	 * @constructor
 	 * @public
@@ -93,6 +93,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 		if (!(oStartDate instanceof Date)) {
 			throw new Error("Date must be a JavaScript date object; " + this);
+		}
+
+		if (jQuery.sap.equal(this.getStartDate(), oStartDate)) {
+			return this;
 		}
 
 		var iYear = oStartDate.getFullYear();

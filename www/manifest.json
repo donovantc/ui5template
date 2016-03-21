@@ -32,7 +32,6 @@
 			"phone": true
 		},
 		"supportedThemes": [
-			"sap_hcb",
 			"sap_bluecrystal"
 		]
 	},
@@ -79,16 +78,18 @@
 			"routes": [
 				{
 					"pattern": "",
-					"name": "",
+					"name": "MainView",
 					"target": [
-						"nodata"
+						"mainView"
 					]
 				}
 			],
 			"targets": {
 				"nodata": {
-					"viewName": "NoData",
-					"controlAggregation": "detailPages"
+					"viewName": "NoData"
+				},
+                "mainView": {
+					"viewName": "MainView"
 				}
 			}
 		}

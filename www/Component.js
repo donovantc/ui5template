@@ -5,7 +5,7 @@ sap.ui.define([
 ], function(UIComponent, Device, models) {
 	"use strict";
 
-	return UIComponent.extend("sdc.Component", {
+	return UIComponent.extend("Component", {
 
 		metadata: {
 			manifest: "json"

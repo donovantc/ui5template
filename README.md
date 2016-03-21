@@ -8,7 +8,7 @@ An iOS* and Android application have been added to the cordova project.
 *iOS app has not been tested
 
 # Current specs
-- openui5 v. 1.34.8
+- openui5 v. 1.34.9
 - cordova v. 6.0.0
 - Android cordova platform v. 5.1.1
 - iOS cordova platform v. 4.0.1

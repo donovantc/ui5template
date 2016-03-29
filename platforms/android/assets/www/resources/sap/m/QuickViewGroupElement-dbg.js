@@ -23,7 +23,7 @@ sap.ui.define([
 		* @extends sap.ui.core.Element
 		*
 		* @author SAP SE
-		* @version 1.34.9
+		* @version 1.36.5
 		*
 		* @constructor
 		* @public

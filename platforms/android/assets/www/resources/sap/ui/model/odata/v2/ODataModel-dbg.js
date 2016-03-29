@@ -59,14 +59,14 @@ sap.ui.define([
 	 * @class
 	 * Model implementation for oData format
 	 *
-	 * @extends sap.ui.model.Model
 	 *
 	 * @author SAP SE
-	 * @version 1.34.9
+	 * @version 1.36.5
 	 *
 	 * @constructor
 	 * @public
 	 * @alias sap.ui.model.odata.v2.ODataModel
+	 * @extends sap.ui.model.Model
 	 */
 	var ODataModel = Model.extend("sap.ui.model.odata.v2.ODataModel", /** @lends sap.ui.model.odata.v2.ODataModel.prototype */ {
 
@@ -1380,7 +1380,10 @@ sap.ui.define([
 	 * @see sap.ui.model.Model.prototype.createBindingContext
 	 * @param {string} sPath binding path
 	 * @param {object} [oContext] bindingContext
-	 * @param {map} [mParameters] map of parameters
+	 * @param {map} [mParameters] a map which contains additional parameters for the binding
+	 * @param {string} [mParameters.expand] Standing for OData <code>$expand</code> query option which should be included in the request
+	 * @param {string} [mParameters.select] Standing for OData <code>$select</code> query option parameter which should be included in the request
+	 * @param {map} [mParameters.custom] an optional map of custom query parameters. Custom parameters must not start with <code>$</code>.
 	 * @param {function} [fnCallBack] function called when context is created
 	 * @param {boolean} [bReload] reload of data
 	 * @return sap.ui.model.Context
@@ -4605,7 +4608,7 @@ sap.ui.define([
 	 * via a submitChanges call.
 	 *
 	 * @param {array} aGroupIds Array of batchGroupIds that should be set as deferred
-	 * @deprecated Deprecated since 1.32 use
+	 * @deprecated Since 1.32 use
 	 * @public
 	 */
 	ODataModel.prototype.setDeferredBatchGroups = function(aGroupIds) {
@@ -4631,7 +4634,7 @@ sap.ui.define([
 	 * Returns the array of batchGroupIds that are set as deferred
 	 *
 	 * @returns {array} aGroupIds The array of deferred batchGroupIds
-	 * @deprecated Deprecated since 1.32 use
+	 * @deprecated Since 1.32 use
 	 * @public
 	 */
 	ODataModel.prototype.getDeferredBatchGroups = function() {
@@ -4668,7 +4671,7 @@ sap.ui.define([
 	 * bacthGroupId: Defines the bacthGroup for changes of the defined EntityTypeName
 	 * changeSetId: Defines a changeSetId wich bundles the changes for the EntityType.
 	 * single: Defines if every change will get an own changeSet (true)
-	 * @deprecated Deprecated since 1.32 use
+	 * @deprecated Since 1.32 use
 	 * @public
 	 */
 	ODataModel.prototype.setChangeBatchGroups = function(mGroups) {

@@ -5,8 +5,8 @@
 */
 
 // Provides control sap.m.ViewSettingsDialog.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/IconPool'],
-function(jQuery, library, Control, IconPool) {
+sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/IconPool', './Toolbar', './CheckBox', './SearchField'],
+function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField) {
 	"use strict";
 
 	/**
@@ -20,7 +20,7 @@ function(jQuery, library, Control, IconPool) {
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.34.9
+	 * @version 1.36.5
 	 *
 	 * @constructor
 	 * @public
@@ -468,6 +468,8 @@ function(jQuery, library, Control, IconPool) {
 								oItem.setSelected(oEvent.getParameter('propertyValue'));
 							}
 						});
+
+						this._updateSelectAllCheckBoxState();
 					}
 				}
 			} else {
@@ -693,7 +695,7 @@ function(jQuery, library, Control, IconPool) {
 	 * Opens the ViewSettingsDialog relative to the parent control.
 	 *
 	 * @public
-	 * @param {string} sPageId The ID of the initial page to be opened in the dialog.
+	 * @param {string} [sPageId] The ID of the initial page to be opened in the dialog.
 	 *	The available values are "sort", "group", "filter" or IDs of custom tabs.
 	 *
 	 * @return {sap.m.ViewSettingsDialog} this pointer for chaining
@@ -982,10 +984,10 @@ function(jQuery, library, Control, IconPool) {
 				contentWidth        : this._sDialogWidth,
 				contentHeight       : this._sDialogHeight,
 				content             : this._getNavContainer(),
-				beginButton         : new sap.m.Button({
+				beginButton         : new sap.m.Button(this.getId() + "-acceptbutton", {
 					text : this._rb.getText("VIEWSETTINGS_ACCEPT")
 				}).attachPress(this._onConfirm, this),
-				endButton           : new sap.m.Button({
+				endButton           : new sap.m.Button(this.getId() + "-cancelbutton", {
 					text : this._rb.getText("VIEWSETTINGS_CANCEL")
 				}).attachPress(this._onCancel, this)
 			}).addStyleClass("sapMVSD");
@@ -1270,6 +1272,10 @@ function(jQuery, library, Control, IconPool) {
 
 				that._clearPresetFilter();
 
+				if (bMultiSelectMode) {
+					this._updateSelectAllCheckBoxState();
+				}
+
 				// check if multiple items are selected - [CTRL] + [A] combination from the list
 				if (aEventListItems.length > 1 && bMultiSelectMode){
 					aSubItems = oItem.getItems();
@@ -1297,7 +1303,7 @@ function(jQuery, library, Control, IconPool) {
 						oSubItem.setProperty('selected', oEvent.getParameter("listItem").getSelected(), true);
 					}
 				}
-			}
+			}.bind(this)
 		});
 
 		for (var i = 0; i < aSubFilters.length; i++) {
@@ -1308,6 +1314,15 @@ function(jQuery, library, Control, IconPool) {
 				selected : aSubFilters[i].getSelected()
 			}).data("item", aSubFilters[i]);
 			this._filterDetailList.addItem(oListItem);
+		}
+
+		if (bMultiSelectMode) {
+			this._filterSearchField = this._getFilterSearchField(this._filterDetailList);
+			this._selectAllCheckBox = this._getSelectAllCheckbox(aSubFilters, this._filterDetailList);
+			this._getPage2().addContent(this._filterSearchField.addStyleClass('sapMVSDFilterSearchField'));
+			this._filterDetailList.setHeaderToolbar(new Toolbar({
+				content: [ this._selectAllCheckBox ]
+			}).addStyleClass('sapMVSDFilterHeaderToolbar'));
 		}
 
 		this._getPage2().addContent(this._filterDetailList);
@@ -1594,7 +1609,7 @@ function(jQuery, library, Control, IconPool) {
 
 	/**
 	 * Fills the dialog with the aggregation data.
-	 * @param {string} sPageId The ID of the page to be opened in the dialog
+	 * @param {string} [sPageId] The ID of the page to be opened in the dialog
 	 * @private
 	 */
 	ViewSettingsDialog.prototype._initDialogContent = function(sPageId) {
@@ -1632,7 +1647,7 @@ function(jQuery, library, Control, IconPool) {
 	 * Sets the state of the dialog when it is opened.
 	 * If content for only one tab is defined, then tabs are not displayed, otherwise,
 	 * a SegmentedButton is displayed and the button for the initially displayed page is focused.
-	 * @param {string} sPageId The ID of the page to be opened in the dialog
+	 * @param {string} [sPageId] The ID of the page to be opened in the dialog
 	 * @private
 	 */
 	ViewSettingsDialog.prototype._updateDialogState = function(sPageId) {
@@ -1748,7 +1763,7 @@ function(jQuery, library, Control, IconPool) {
 
 	/**
 	 * Determines the page ID of a valid page to load.
-	 * @param {string} sPageId The ID of the page to be opened in the dialog
+	 * @param {string} [sPageId] The ID of the page to be opened in the dialog
 	 * @returns {string} sPageId
 	 * @private
 	 */
@@ -2074,6 +2089,77 @@ function(jQuery, library, Control, IconPool) {
 
 				break;
 		}
+	};
+
+	/**
+	 * Creates the Select All checkbox.
+	 *
+	 * @param {Array} aFilterSubItems The detail filter items
+	 * @param oFilterDetailList The actual list created for the detail filter page
+	 * @returns {sap.m.CheckBox} A checkbox instance
+	 * @private
+	 */
+	ViewSettingsDialog.prototype._getSelectAllCheckbox = function(aFilterSubItems, oFilterDetailList) {
+		var oSelectAllCheckBox = new CheckBox({
+			text: 'Select All',
+			selected: aFilterSubItems.every(function(oItem) { return oItem.getSelected(); }),
+			select: function(oEvent) {
+				var bSelected = oEvent.getParameter('selected');
+				//update the list items
+				//and corresponding view settings items
+				oFilterDetailList.getItems().filter(function(oItem) {
+					return oItem.getVisible();
+				}).forEach(function(oItem) {
+					var oVSDItem = oItem.data("item");
+					oVSDItem.setSelected(bSelected);
+				});
+			}
+		});
+
+		return oSelectAllCheckBox;
+	};
+
+	/**
+	 * Updates the state of the select all checkbox after selecting a single item or after filtering items.
+	 *
+	 * @private
+	 */
+	ViewSettingsDialog.prototype._updateSelectAllCheckBoxState = function() {
+		var bAllSelected = this._filterDetailList.getItems().filter(function(oItem) {
+			return oItem.getVisible();
+		}).every(function(oItem) {
+			return oItem.getSelected();
+		});
+		if (this._selectAllCheckBox) {
+			this._selectAllCheckBox.setSelected(bAllSelected);
+		}
+	};
+
+	/**
+	 * Creates the filter items search field.
+	 *
+	 * @param {Array} oFilterDetailList The actual list created for the detail filter page
+	 * @returns {sap.m.SearchField} A search field instance
+	 * @private
+	 */
+	ViewSettingsDialog.prototype._getFilterSearchField = function(oFilterDetailList) {
+		var that = this,
+			oFilterSearchField = new SearchField({
+			search: function(oEvent) {
+				var sQuery = oEvent.getParameter('query').toLowerCase();
+
+				//update the list items visibility
+				oFilterDetailList.getItems().forEach(function(oItem) {
+					var bStartsWithQuery = oItem.getTitle().toLowerCase().indexOf(sQuery) === 0;
+					oItem.setVisible(bStartsWithQuery);
+				});
+
+				//update Select All checkbox
+				that._updateSelectAllCheckBoxState();
+			}
+		});
+
+		return oFilterSearchField;
 	};
 
 	/**

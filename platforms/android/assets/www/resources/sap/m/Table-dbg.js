@@ -19,11 +19,12 @@ sap.ui.define(['jquery.sap.global', './ListBase', './library'],
 	 *
 	 * @class
 	 * <code>sap.m.Table</code> control provides a set of sophisticated and convenience functions for responsive table design.
+	 * To render the <code>sap.m.Table</code> properly, the order of the <code>columns</code> aggregation should match with the order of the items <code>cells</code> aggregation. Also <code>sap.m.Table</code> requires at least one visible <code>sap.m.Column</code> in <code>columns</code> aggregation.
 	 * For mobile devices, the recommended limit of table rows is 100 (based on 4 columns) to assure proper performance. To improve initial rendering on large tables, use the <code>growing</code> feature.
 	 * @extends sap.m.ListBase
 	 *
 	 * @author SAP SE
-	 * @version 1.34.9
+	 * @version 1.36.5
 	 *
 	 * @constructor
 	 * @public
@@ -167,9 +168,15 @@ sap.ui.define(['jquery.sap.global', './ListBase', './library'],
 	 * @overwrite
 	 */
 	Table.prototype.shouldRenderItems = function() {
-		return this.getColumns().some(function(oColumn) {
+		var bHasVisibleColumns = this.getColumns().some(function(oColumn) {
 			return oColumn.getVisible();
 		});
+
+		if (!bHasVisibleColumns) {
+			jQuery.sap.log.warning("No visible columns found in " + this);
+		}
+
+		return bHasVisibleColumns;
 	};
 
 	// this gets called when item type column requirement is changed

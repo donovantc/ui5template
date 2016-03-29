@@ -20,7 +20,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxBase', '.
 	 * @extends sap.m.ComboBoxBase
 	 *
 	 * @author SAP SE
-	 * @version 1.34.8
+	 * @version 1.36.5
 	 *
 	 * @constructor
 	 * @public
@@ -711,6 +711,21 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxBase', '.
 	MultiComboBox.prototype._onBeforeOpenDialog = function() {};
 
 	/**
+	 * This event handler will be called before the control's picker popover is opened.
+	 *
+	 */
+	MultiComboBox.prototype._onBeforeOpenPopover = function() {
+		var oPopover = this.getPicker(),
+			oDomRef = this.getDomRef(),
+			sWidth;
+
+		if (oDomRef && oPopover) {
+			sWidth = (oDomRef.offsetWidth / parseFloat(sap.m.BaseFontSize)) + "rem";
+			oPopover.setContentMinWidth(sWidth);
+		}
+	};
+
+	/**
 	 * Creates an instance type of <code>sap.m.Dialog</code>.
 	 *
 	 * @returns {sap.m.Dialog}
@@ -745,33 +760,9 @@ sap.ui.define(['jquery.sap.global', './Bar', './InputBase', './ComboBoxBase', '.
 	MultiComboBox.prototype._decoratePopover = function(oPopover) {
 		var that = this;
 
-		oPopover._setMinWidth = function(sWidth) {
-			var oPickerDomRef = this.getDomRef();
-
-			if (oPickerDomRef) {
-				oPickerDomRef.style.minWidth = sWidth;
-			}
-		};
-
 		oPopover.open = function() {
 			return this.openBy(that);
 		};
-	};
-
-	/**
-	 * Required adaptations after rendering of the Popover.
-	 *
-	 * @private
-	 */
-	MultiComboBox.prototype._onAfterRenderingPopover = function() {
-		var oPopover = this.getPicker(),
-			oDomRef = this.getDomRef(),
-			sWidth;
-
-		if (oDomRef && oPopover) {
-			sWidth = (oDomRef.offsetWidth / parseFloat(sap.m.BaseFontSize)) + "rem";
-			oPopover._setMinWidth(sWidth);
-		}
 	};
 
 	/**

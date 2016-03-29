@@ -20,7 +20,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', "sap/m/OverflowToolb
 	 * Constructor for a sap.m.semantic.SemanticConfiguration.
 	 *
 	 * @class Defines the visual properties and positioning for each supported semantic type
-	 * @version 1.34.8
+	 * @version 1.36.5
 	 * @private
 	 * @since 1.30.0
 	 * @alias sap.m.semantic.SemanticConfiguration
@@ -161,10 +161,30 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', "sap/m/OverflowToolb
 				return {
 					text: oBundle.getText("SEMANTIC_CONTROL_SAVE"),
 					ariaLabelledBy: _ensureInvisibleText("SaveAction", oBundle.getText("SEMANTIC_CONTROL_SAVE")),
-					type: sap.m.ButtonType.Emphasized
+					type: sap.m.ButtonType.Emphasized,
+					layoutData: new OverflowToolbarLayoutData({
+						moveToOverflow: false,
+						stayInOverflow: false
+					})
 				};
 			},
 			order: 3
+		};
+
+		oTypeConfigs["sap.m.semantic.DeleteAction"] = {
+			position: SemanticConfiguration.prototype._PositionInPage.footerRight_TextOnly,
+			triggers: SemanticConfiguration._PageMode.display,
+			getSettings: function() {
+				return {
+					text: oBundle.getText("SEMANTIC_CONTROL_DELETE"),
+					layoutData: new OverflowToolbarLayoutData({
+						moveToOverflow: false,
+						stayInOverflow: false
+					}),
+					ariaLabelledBy: _ensureInvisibleText("DeleteAction", oBundle.getText("SEMANTIC_CONTROL_DELETE"))
+				};
+			},
+			order: 4
 		};
 
 		oTypeConfigs["sap.m.semantic.PositiveAction"] = {
@@ -177,7 +197,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', "sap/m/OverflowToolb
 						stayInOverflow: false
 					})};
 			},
-			order: 4
+			order: 5
 		};
 
 		oTypeConfigs["sap.m.semantic.NegativeAction"] = {
@@ -190,7 +210,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', "sap/m/OverflowToolb
 						stayInOverflow: false
 					})};
 			},
-			order: 5
+			order: 6
 		};
 
 		oTypeConfigs["sap.m.semantic.CancelAction"] = {
@@ -202,7 +222,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', "sap/m/OverflowToolb
 					ariaLabelledBy: _ensureInvisibleText("CancelAction", oBundle.getText("SEMANTIC_CONTROL_CANCEL"))
 				};
 			},
-			order: 6
+			order: 7
 		};
 
 		oTypeConfigs["sap.m.semantic.ForwardAction"] = {
@@ -217,7 +237,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', "sap/m/OverflowToolb
 					})
 				};
 			},
-			order: 7
+			order: 8
 		};
 
 		oTypeConfigs["sap.m.semantic.OpenInAction"] = {
@@ -228,7 +248,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', "sap/m/OverflowToolb
 					ariaLabelledBy: _ensureInvisibleText("OpenInAction", oBundle.getText("SEMANTIC_CONTROL_OPEN_IN"))
 				};
 			},
-			order: 8
+			order: 9
 		};
 
 		oTypeConfigs["sap.m.semantic.AddAction"] = {

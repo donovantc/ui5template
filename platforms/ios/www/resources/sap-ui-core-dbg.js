@@ -994,7 +994,7 @@
  * This API is independent from any other part of the UI5 framework. This allows it to be loaded beforehand, if it is needed, to create the UI5 bootstrap
  * dynamically depending on the capabilities of the browser or device.
  *
- * @version 1.34.8
+ * @version 1.36.5
  * @namespace
  * @name sap.ui.Device
  * @public
@@ -1020,7 +1020,7 @@ if (typeof window.sap.ui !== "object") {
 
 	//Skip initialization if API is already available
 	if (typeof window.sap.ui.Device === "object" || typeof window.sap.ui.Device === "function" ) {
-		var apiVersion = "1.34.8";
+		var apiVersion = "1.36.5";
 		window.sap.ui.Device._checkAPIVersion(apiVersion);
 		return;
 	}
@@ -1078,7 +1078,7 @@ if (typeof window.sap.ui !== "object") {
 
 	//Only used internal to make clear when Device API is loaded in wrong version
 	device._checkAPIVersion = function(sVersion){
-		var v = "1.34.8";
+		var v = "1.36.5";
 		if (v != sVersion) {
 			logger.log(WARNING, "Device API version differs: " + v + " <-> " + sVersion);
 		}
@@ -15785,7 +15785,7 @@ $.ui.position = {
 	 * @class Represents a version consisting of major, minor, patch version and suffix, e.g. '1.2.7-SNAPSHOT'.
 	 *
 	 * @author SAP SE
-	 * @version 1.34.8
+	 * @version 1.36.5
 	 * @constructor
 	 * @public
 	 * @since 1.15.0
@@ -16233,7 +16233,7 @@ $.ui.position = {
 	/**
 	 * Root Namespace for the jQuery plug-in provided by SAP SE.
 	 *
-	 * @version 1.34.8
+	 * @version 1.36.5
 	 * @namespace
 	 * @public
 	 * @static
@@ -16896,7 +16896,8 @@ $.ui.position = {
 				aRestrictedCategories = null,
 				aAverageMethods = [],
 				aOriginalMethods = [],
-				aMethods = ["start", "end", "pause", "resume", "add", "remove", "clear", "average"];
+				mMethods = {},
+				mMeasurements = {};
 
 			/**
 			 * Gets the current state of the perfomance measurement functionality
@@ -16938,11 +16939,10 @@ $.ui.position = {
 				if (bActive) {
 
 					//activate method implementations once
-					for (var i = 0; i < aMethods.length; i++) {
-						this[aMethods[i]] = this["_" + aMethods[i]];
-
+					for (var sName in mMethods) {
+						this[sName] = mMethods[sName];
 					}
-					aMethods = [];
+					mMethods = {};
 					// wrap and instrument jQuery.ajax
 					jQuery.ajax = function(url, options) {
 
@@ -16972,9 +16972,6 @@ $.ui.position = {
 				return bActive;
 			};
 
-			this.mMeasurements = {};
-
-
 			/**
 			 * Starts a performance measure.
 			 * Optionally a category or list of categories can be passed to allow filtering of measurements.
@@ -16988,7 +16985,7 @@ $.ui.position = {
 			 * @function
 			 * @public
 			 */
-			this._start = function(sId, sInfo, aCategories) {
+			mMethods["start"] = function(sId, sInfo, aCategories) {
 				if (!bActive) {
 					return;
 				}
@@ -17010,7 +17007,7 @@ $.ui.position = {
 	//			jQuery.sap.log.info("Performance measurement start: "+ sId + " on "+ iTime);
 
 				if (oMeasurement) {
-					this.mMeasurements[sId] = oMeasurement;
+					mMeasurements[sId] = oMeasurement;
 					return this.getMeasurement(oMeasurement.id);
 				} else {
 					return false;
@@ -17026,13 +17023,13 @@ $.ui.position = {
 			 * @function
 			 * @public
 			 */
-			this._pause = function(sId) {
+			mMethods["pause"] = function(sId) {
 				if (!bActive) {
 					return;
 				}
 
 				var iTime = jQuery.sap.now();
-				var oMeasurement = this.mMeasurements[sId];
+				var oMeasurement = mMeasurements[sId];
 				if (oMeasurement && oMeasurement.end > 0) {
 					// already ended -> no pause possible
 					return false;
@@ -17066,13 +17063,13 @@ $.ui.position = {
 			 * @function
 			 * @public
 			 */
-			this._resume = function(sId) {
+			mMethods["resume"] = function(sId) {
 				if (!bActive) {
 					return;
 				}
 
 				var iTime = jQuery.sap.now();
-				var oMeasurement = this.mMeasurements[sId];
+				var oMeasurement = mMeasurements[sId];
 	//			jQuery.sap.log.info("Performance measurement resume: "+ sId + " on "+ iTime + " duration: "+ oMeasurement.duration);
 
 				if (oMeasurement && oMeasurement.pause > 0) {
@@ -17097,14 +17094,14 @@ $.ui.position = {
 			 * @function
 			 * @public
 			 */
-			this._end = function(sId) {
+			mMethods["end"] = function(sId) {
 				if (!bActive) {
 					return;
 				}
 
 				var iTime = jQuery.sap.now();
 
-				var oMeasurement = this.mMeasurements[sId];
+				var oMeasurement = mMeasurements[sId];
 	//			jQuery.sap.log.info("Performance measurement end: "+ sId + " on "+ iTime);
 
 				if (oMeasurement && !oMeasurement.end) {
@@ -17150,8 +17147,8 @@ $.ui.position = {
 			 * @function
 			 * @public
 			 */
-			this._clear = function() {
-				this.mMeasurements = {};
+			mMethods["clear"] = function() {
+				mMeasurements = {};
 			};
 
 			/**
@@ -17162,8 +17159,8 @@ $.ui.position = {
 			 * @function
 			 * @public
 			 */
-			this._remove = function(sId) {
-				delete this.mMeasurements[sId];
+			mMethods["remove"] = function(sId) {
+				delete mMeasurements[sId];
 			};
 			/**
 			 * Adds a performance measurement with all data
@@ -17181,7 +17178,7 @@ $.ui.position = {
 			 * @function
 			 * @public
 			 */
-			this._add = function(sId, sInfo, iStart, iEnd, iTime, iDuration, aCategories) {
+			mMethods["add"] = function(sId, sInfo, iStart, iEnd, iTime, iDuration, aCategories) {
 				if (!bActive) {
 					return;
 				}
@@ -17194,7 +17191,7 @@ $.ui.position = {
 				oMeasurement.duration = iDuration;
 
 				if (oMeasurement) {
-					this.mMeasurements[sId] = oMeasurement;
+					mMeasurements[sId] = oMeasurement;
 					return this.getMeasurement(oMeasurement.id);
 				} else {
 					return false;
@@ -17214,7 +17211,7 @@ $.ui.position = {
 			 * @function
 			 * @public
 			 */
-			this._average = function(sId, sInfo, aCategories) {
+			mMethods["average"] = function(sId, sInfo, aCategories) {
 				if (!bActive) {
 					return;
 				}
@@ -17223,11 +17220,11 @@ $.ui.position = {
 					return;
 				}
 
-				var oMeasurement = this.mMeasurements[sId],
+				var oMeasurement = mMeasurements[sId],
 					iTime = jQuery.sap.now();
 				if (!oMeasurement || !oMeasurement.average) {
 					this.start(sId, sInfo, aCategories);
-					oMeasurement = this.mMeasurements[sId];
+					oMeasurement = mMeasurements[sId];
 					oMeasurement.average = true;
 				} else {
 					if (!oMeasurement.end) {
@@ -17251,7 +17248,7 @@ $.ui.position = {
 			 */
 			this.getMeasurement = function(sId) {
 
-				var oMeasurement = this.mMeasurements[sId];
+				var oMeasurement = mMeasurements[sId];
 
 				if (oMeasurement) {
 					return {id: oMeasurement.id,
@@ -17308,7 +17305,7 @@ $.ui.position = {
 			this.filterMeasurements = function(fnFilter, bCompleted) {
 				var aMeasurements = [],
 					that = this;
-				jQuery.each(this.mMeasurements, function(sId){
+				jQuery.each(mMeasurements, function(sId){
 					var oMeasurement = that.getMeasurement(sId);
 					if (fnFilter) {
 						var oResult = fnFilter(oMeasurement);
@@ -17400,14 +17397,45 @@ $.ui.position = {
 
 			/**
 			 * Gets all interaction measurements
+			 * @param {boolean} bFinalize finalize the current pending interaction so that it is contained in the returned array
 			 * @return {object[]} all interaction measurements
 			 * @name jQuery.sap.measure#getAllInteractionMeasurements
 			 * @function
 			 * @public
 			 * @since 1.34.0
 			 */
-			this.getAllInteractionMeasurements = function() {
+			this.getAllInteractionMeasurements = function(bFinalize) {
+				if (bFinalize) {
+					// force the finalization of the currently pending interaction
+					jQuery.sap.measure.endInteraction(true);
+				}
 				return aInteractions;
+			};
+
+			/**
+			 * Gets all interaction measurements for which a provided filter function returns a truthy value.
+			 * To filter for certain categories of measurements a fnFilter can be implemented like this
+			 * <code>
+			 * function(oInteractionMeasurement) {
+			 *     return oInteractionMeasurement.duration > 0
+			 * }</code>
+			 * @param {function} fnFilter a filter function that returns true if the passed measurement should be added to the result
+			 * @return {object[]} all interaction measurements passing the filter function successfully
+			 * @name jQuery.sap.measure#filterInteractionMeasurements
+			 * @function
+			 * @public
+			 * @since 1.36.2
+			 */
+			this.filterInteractionMeasurements = function(fnFilter) {
+				var aFilteredInteractions = [];
+				if (fnFilter) {
+					for (var i = 0, l = aInteractions.length; i < l; i++) {
+						if (fnFilter(aInteractions[i])) {
+							aFilteredInteractions.push(aInteractions[i]);
+						}
+					}
+				}
+				return aFilteredInteractions;
 			};
 
 			/**
@@ -17478,7 +17506,7 @@ $.ui.position = {
 						oPendingInteraction.processing = iProcessing > 0 ? iProcessing : 0;
 					}
 					aInteractions.push(oPendingInteraction);
-					jQuery.sap.log.info("Interaction step finished: trigger: " + oPendingInteraction.trigger + "; duration: " + oPendingInteraction.duration + "; requests: " + oPendingInteraction.requests.length);
+					jQuery.sap.log.info("Interaction step finished: trigger: " + oPendingInteraction.trigger + "; duration: " + oPendingInteraction.duration + "; requests: " + oPendingInteraction.requests.length, "jQuery.sap.measure");
 					oPendingInteraction = null;
 				}
 			}
@@ -17496,7 +17524,8 @@ $.ui.position = {
 			 */
 			this.startInteraction = function(sType, oSrcElement) {
 				// component determination - heuristic
-				function identifyOwnerComponent(oSrcElement) {
+				function createOwnerComponentInfo(oSrcElement) {
+					var sId, sVersion;
 					if (oSrcElement) {
 						var Component, oComponent;
 						Component = sap.ui.require("sap/ui/core/Component");
@@ -17506,12 +17535,16 @@ $.ui.position = {
 								oComponent = oComponent || oSrcElement;
 								var oApp = oComponent.getManifestEntry("sap.app");
 								// get app id or module name for FESR
-								return oApp && oApp.id || oComponent.getMetadata().getName();
+								sId = oApp && oApp.id || oComponent.getMetadata().getName();
+								sVersion = oApp && oApp.applicationVersion && oApp.applicationVersion.version;
 							}
 							oSrcElement = oSrcElement.getParent();
 						}
 					}
-					return "undetermined";
+					return {
+						id: sId ? sId : "undetermined",
+						version: sVersion ? sVersion : ""
+					};
 				}
 
 				var iTime = jQuery.sap.now();
@@ -17523,11 +17556,14 @@ $.ui.position = {
 				// clear request timings for new interaction
 				this.clearRequestTimings();
 
+				var oComponentInfo = createOwnerComponentInfo(oSrcElement);
+
 				// setup new pending interaction
 				oPendingInteraction = {
 					event: sType, // event which triggered interaction
 					trigger: oSrcElement && oSrcElement.getId ? oSrcElement.getId() : "undetermined", // control which triggered interaction
-					component: identifyOwnerComponent(oSrcElement), // component or app identifier
+					component: oComponentInfo.id, // component or app identifier
+					appVersion: oComponentInfo.version, // application version as from app descriptor
 					start : iTime, // interaction start
 					end: 0, // interaction end
 					navigation: 0, // sum over all navigation times
@@ -17541,9 +17577,10 @@ $.ui.position = {
 					networkTime: 0, // request time minus server time from the header, added by jQuery.sap.trace
 					bytesSent: 0, // sum over all requests bytes, added by jQuery.sap.trace
 					bytesReceived: 0, // sum over all response bytes, added by jQuery.sap.trace
-					requestCompression: undefined // true if all responses have been sent gzipped
+					requestCompression: undefined, // true if all responses have been sent gzipped
+					busyDuration : 0 // summed GlobalBusyIndicator duration during this interaction
 				};
-				jQuery.sap.log.info("Interaction step started: trigger: " + oPendingInteraction.trigger + "; type: " + oPendingInteraction.event);
+				jQuery.sap.log.info("Interaction step started: trigger: " + oPendingInteraction.trigger + "; type: " + oPendingInteraction.event, "jQuery.sap.measure");
 			};
 
 			/**
@@ -17638,8 +17675,8 @@ $.ui.position = {
 					return null;
 				};
 				//deactivate methods implementations
-				for (var i = 0; i < aMethods.length; i++) {
-					this[aMethods[i]] = fnInactive;
+				for (var sName in mMethods) {
+					this[sName] = fnInactive;
 				}
 			}
 		}
@@ -22721,10 +22758,11 @@ sap.ui.predefine('jquery.sap.events',['jquery.sap.global', 'sap/ui/Device', 'jqu
 	 * for any of the following events that it wants to be notified about:
 	 *
 	 * click, dblclick, contextmenu, focusin, focusout, keydown, keypress, keyup, mousedown, mouseout, mouseover,
-	 * mouseup, select, selectstart, dragstart, dragenter, dragover, dragleave, dragend, drop, paste, cut, input
+	 * mouseup, select, selectstart, dragstart, dragenter, dragover, dragleave, dragend, drop, paste, cut, input,
+	 * touchstart, touchend, touchmove, touchcancel, tap, swipe, swipeleft, swiperight, scrollstart, scrollstop
 	 *
-	 * In case touch events are natively supported the following events are available in addition:
-	 * touchstart, touchend, touchmove, touchcancel
+	 * The mouse events and touch events are supported simultaneously on both desktop and mobile browsers. Do NOT
+	 * create both onmouse* and ontouch* functions to avoid one event being handled twice on the same control.
 	 *
 	 * @public
 	 */
@@ -25493,7 +25531,7 @@ sap.ui.predefine('jquery.sap.properties',['jquery.sap.global', 'jquery.sap.sjax'
 	 * currently in the list.
 	 *
 	 * @author SAP SE
-	 * @version 1.34.8
+	 * @version 1.36.5
 	 * @since 0.9.0
 	 * @name jQuery.sap.util.Properties
 	 * @public
@@ -25819,7 +25857,7 @@ sap.ui.predefine('jquery.sap.resources',['jquery.sap.global', 'jquery.sap.proper
 	 * Exception: Fallback for "zh_HK" is "zh_TW" before zh.
 	 *
 	 * @author SAP SE
-	 * @version 1.34.8
+	 * @version 1.36.5
 	 * @since 0.9.0
 	 * @name jQuery.sap.util.ResourceBundle
 	 * @public
@@ -26389,7 +26427,7 @@ sap.ui.predefine('jquery.sap.script',['jquery.sap.global'],
 	 * Use {@link jQuery.sap.getUriParameters} to create an instance of jQuery.sap.util.UriParameters.
 	 *
 	 * @author SAP SE
-	 * @version 1.34.8
+	 * @version 1.36.5
 	 * @since 0.9.0
 	 * @name jQuery.sap.util.UriParameters
 	 * @public
@@ -27668,7 +27706,7 @@ sap.ui.predefine('jquery.sap.strings',['jquery.sap.global'],
 	};
 
 
-	var rEscapeRegExp = /[-[\]{}()*+?.,\\^$|#\s]/g;
+	var rEscapeRegExp = /[[\]{}()*+?.\\^$|]/g;
 
 	/**
 	 * This function escapes the reserved letters in Regular Expression
@@ -27779,42 +27817,51 @@ sap.ui.predefine('jquery.sap.strings',['jquery.sap.global'],
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
-sap.ui.predefine('jquery.sap.trace',['jquery.sap.global', 'sap/ui/thirdparty/URI'],
-	function(jQuery, URI) {
+/*
+ * This module should provide the foundation for tracing capabilities. There are three different namespaces.
+ * <ul>
+ * <li><code>jQuery.sap.interaction</code> - contains logic for the detection of interaction traces</li>
+ * <li><code>jQuery.sap.fesr</code> - handles the creation and transmission of frontend-subrecords http-headers</li>
+ * <li><code>jQuery.sap.passport</code> - handles the creation of the passport http-header, which is used by fesr and the
+ * E2eTraceLib module</li>
+ * </ul>
+ * All measurement activities get recorded by jquery.sap.measure, which is located in jquery.sap.global. As the initial
+ * interaction is the app startup, we need the measuring capability already before this module is loaded.
+ */
+sap.ui.predefine('jquery.sap.trace',['jquery.sap.global', 'sap/ui/thirdparty/URI', 'sap/ui/Global'],
+	function(jQuery, URI /*,jQuery*/) {
 		"use strict";
 
 		(function() {
 
-			var bFesrActive = /sap-ui-xx-fesr=(true|x|X)/.test(location.search),
+			var bFesrActive = /sap-ui-xx-fesr=(true|x|X)/.test(location.search), // experimental parameter
 				bTraceActive,
-				bInteractionActive = bFesrActive,
-				bXHROverridden,
+				bInteractionActive,
+				bMethodsOverridden, // indicates if the method overrides for fesr have already taken place
 				ROOT_ID = createGUID(), // static per session
 				CLIENT_ID = createGUID().substr(-8, 8) + ROOT_ID, // static per session
 				HOST = new URI(window.location).host(), // static per session
 				CLIENT_OS = sap.ui.Device.os.name + "_" + sap.ui.Device.os.version,
 				CLIENT_MODEL = sap.ui.Device.browser.name + "_" + sap.ui.Device.browser.version,
+				UI5_VERSION = "",
 				iE2eTraceLevel,
-				sTransactionId,
-				sFESRTransactionId,
-				oPendingInteraction = {
-					component: "initial",
-					trigger: "initial",
-					event: "initial"
-				},
-				iStepCounter = 0,
+				sTransactionId, // transaction id for the current request
+				sFESRTransactionId, // first transaction id of an interaction step, serves as identifier for the fesr-header
+				oPendingInteraction = {},
+				iStepCounter = 0, // counts interaction steps
 				iInteractionStepTimer,
 				oCurrentBrowserEvent,
-				sFESR,
-				sFESRopt;
+				sFESR, // current header string
+				sFESRopt, // current header string
+				iScrollEventDelayId = 0;
 
-			function overrideXHRMethods() {
+			function activateDetectionMethods() {
 				// only start this once to avoid multiple overrides of the xhr methods
-				if (!bXHROverridden) {
-					bXHROverridden = true;
+				if (!bMethodsOverridden) {
+					bMethodsOverridden = true;
 					// in case we do not have this API measurement is superfluous due to insufficient performance data
 					if (!(window.performance && window.performance.getEntries)) {
-						jQuery.sap.log.warning("Frontend Subrecords is not supported on browsers with insufficient performance API");
+						jQuery.sap.log.warning("Interaction tracking is not supported on browsers with insufficient performance API");
 					}
 
 					var fnXHRopen = window.XMLHttpRequest.prototype.open,
@@ -27826,40 +27873,46 @@ sap.ui.predefine('jquery.sap.trace',['jquery.sap.global', 'sap/ui/thirdparty/URI
 						fnXHRopen.apply(this, arguments);
 						// as we should not reset this function override, we just skip the implementation in case none
 						// of the features is activated - later override should so be kept active
-						if (bFesrActive || bTraceActive) {
+						if (bInteractionActive || bFesrActive || bTraceActive) {
 							var sHost = new URI(arguments[1]).host();
 
 							// only use passport & FESR for non CORS requests (relative or with same host)
 							if (!sHost || sHost === HOST) {
 								sTransactionId = createGUID();
-								if (bFesrActive) {
+								if (bInteractionActive || bFesrActive) {
 									this.addEventListener("readystatechange", handleResponse);
+									// assign the current interaction to the xhr for later response header retrieval.
 									this.pendingInteraction = oPendingInteraction;
 
 									iStepCounter++;
 
-									// set FESR
-									if (sFESR) {
-										this.setRequestHeader("SAP-Perf-FESRec", sFESR);
-										this.setRequestHeader("SAP-Perf-FESRec-opt", sFESRopt);
-										sFESR = null;
-										sFESRopt = null;
-										iStepCounter = 0;
-										sFESRTransactionId = sTransactionId;
-									} else if (!sFESRTransactionId) {
-										// initial request should set the FESR Transaction Id
-										sFESRTransactionId = sTransactionId;
-									}
+									if (bFesrActive) {
+										// set FESR
+										if (sFESR) {
+											this.setRequestHeader("SAP-Perf-FESRec", sFESR);
+											this.setRequestHeader("SAP-Perf-FESRec-opt", sFESRopt);
+											sFESR = null;
+											sFESRopt = null;
+											iStepCounter = 0;
+											sFESRTransactionId = sTransactionId;
+										} else if (!sFESRTransactionId) {
+											// initial request should set the FESR Transaction Id
+											sFESRTransactionId = sTransactionId;
+										}
 
-									// set passport with Root Context ID, Transaction ID, Component Name, Action
-									this.setRequestHeader("SAP-PASSPORT", passportHeader(
-										iE2eTraceLevel,
-										ROOT_ID,
-										sTransactionId,
-										oPendingInteraction.component,
-										oPendingInteraction.trigger + "_" + oPendingInteraction.event + "_" + iStepCounter)
-									);
-								} else if (bTraceActive) {
+										// set passport with Root Context ID, Transaction ID, Component Info, Action
+										this.setRequestHeader("SAP-PASSPORT", passportHeader(
+											iE2eTraceLevel,
+											ROOT_ID,
+											sTransactionId,
+											oPendingInteraction.component +
+												(oPendingInteraction.appVersion ? "@" +  oPendingInteraction.appVersion : "") +
+												(UI5_VERSION ? "@" + UI5_VERSION : ""),
+											oPendingInteraction.trigger + "_" + oPendingInteraction.event + "_" + iStepCounter)
+										);
+									}
+								}
+								if (!bFesrActive && bTraceActive) {
 									// set passport with Root Context ID, Transaction ID for Trace
 									this.setRequestHeader("SAP-PASSPORT", passportHeader(iE2eTraceLevel, ROOT_ID, sTransactionId));
 								}
@@ -27870,7 +27923,7 @@ sap.ui.predefine('jquery.sap.trace',['jquery.sap.global', 'sap/ui/thirdparty/URI
 					// inject function in window.XMLHttpRequest.send
 					window.XMLHttpRequest.prototype.send = function() {
 						fnXHRsend.apply(this, arguments);
-						if (bFesrActive && this.pendingInteraction) {
+						if ((bInteractionActive || bFesrActive) && this.pendingInteraction) {
 							// double string length for byte length as in js characters are stored as 16 bit ints
 							this.pendingInteraction.bytesSent += arguments[0] ? arguments[0].length * 2 : 0;
 						}
@@ -27879,7 +27932,7 @@ sap.ui.predefine('jquery.sap.trace',['jquery.sap.global', 'sap/ui/thirdparty/URI
 					// count request header size
 					window.XMLHttpRequest.prototype.setRequestHeader = function(sHeader, sValue) {
 						fnXHRsetRequestHeader.apply(this, arguments);
-						if (bFesrActive) {
+						if (bInteractionActive || bFesrActive) {
 							// count request header length consistent to what getAllResponseHeaders().length would return
 							if (!this.requestHeaderLength) {
 								this.requestHeaderLength = 0;
@@ -27889,9 +27942,14 @@ sap.ui.predefine('jquery.sap.trace',['jquery.sap.global', 'sap/ui/thirdparty/URI
 							this.requestHeaderLength += (sHeader.length + sValue.length + 3) * 2;
 						}
 					};
+
+					// detect scroll interactions by global event handler
+					window.addEventListener("scroll", jQuery.sap.interaction.notifyScrollEvent);
+					window.addEventListener("mousewheel", jQuery.sap.interaction.notifyScrollEvent);
 				}
 			}
 
+			// response handler which uses the custom properties we added to the xhr to retrieve information from the response headers
 			function handleResponse() {
 				if (this.readyState === 4 && this.pendingInteraction) {
 					// enrich interaction with information
@@ -27901,7 +27959,7 @@ sap.ui.predefine('jquery.sap.trace',['jquery.sap.global', 'sap/ui/thirdparty/URI
 					this.pendingInteraction.bytesReceived += sContentLength ? parseInt(sContentLength, 10) : 0;
 					// double string length for byte length as in js characters are stored as 16 bit ints
 					this.pendingInteraction.bytesReceived += this.getAllResponseHeaders().length * 2;
-					this.pendingInteraction.bytesSent += this.requestHeaderLength;
+					this.pendingInteraction.bytesSent += this.requestHeaderLength || 0;
 					// this should be true only if all responses are compressed
 					this.pendingInteraction.requestCompression = bCompressed && (this.pendingInteraction.requestCompression !== false);
 					// sap-perf-fesrec header contains milliseconds
@@ -27911,7 +27969,8 @@ sap.ui.predefine('jquery.sap.trace',['jquery.sap.global', 'sap/ui/thirdparty/URI
 						this.pendingInteraction.sapStatistics.push({
 							// add response url for mapping purposes
 							url: this.responseURL,
-							statistics: sSapStatistics
+							statistics: sSapStatistics,
+							timing: jQuery.sap.measure.getRequestTimings().pop()
 						});
 					}
 					delete this.requestHeaderLength;
@@ -27948,11 +28007,13 @@ sap.ui.predefine('jquery.sap.trace',['jquery.sap.global', 'sap/ui/thirdparty/URI
 					"", "", // 2 empty fields
 					format(oInteraction.processing, 16), // client_processing_time
 					oInteraction.requestCompression ? "X" : "", // compressed - empty if not compressed
-					"", "", "", "", "", "", "", "", "" // 9 empty fields
+					"", "", "", "", // 4 empty fields
+					format(oInteraction.busyDuration, 16), // busy duration
+					"", "", "", "" // 4 empty fields
 				].join(",");
 			}
 
-			// cut string to designated length
+			// format string to fesr compliant string
 			function format(vField, iLength, bCutFromFront) {
 				if (!vField) {
 					vField = vField === 0 ? "0" : "";
@@ -27968,7 +28029,22 @@ sap.ui.predefine('jquery.sap.trace',['jquery.sap.global', 'sap/ui/thirdparty/URI
 			}
 
 
-			// ***** Interaction detection heuristics & API ***** //
+			/**
+			 * @class Provides base functionality for interaction detection heuristics & API<br>
+			 * <p>
+			 * Interaction detection works through the detection of relevant events and tracking of rendering activities.<br>
+			 * An example:<br>
+			 * The user clicks on a button<br>
+			 * -> "click" event gets detected via notification (jQuery.sap.interaction.notifyEventStart)<br>
+			 * -> a click handler is registered on the button, so this is an interaction start (jQuery.sap.interaction.notifyStepStart)<br>
+			 * -> some requests are made and rendering has finished (jQuery.sap.interaction.notifyStepEnd)<br>
+			 * </p>
+			 * All measurement takes place in {@link jQuery.sap.measure}<br>.
+			 *
+			 * @name jQuery.sap.interaction
+			 * @static
+			 * @private
+			 */
 			jQuery.sap.interaction = {};
 
 			/**
@@ -27977,19 +28053,28 @@ sap.ui.predefine('jquery.sap.trace',['jquery.sap.global', 'sap/ui/thirdparty/URI
 			 * @since 1.32
 			 */
 			jQuery.sap.interaction.setActive = function(bActive) {
+				if (bActive && !bInteractionActive) {
+					activateDetectionMethods();
+				}
 				bInteractionActive = bActive;
 			};
 
 			/**
+			 * Returns true if the interaction detection was enabled explicitly, or implicitly along with fesr.
+			 *
 			 * @return {boolean} bActive state of the interaction detection
 			 * @private
 			 * @since 1.32
 			 */
 			jQuery.sap.interaction.getActive = function() {
-				return bInteractionActive;
+				return bInteractionActive || bFesrActive;
 			};
 
 			/**
+			 * This method starts the actual interaction measurement when all criteria are met. As it is the starting point
+			 * for the new interaction the creation of the FESR headers for the last interaction is triggered here, so that
+			 * the headers can be sent with the first request of the current interaction.<br>
+			 *
 			 * @param {sap.ui.core.Element} oElement Element on which the interaction has been triggered
 			 * @param {boolean} bForce forces the interaction to start independently from a currently active browser event
 			 * @private
@@ -28006,6 +28091,7 @@ sap.ui.predefine('jquery.sap.trace',['jquery.sap.global', 'sap/ui/thirdparty/URI
 						} else {
 							sType = oCurrentBrowserEvent.type;
 						}
+
 						jQuery.sap.measure.startInteraction(sType, oElement);
 
 						var aInteraction = jQuery.sap.measure.getAllInteractionMeasurements();
@@ -28014,7 +28100,7 @@ sap.ui.predefine('jquery.sap.trace',['jquery.sap.global', 'sap/ui/thirdparty/URI
 
 						// update pending interaction infos
 						oPendingInteraction = oPI ? oPI : oPendingInteraction;
-						if (oFinshedInteraction && oFinshedInteraction.requests.length > 0) {
+						if (bFesrActive && oFinshedInteraction && oFinshedInteraction.requests.length > 0) {
 							// create FESR from completed interaction
 							sFESR = createFESR(oFinshedInteraction);
 							sFESRopt = createFESRopt(oFinshedInteraction);
@@ -28046,6 +28132,28 @@ sap.ui.predefine('jquery.sap.trace',['jquery.sap.global', 'sap/ui/thirdparty/URI
 				oCurrentBrowserEvent = (bInteractionActive || bFesrActive) ? oEvent : null;
 			};
 
+			function notifyScrollStepStart() {
+				jQuery.sap.interaction.notifyStepStart();
+				iScrollEventDelayId = 0;
+			}
+
+			/**
+			 * @param {Event} oEvent scroll event whose processing has started
+			 * @private
+			 * @since 1.36.2
+			 */
+			 jQuery.sap.interaction.notifyScrollEvent = function(oEvent) {
+				if (bInteractionActive || bFesrActive) {
+					// notify for a newly started interaction, but not more often than every 250ms.
+					if (!iScrollEventDelayId) {
+						jQuery.sap.interaction.notifyEventStart(oEvent);
+					} else {
+						jQuery.sap.clearDelayedCall(iScrollEventDelayId);
+					}
+					iScrollEventDelayId = jQuery.sap.delayedCall(250, undefined, notifyScrollStepStart);
+				}
+			};
+
 			/**
 			 * @private
 			 * @since 1.32
@@ -28057,10 +28165,29 @@ sap.ui.predefine('jquery.sap.trace',['jquery.sap.global', 'sap/ui/thirdparty/URI
 						jQuery.sap.measure.endInteraction(/*bForce*/true);
 					}
 				}
-				oCurrentBrowserEvent = null;
 			};
 
-			// ***** FESR API, consumed by E2eTraceLib instead of former EppLib.js ***** //
+
+			/**
+			 * @class FESR API, consumed by E2eTraceLib instead of former EppLib.js <br>
+			 *<p>
+			 * Provides functionalities for creating the headers for the frontend-subrecords which will be sent with each
+			 * first request of an interaction. The headers have a specific format, you may have a look at the createFESR
+			 * methods.<br>
+			 *</p><p>
+			 * There is a special order in which things are happening: <br>
+			 * 1. Interaction starts<br>
+			 * 1.1. Request 1.1 sent<br>
+			 * 1.2. Request 1.2 sent<br>
+			 * 2. Interaction starts<br>
+			 * 2.1 Creation of FESR for 1. interaction<br>
+			 * 2.2 Request 2.1 sent with FESR header for 1. interaction<br>
+			 * ...<br>
+			 *</p>
+			 * @name jQuery.sap.fesr
+			 * @static
+			 * @private
+			 */
 			jQuery.sap.fesr = {};
 
 			/**
@@ -28071,10 +28198,21 @@ sap.ui.predefine('jquery.sap.trace',['jquery.sap.global', 'sap/ui/thirdparty/URI
 			jQuery.sap.fesr.setActive = function(bActive) {
 				if (bActive && !bFesrActive) {
 					bFesrActive = true;
-					overrideXHRMethods();
+					if (!bInteractionActive) {
+						activateDetectionMethods();
+					}
 				} else if (!bActive) {
 					bFesrActive = false;
 				}
+			};
+
+			/**
+			 * @return {boolean} state of the FESR header creation
+			 * @private
+			 * @since 1.36.4
+			 */
+			jQuery.sap.fesr.getActive = function() {
+				return bFesrActive;
 			};
 
 			/**
@@ -28095,8 +28233,30 @@ sap.ui.predefine('jquery.sap.trace',['jquery.sap.global', 'sap/ui/thirdparty/URI
 				return ROOT_ID;
 			};
 
+			/**
+			 * @param {float} iDuration increase busy duration of pending interaction by this value
+			 * @private
+			 * @since 1.36.4
+			 */
+			jQuery.sap.fesr.addBusyDuration = function(iDuration) {
+				if (!oPendingInteraction.busyDuration) {
+					oPendingInteraction.busyDuration = 0;
+				}
+				oPendingInteraction.busyDuration += iDuration;
+			};
 
-			// ***** Passport implementation, former EppLib.js ***** //
+
+			/**
+			 * @class Passport implementation, former EppLib.js <br>
+			 *
+			 * Provides functionalities which where former located in the EppLib.js, but as the PASSPORT header is mandatory
+			 * for correct assignment of the FESR headers some functionality had to be moved to here. The actual tracing
+			 * functionality of EppLib.js remained in the original file.
+			 *
+			 * @name jQuery.sap.passport
+			 * @static
+			 * @private
+			 */
 			jQuery.sap.passport = {};
 
 			/**
@@ -28107,13 +28267,13 @@ sap.ui.predefine('jquery.sap.trace',['jquery.sap.global', 'sap/ui/thirdparty/URI
 			jQuery.sap.passport.setActive = function(bActive) {
 				if (bActive && !bTraceActive) {
 					bTraceActive = true;
-					overrideXHRMethods();
+					activateDetectionMethods();
 				} else if (!bActive) {
 					bTraceActive = false;
 				}
 			};
 
-			// old methods
+			// old methods taken over from E2eTraceLib
 			function getBytesFromString(s) {
 				var bytes = [];
 				for (var i = 0; i < s.length; ++i) {
@@ -28258,9 +28418,15 @@ sap.ui.predefine('jquery.sap.trace',['jquery.sap.global', 'sap/ui/thirdparty/URI
 			// start initial interaction
 			jQuery.sap.interaction.notifyStepStart(null, true);
 
-			// activate FESR header generation
+			// activate FESR header generation and determine version
 			if (bFesrActive) {
-				overrideXHRMethods();
+				sap.ui.getVersionInfo({async: true}).then(function(oInfo) {
+					// only add dist layer version if it was created properly
+					UI5_VERSION = oInfo && oInfo.version ? oInfo.version : "";
+				}).catch(function(e) {
+					jQuery.sap.log.debug("UI5 version could not be determined", e, "jQuery.sap.fesr");
+				});
+				activateDetectionMethods();
 			}
 
 			// *********** Include E2E-Trace Scripts *************
@@ -28444,7 +28610,7 @@ sap.ui.predefine('jquery.sap.ui',['jquery.sap.global', 'sap/ui/Global' /* cyclic
  * sap.ui.lazyRequire("sap.ui.core.Control");
  * sap.ui.lazyRequire("sap.ui.commons.Button");
  *
- * @version 1.34.8
+ * @version 1.36.5
  * @author  Martin Schaus, Daniel Brinkmann
  * @public
  */
@@ -28452,7 +28618,7 @@ sap.ui.predefine('jquery.sap.ui',['jquery.sap.global', 'sap/ui/Global' /* cyclic
 /*global OpenAjax */// declare unusual global vars for JSLint/SAPUI5 validation
 
 // Register to the OpenAjax Hub if it exists
-sap.ui.predefine('sap/ui/Global',['jquery.sap.global', 'jquery.sap.trace', 'jquery.sap.dom'],
+sap.ui.predefine('sap/ui/Global',['jquery.sap.global', 'jquery.sap.dom'],
 	function(jQuery/* , jQuerySap */) {
 	"use strict";
 
@@ -28466,7 +28632,7 @@ sap.ui.predefine('sap/ui/Global',['jquery.sap.global', 'jquery.sap.trace', 'jque
 	 * The <code>sap</code> namespace is automatically registered with the
 	 * OpenAjax hub if it exists.
 	 *
-	 * @version 1.34.8
+	 * @version 1.36.5
 	 * @namespace
 	 * @public
 	 * @name sap
@@ -28479,7 +28645,7 @@ sap.ui.predefine('sap/ui/Global',['jquery.sap.global', 'jquery.sap.trace', 'jque
 	 * The <code>sap.ui</code> namespace is the central OpenAjax compliant entry
 	 * point for UI related JavaScript functionality provided by SAP.
 	 *
-	 * @version 1.34.8
+	 * @version 1.36.5
 	 * @namespace
 	 * @name sap.ui
 	 * @public
@@ -28492,8 +28658,8 @@ sap.ui.predefine('sap/ui/Global',['jquery.sap.global', 'jquery.sap.trace', 'jque
 			 * The version of the SAP UI Library
 			 * @type string
 			 */
-			version: "1.34.8",
-			buildinfo : { lastchange : "", buildtime : "20160226-0945" }
+			version: "1.36.5",
+			buildinfo : { lastchange : "", buildtime : "20160321-0914" }
 		});
 
 	/**
@@ -29829,7 +29995,7 @@ sap.ui.predefine('sap/ui/base/Event',['jquery.sap.global', './Object'],
 	 * @extends sap.ui.base.Object
 	 * @implements sap.ui.base.Poolable
 	 * @author SAP SE
-	 * @version 1.34.8
+	 * @version 1.36.5
 	 * @alias sap.ui.base.Event
 	 * @public
 	 */
@@ -29987,7 +30153,7 @@ sap.ui.predefine('sap/ui/base/EventProvider',['jquery.sap.global', './Event', '.
 	 * @abstract
 	 * @extends sap.ui.base.Object
 	 * @author SAP SE
-	 * @version 1.34.8
+	 * @version 1.36.5
 	 * @constructor
 	 * @public
 	 * @alias sap.ui.base.EventProvider
@@ -30008,12 +30174,14 @@ sap.ui.predefine('sap/ui/base/EventProvider',['jquery.sap.global', './Event', '.
 
 	});
 
+	var EVENT__LISTENERS_CHANGED = "EventHandlerChange";
+
 	/**
 	 * Map of event names and ids, that are provided by this class
 	 * @private
 	 * @static
 	 */
-	EventProvider.M_EVENTS = {EventHandlerChange:"EventHandlerChange"};
+	EventProvider.M_EVENTS = {EventHandlerChange:EVENT__LISTENERS_CHANGED};
 
 	/**
 	 * Pool is defined on the prototype to be shared among all EventProviders
@@ -30040,6 +30208,7 @@ sap.ui.predefine('sap/ui/base/EventProvider',['jquery.sap.global', './Event', '.
 	 * @public
 	 */
 	EventProvider.prototype.attachEvent = function(sEventId, oData, fnFunction, oListener) {
+		var mEventRegistry = this.mEventRegistry;
 		jQuery.sap.assert(typeof (sEventId) === "string" && sEventId, "EventProvider.attachEvent: sEventId must be a non-empty string");
 		if (typeof (oData) === "function") {
 		//one could also increase the check in the line above
@@ -30051,15 +30220,17 @@ sap.ui.predefine('sap/ui/base/EventProvider',['jquery.sap.global', './Event', '.
 		jQuery.sap.assert(typeof (fnFunction) === "function", "EventProvider.attachEvent: fnFunction must be a function");
 		jQuery.sap.assert(!oListener || typeof (oListener) === "object", "EventProvider.attachEvent: oListener must be empty or an object");
 
-		var aEventListeners = this.mEventRegistry[sEventId];
+		var aEventListeners = mEventRegistry[sEventId];
 		if ( !Array.isArray(aEventListeners) ) {
-			aEventListeners = this.mEventRegistry[sEventId] = [];
+			aEventListeners = mEventRegistry[sEventId] = [];
 		}
 
 		aEventListeners.push({oListener:oListener, fFunction:fnFunction, oData: oData});
 
 		// Inform interested parties about changed EventHandlers
-		this.fireEvent(EventProvider.M_EVENTS.EventHandlerChange, {EventId: sEventId, type: 'listenerAttached'});
+		if ( mEventRegistry[EVENT__LISTENERS_CHANGED] ) {
+			this.fireEvent(EVENT__LISTENERS_CHANGED, {EventId: sEventId, type: 'listenerAttached'});
+		}
 
 		return this;
 	};
@@ -30090,6 +30261,7 @@ sap.ui.predefine('sap/ui/base/EventProvider',['jquery.sap.global', './Event', '.
 			fnFunction = oData;
 			oData = undefined;
 		}
+		jQuery.sap.assert(typeof (fnFunction) === "function", "EventProvider.attachEventOnce: fnFunction must be a function");
 		function fnOnce() {
 			this.detachEvent(sEventId, fnOnce);  // ‘this’ is always the control, due to the context ‘undefined’ in the attach call below
 			fnFunction.apply(oListener || this, arguments);  // needs to do the same resolution as in fireEvent
@@ -30113,11 +30285,12 @@ sap.ui.predefine('sap/ui/base/EventProvider',['jquery.sap.global', './Event', '.
 	 * @public
 	 */
 	EventProvider.prototype.detachEvent = function(sEventId, fnFunction, oListener) {
+		var mEventRegistry = this.mEventRegistry;
 		jQuery.sap.assert(typeof (sEventId) === "string" && sEventId, "EventProvider.detachEvent: sEventId must be a non-empty string" );
 		jQuery.sap.assert(typeof (fnFunction) === "function", "EventProvider.detachEvent: fnFunction must be a function");
 		jQuery.sap.assert(!oListener || typeof (oListener) === "object", "EventProvider.detachEvent: oListener must be empty or an object");
 
-		var aEventListeners = this.mEventRegistry[sEventId];
+		var aEventListeners = mEventRegistry[sEventId];
 		if ( !Array.isArray(aEventListeners) ) {
 			return this;
 		}
@@ -30136,12 +30309,12 @@ sap.ui.predefine('sap/ui/base/EventProvider',['jquery.sap.global', './Event', '.
 		}
 		// If we just deleted the last registered EventHandler, remove the whole entry from our map.
 		if (aEventListeners.length == 0) {
-			delete this.mEventRegistry[sEventId];
+			delete mEventRegistry[sEventId];
 		}
 
-		if (bListenerDetached) {
+		if (bListenerDetached && mEventRegistry[EVENT__LISTENERS_CHANGED] ) {
 			// Inform interested parties about changed EventHandlers
-			this.fireEvent(EventProvider.M_EVENTS.EventHandlerChange, {EventId: sEventId, type: 'listenerDetached' });
+			this.fireEvent(EVENT__LISTENERS_CHANGED, {EventId: sEventId, type: 'listenerDetached' });
 		}
 
 		return this;
@@ -31147,7 +31320,7 @@ sap.ui.predefine('sap/ui/base/Interface',['jquery.sap.global'],
 	 *        only the defined functions will be visible, no internals of the class can be accessed.
 	 *
 	 * @author Malte Wedel, Daniel Brinkmann
-	 * @version 1.34.8
+	 * @version 1.36.5
 	 * @param {sap.ui.base.Object}
 	 *            oObject the instance that needs an interface created
 	 * @param {string[]}
@@ -31216,6 +31389,8 @@ sap.ui.predefine('sap/ui/base/ManagedObject',[
 
 	"use strict";
 
+	// shortcut for the sap.ui.core.ID type
+	var IDType;
 
 	/**
 	 * Constructs and initializes a managed object with the given <code>sId</code> and settings.
@@ -31264,8 +31439,9 @@ sap.ui.predefine('sap/ui/base/ManagedObject',[
 	 *
 	 * @param {string} [sId] id for the new managed object; generated automatically if no non-empty id is given
 	 *      Note: this can be omitted, no matter whether <code>mSettings</code> will be given or not!
-	 * @param {object} [mSettings] optional map/JSON-object with initial property values, aggregated objects etc. for the new object
-	 * @param {object} [oScope] scope object for resolving string based type and formatter references in bindings
+	 * @param {object} [mSettings] Optional map/JSON-object with initial property values, aggregated objects etc. for the new object
+	 * @param {object} [oScope] Scope object for resolving string based type and formatter references in bindings.
+	 *      When a scope object is given, <code>mSettings</code> cannot be omitted, at least <code>null</code> or an empty object literal must be given.
 	 *
 	 *
 	 * @class Base Class that introduces some basic concepts like state management or databinding.
@@ -31368,7 +31544,7 @@ sap.ui.predefine('sap/ui/base/ManagedObject',[
 	 *
 	 * @extends sap.ui.base.EventProvider
 	 * @author SAP SE
-	 * @version 1.34.8
+	 * @version 1.36.5
 	 * @public
 	 * @alias sap.ui.base.ManagedObject
 	 * @experimental Since 1.11.2. ManagedObject as such is public and usable. Only the support for the optional parameter
@@ -31553,24 +31729,22 @@ sap.ui.predefine('sap/ui/base/ManagedObject',[
 
 		constructor : function(sId, mSettings, oScope) {
 
+			var that = this;
+
 			EventProvider.call(this); // no use to pass our arguments
-			if (typeof (sId) != "string" && arguments.length > 0) {
+			if ( typeof sId !== 'string' && sId !== undefined ) {
 				// shift arguments in case sId was missing, but mSettings was given
 				oScope = mSettings;
 				mSettings = sId;
-				if (mSettings && mSettings.id) {
-					sId = mSettings["id"];
-				} else {
-					sId = null;
-				}
+				sId = mSettings && mSettings.id;
 			}
 
 			if (!sId) {
-				sId = this.getMetadata().uid() || jQuery.sap.uid();
+				sId = this.getMetadata().uid();
 			} else {
 				var preprocessor = ManagedObject._fnIdPreprocessor;
 				sId = (preprocessor ? preprocessor.call(this, sId) : sId);
-				var oType = DataType.getType("sap.ui.core.ID");
+				var oType = IDType || (IDType = DataType.getType("sap.ui.core.ID"));
 				if (!oType.isValid(sId)) {
 					throw new Error("\"" + sId + "\" is not a valid ID.");
 				}
@@ -31582,7 +31756,6 @@ sap.ui.predefine('sap/ui/base/ManagedObject',[
 			this.mProperties = this.getMetadata().createPropertyBag();
 			this.mAggregations = {};
 			this.mAssociations = {};
-			this.mMethods = {};
 
 			// private properties
 			this.oParent = null;
@@ -31607,37 +31780,40 @@ sap.ui.predefine('sap/ui/base/ManagedObject',[
 
 			// make sure that the object is registered before initializing
 			// and to deregister the object in case of errors
-			try {
+			(function() {
 
-				// registers the object in the Core
-				if (this.register) {
-					this.register();
+				try {
+					// registers the object in the Core
+					if (that.register) {
+						that.register();
+					}
+
+					// TODO: generic concept for init hooks?
+					if ( that._initCompositeSupport ) {
+						that._initCompositeSupport(mSettings);
+					}
+
+					// Call init method here instead of specific Controls constructor.
+					if (that.init) {
+						that.init();
+					}
+
+					// apply the settings
+					that.applySettings(mSettings, oScope);
+
+				} catch (ex) {
+
+					// unregisters the object in the Core
+					if (that.deregister) {
+						that.deregister();
+					}
+
+					// forward the exception
+					throw ex;
+
 				}
 
-				// TODO: generic concept for init hooks?
-				if ( this._initCompositeSupport ) {
-					this._initCompositeSupport(mSettings);
-				}
-
-				// Call init method here instead of specific Controls constructor.
-				if (this.init) {
-					this.init();
-				}
-
-				// apply the settings
-				this.applySettings(mSettings, oScope);
-
-			} catch (ex) {
-
-				// unregisters the object in the Core
-				if (this.deregister) {
-					this.deregister();
-				}
-
-				// forward the exception
-				throw ex;
-
-			}
+			}());
 
 		}
 
@@ -31919,6 +32095,29 @@ sap.ui.predefine('sap/ui/base/ManagedObject',[
 	};
 
 	/**
+	 * Optional StashedControlSupport dependecy
+	 * @private
+	 */
+	var StashedControlSupport;
+
+	/**
+	 * Returns an array of stashed child elements or an empty array if there are none.
+	 *
+	 * @param {string} sId id of the object which should have stashed children
+	 * @return {sap.ui.core._StashedControl[]} array of stashed children
+	 * @private
+	 */
+	function getStashedControls(sId) {
+		if (!StashedControlSupport) {
+			StashedControlSupport = sap.ui.require("sap/ui/core/StashedControlSupport");
+		}
+		if (StashedControlSupport) {
+			return StashedControlSupport.getStashedControls(sId);
+		}
+		return [];
+	}
+
+	/**
 	 * A global preprocessor for the ID of a ManagedObject (used internally).
 	 * If set, this function will be called before the ID is applied to any ManagedObject.
 	 * If the original ID was empty, the hook will not be called (to be discussed).
@@ -32007,7 +32206,7 @@ sap.ui.predefine('sap/ui/base/ManagedObject',[
 		function addAllToAggregation(aObjects) {
 			for (var i = 0, len = aObjects.length; i < len; i++) {
 				var vObject = aObjects[i];
-				if ( jQuery.isArray(vObject) ) {
+				if ( Array.isArray(vObject) ) {
 					addAllToAggregation(vObject);
 				} else {
 					that[oKeyInfo._sMutator](makeObject(vObject, oKeyInfo, oScope));
@@ -32030,7 +32229,6 @@ sap.ui.predefine('sap/ui/base/ManagedObject',[
 					this.setModel(mSettings.models[sKey], sKey === "undefined" ? undefined : sKey);
 				}
 			}
-			delete mSettings.models;
 		}
 		//process BindingContext
 		if ( mSettings.bindingContexts ) {
@@ -32044,7 +32242,6 @@ sap.ui.predefine('sap/ui/base/ManagedObject',[
 					this.setBindingContext(mSettings.bindingContexts[sKey], sKey === "undefined" ? undefined : sKey);
 				}
 			}
-			delete mSettings.bindingContexts;
 		}
 		//process object bindings
 		if ( mSettings.objectBindings ) {
@@ -32059,7 +32256,6 @@ sap.ui.predefine('sap/ui/base/ManagedObject',[
 					this.bindObject(mSettings.objectBindings[sKey]);
 				}
 			}
-			delete mSettings.objectBindings;
 		}
 
 		// process all settings
@@ -32083,7 +32279,7 @@ sap.ui.predefine('sap/ui/base/ManagedObject',[
 					if ( oBindingInfo && typeof oBindingInfo === "object" ) {
 						this.bindProperty(sKey, oBindingInfo);
 					} else {
-						if (jQuery.isArray(oValue)){
+						if (Array.isArray(oValue)){
 							// assumption: we have an extensionPoint here which is always an array, even if it contains a single control
 							if (oValue.length > 1){
 								jQuery.sap.log.error("Tried to add an array of controls to a single aggregation");
@@ -32100,7 +32296,11 @@ sap.ui.predefine('sap/ui/base/ManagedObject',[
 					} else {
 						oValue = oBindingInfo || oValue; // could be an unescaped string if altTypes contains 'string'
 						if ( oValue ) {
-							addAllToAggregation(jQuery.isArray(oValue) ? oValue : [oValue]); // wrap a single object as array
+							if ( Array.isArray(oValue) ) {
+								addAllToAggregation(oValue); // wrap a single object as array
+							} else {
+								that[oKeyInfo._sMutator](makeObject(oValue, oKeyInfo, oScope));
+							}
 						}
 					}
 					break;
@@ -32108,12 +32308,13 @@ sap.ui.predefine('sap/ui/base/ManagedObject',[
 					this[oKeyInfo._sMutator](oValue);
 					break;
 				case 4: // MULTIPLE_ASSOCIATION
-					if ( oValue && !jQuery.isArray(oValue) ) {
-						oValue = [oValue];
-					}
 					if ( oValue ) {
-						for (var i = 0,l = oValue.length; i < l; i++) {
-							this[oKeyInfo._sMutator](oValue[i]);
+						if ( Array.isArray(oValue) ) {
+							for (var i = 0,l = oValue.length; i < l; i++) {
+								this[oKeyInfo._sMutator](oValue[i]);
+							}
+						} else {
+							this[oKeyInfo._sMutator](oValue);
 						}
 					}
 					break;
@@ -32217,14 +32418,15 @@ sap.ui.predefine('sap/ui/base/ManagedObject',[
 		// check whether property is bound and update model in case of two way binding
 		this.updateModelProperty(sPropertyName, oValue, oOldValue);
 
-		// prototype for generic property change events
-		// TODO: THINK ABOUT CONFIGURATION TO ENABLE THIS
-		EventProvider.prototype.fireEvent.call(this, "_change", {
-			"id": this.getId(),
-			"name": sPropertyName,
-			"oldValue": oOldValue,
-			"newValue": oValue
-		});
+		// fire property change event (experimental, only for internal use)
+		if ( this.mEventRegistry["_change"] ) {
+			EventProvider.prototype.fireEvent.call(this, "_change", {
+				"id": this.getId(),
+				"name": sPropertyName,
+				"oldValue": oOldValue,
+				"newValue": oValue
+			});
+		}
 
 		// reset suppress invalidate flag
 		if (bSuppressInvalidate) {
@@ -32235,7 +32437,7 @@ sap.ui.predefine('sap/ui/base/ManagedObject',[
 	};
 
 	/**
-	 * Returns the value for the property with the given <code>sPropertyName</code>
+	 * Returns the value for the property with the given <code>sPropertyName</code>.
 	 *
 	 * <b>Note:</b> This method is a low-level API as described in <a href="#lowlevelapi">the class documentation</a>.
 	 * Applications or frameworks must not use this method to generically retrieve the value of a property.
@@ -33098,6 +33300,13 @@ sap.ui.predefine('sap/ui/base/ManagedObject',[
 		var aChildren = this.mAggregations[sAggregationName],
 			i, aChild;
 
+		// destroy surrogates in this aggregation
+		getStashedControls(this.getId()).forEach(function(c) {
+			if (c.sParentAggregationName === sAggregationName) {
+				c.destroy();
+			}
+		});
+
 		if (!aChildren) {
 			return this;
 		}
@@ -33350,6 +33559,11 @@ sap.ui.predefine('sap/ui/base/ManagedObject',[
 			this.destroyAggregation(oAggr, bSuppressInvalidate);
 		}
 
+		// destroy all inactive children
+		getStashedControls(this.getId()).forEach(function(c) {
+			c.destroy();
+		});
+
 		// Deregister, if available
 		if (this.deregister) {
 			this.deregister();
@@ -33499,7 +33713,8 @@ sap.ui.predefine('sap/ui/base/ManagedObject',[
 	 * @param {object} [vPath.parameters] map of additional parameters for this binding
 	 * @param {string} [vPath.model] name of the model
 	 * @param {object} [vPath.events] map of event listeners for the binding events
-	 * @param {object} [mParameters] map of additional parameters for this binding (only taken into account when vPath is a string)
+	 * @param {object} [mParameters] map of additional parameters for this binding (only taken into account when vPath is a string).
+	 * The supported parameters are listed in the corresponding model-specific implementation of <code>sap.ui.model.ContextBinding</code>.
 	 *
 	 * @return {sap.ui.base.ManagedObject} reference to the instance itself
 	 * @public
@@ -33651,7 +33866,8 @@ sap.ui.predefine('sap/ui/base/ManagedObject',[
 	 * @param {object} [oBindingInfo.formatOptions] the format options to be used
 	 * @param {object} [oBindingInfo.constraints] the constraints for this value
 	 * @param {sap.ui.model.BindingMode} [oBindingInfo.mode=Default] the binding mode to be used for this property binding (e.g. one way)
-	 * @param {object} [oBindingInfo.parameters] a map of parameters which is passed to the binding
+	 * @param {object} [oBindingInfo.parameters] a map of parameters which is passed to the binding.
+	 * The supported parameters are listed in the corresponding model-specific implementation of <code>sap.ui.model.PropertyBinding</code>.
 	 * @param {object} [oBindingInfo.parts] object for definding a read only composite binding which may have multiple binding paths also in different models.
 	 * <pre>
 	 *   oTxt.bindValue({
@@ -33664,15 +33880,9 @@ sap.ui.predefine('sap/ui/base/ManagedObject',[
 	 * @return {sap.ui.base.ManagedObject} reference to the instance itself
 	 * @public
 	 */
-	ManagedObject.prototype.bindProperty = function(sName, oBindingInfo) {
-		var sPath,
-			oFormat,
-			sMode,
-			fnFormatter,
-			oType,
-			iSeparatorPos,
+	ManagedObject.prototype.bindProperty = function(sName, oBindingInfo, /* undocumented, old API only: */ _vFormat, _sMode) {
+		var iSeparatorPos,
 			bAvailable = true,
-			that = this,
 			oProperty = this.getMetadata().getPropertyLikeSetting(sName);
 
 		// check whether property or alternative type on aggregation exists
@@ -33680,19 +33890,16 @@ sap.ui.predefine('sap/ui/base/ManagedObject',[
 			throw new Error("Property \"" + sName + "\" does not exist in " + this);
 		}
 
-		// old API compatbility (sName, sPath, oFormat, sMode)
+		// old API compatbility (sName, sPath, _vFormat, _sMode)
 		if (typeof oBindingInfo == "string") {
-			sPath = arguments[1];
-			oFormat = arguments[2];
-			sMode = arguments[3];
-
-			// find out whether formatter or type has been provided
-			if (typeof oFormat == "function") {
-				fnFormatter = oFormat;
-			} else if (oFormat instanceof Type) {
-				oType = oFormat;
-			}
-			oBindingInfo = {formatter: fnFormatter, parts : [ {path: sPath, type: oType, mode: sMode} ]};
+			oBindingInfo = {
+				parts: [ {
+					path: oBindingInfo,
+					type: _vFormat instanceof Type ? _vFormat : undefined,
+					mode: _sMode
+				} ],
+				formatter: typeof _vFormat === 'function' ? _vFormat : undefined
+			};
 		}
 
 		// only one binding object with one binding specified
@@ -33711,11 +33918,14 @@ sap.ui.predefine('sap/ui/base/ManagedObject',[
 			delete oBindingInfo.model;
 		}
 
-		jQuery.each(oBindingInfo.parts, function(i, oPart) {
+		for ( var i = 0; i < oBindingInfo.parts.length; i++ ) {
+
+			var oPart = oBindingInfo.parts[i];
 			if (typeof oPart == "string") {
 				oPart = { path: oPart };
 				oBindingInfo.parts[i] = oPart;
 			}
+
 			// if a model separator is found in the path, extract model name and path
 			iSeparatorPos = oPart.path.indexOf(">");
 			if (iSeparatorPos > 0) {
@@ -33727,11 +33937,11 @@ sap.ui.predefine('sap/ui/base/ManagedObject',[
 				oPart.mode = BindingMode.OneWay;
 			}
 
-			if (!that.getModel(oPart.model)) {
+			if (!this.getModel(oPart.model)) {
 				bAvailable = false;
 			}
 
-		});
+		}
 
 		// if property is already bound, unbind it first
 		if (this.isBound(sName)) {
@@ -34024,7 +34234,8 @@ sap.ui.predefine('sap/ui/base/ManagedObject',[
 	 * @param {number} oBindingInfo.length the amount of entries to be created (may exceed the sizelimit of the model)
 	 * @param {sap.ui.model.Sorter|sap.ui.model.Sorter[]} [oBindingInfo.sorter] the initial sort order (optional)
 	 * @param {sap.ui.model.Filter[]} [oBindingInfo.filters] the predefined filters for this aggregation (optional)
-	 * @param {object} [oBindingInfo.parameters] a map of parameters which is passed to the binding
+	 * @param {object} [oBindingInfo.parameters] a map of parameters which is passed to the binding.
+	 * The supported parameters are listed in the corresponding model-specific implementation of <code>sap.ui.model.ListBinding</code> or <code>sap.ui.model.TreeBinding</code>.
 	 * @param {function} [oBindingInfo.groupHeaderFactory] a factory function to generate custom group visualization (optional)
 	 *
 	 * @return {sap.ui.base.ManagedObject} reference to the instance itself
@@ -34344,7 +34555,9 @@ sap.ui.predefine('sap/ui/base/ManagedObject',[
 	 * @private
 	 */
 	ManagedObject.prototype.updateBindings = function(bUpdateAll, sModelName) {
-		var that = this;
+		var that = this,
+			sName,
+			oBindingInfo;
 
 		/*
 		 * Checks whether the binding for the given oBindingInfo became invalid because
@@ -34400,10 +34613,20 @@ sap.ui.predefine('sap/ui/base/ManagedObject',[
 		}
 
 		// create property and aggregation bindings if they don't exist yet
-		jQuery.each(this.mBindingInfos, function(sName, oBindingInfo) {
+		for ( sName in this.mBindingInfos ) {
+
+			oBindingInfo = this.mBindingInfos[sName];
 
 			// if there is a binding and if it became invalid through the current model change, then remove it
 			if ( oBindingInfo.binding && becameInvalid(oBindingInfo) ) {
+				// Remove the validation controlMessages for this Binding from the MessageManager so they will not be propagated again
+				var oDataState = oBindingInfo.binding.getDataState();
+				sap.ui.getCore().getMessageManager().removeMessages(oDataState.getControlMessages(), true);
+				// Also tell the Control that the messages have been removed (if any)
+				if (this.refreshDataState) {
+					this.refreshDataState(sName, oDataState);
+				}
+
 				oBindingInfo.binding.detachChange(oBindingInfo.modelChangeHandler);
 				if (oBindingInfo.modelRefreshHandler) { // only list bindings currently have a refresh handler attached
 					oBindingInfo.binding.detachRefresh(oBindingInfo.modelRefreshHandler);
@@ -34416,13 +34639,13 @@ sap.ui.predefine('sap/ui/base/ManagedObject',[
 			// if there is no binding and if all required information is available, create a binding object
 			if ( !oBindingInfo.binding && canCreate(oBindingInfo) ) {
 				if (oBindingInfo.factory) {
-					that._bindAggregation(sName, oBindingInfo);
+					this._bindAggregation(sName, oBindingInfo);
 				} else {
-					that._bindProperty(sName, oBindingInfo);
+					this._bindProperty(sName, oBindingInfo);
 				}
 			}
 
-		});
+		}
 
 	};
 
@@ -34534,8 +34757,9 @@ sap.ui.predefine('sap/ui/base/ManagedObject',[
 			oModelNames = {},
 			sModelName,
 			oContext,
+			sName,
 			oBoundObject,
-			that = this;
+			i;
 
 		// find models that need an context update
 		if (bUpdateAll) {
@@ -34553,7 +34777,6 @@ sap.ui.predefine('sap/ui/base/ManagedObject',[
 			oModelNames[sFixedModelName] = sFixedModelName;
 		}
 
-		/*eslint-disable no-loop-func */
 		for (sModelName in oModelNames ) {
 			if ( oModelNames.hasOwnProperty(sModelName) ) {
 				sModelName = sModelName === "undefined" ? undefined : sModelName;
@@ -34571,44 +34794,47 @@ sap.ui.predefine('sap/ui/base/ManagedObject',[
 					}
 					continue;
 				}
+
+				oContext = this.getBindingContext(sModelName);
+
 				// update context in existing bindings
-				jQuery.each(this.mBindingInfos, function(sName, oBindingInfo) {
-					var oBinding = oBindingInfo.binding;
-					var aParts = oBindingInfo.parts,
-						i;
+				for ( sName in this.mBindingInfos ){
+					var oBindingInfo = this.mBindingInfos[sName],
+						oBinding = oBindingInfo.binding,
+						aParts = oBindingInfo.parts;
+
 					if (!oBinding) {
-						return;
+						continue;
 					}
 					if (aParts && aParts.length > 1) {
 						// composite binding: update required  when a part use the model with the same name
 						for (i = 0; i < aParts.length; i++) {
 							if ( aParts[i].model == sModelName ) {
-								oBinding.aBindings[i].setContext(that.getBindingContext(aParts[i].model));
+								oBinding.aBindings[i].setContext(oContext);
 							}
 						}
 					} else if (oBindingInfo.factory) {
 						// list binding: update required when the model has the same name (or updateall)
 						if ( oBindingInfo.model == sModelName) {
-							oBinding.setContext(that.getBindingContext(oBindingInfo.model));
+							oBinding.setContext(oContext);
 						}
 
 					} else {
 						// simple property binding: update required when the model has the same name
 						if ( aParts[0].model == sModelName) {
-							oBinding.setContext(that.getBindingContext(aParts[0].model));
+							oBinding.setContext(oContext);
 						}
 					}
-				});
+				}
 				if (!bSkipChildren) {
-					var oContext = this.getBindingContext(sModelName);
 					// also update context in all child elements
-					for (var sName in this.mAggregations) {
+					for ( sName in this.mAggregations ) {
 						var oAggregation = this.mAggregations[sName];
 						if (oAggregation instanceof ManagedObject) {
 							oAggregation.oPropagatedProperties.oBindingContexts[sModelName] = oContext;
 							oAggregation.updateBindingContext(false,false,sModelName);
 						} else if (oAggregation instanceof Array) {
-							for (var i = 0; i < oAggregation.length; i++) {
+							for (i = 0; i < oAggregation.length; i++) {
 								oAggregation[i].oPropagatedProperties.oBindingContexts[sModelName] = oContext;
 								oAggregation[i].updateBindingContext(false,false,sModelName);
 							}
@@ -34617,7 +34843,7 @@ sap.ui.predefine('sap/ui/base/ManagedObject',[
 				}
 			}
 		}
-		/*eslint-enable no-loop-func */
+
 	};
 
 
@@ -34890,12 +35116,16 @@ sap.ui.predefine('sap/ui/base/ManagedObject',[
 			sKey,
 			sName,
 			oClone,
-			escape = ManagedObject.bindingParser.escape;
+			escape = ManagedObject.bindingParser.escape,
+			i;
 
 		// Clone properties (only those with non-default value)
-		for (sKey in mProps) {
+		var aKeys = Object.keys(mProps);
+		i = aKeys.length;
+		while ( i > 0 ) {
+			sKey = aKeys[--i];
 			//do not clone properties if property is bound and bindings are cloned; Property is set on update
-			if ( mProps.hasOwnProperty(sKey) && !(this.isBound(sKey) && bCloneBindings)) {
+			if ( /*mProps.hasOwnProperty(sKey) && */ !(this.isBound(sKey) && bCloneBindings)) {
 				// Note: to avoid double resolution of binding expressions, we have to escape string values once again
 				if (typeof mProps[sKey] === "string") {
 					mSettings[sKey] = escape(mProps[sKey]);
@@ -34929,6 +35159,14 @@ sap.ui.predefine('sap/ui/base/ManagedObject',[
 						mSettings[sName] = oAggregation;
 					}
 				}
+			}
+
+			// clone inactive children
+			var aInactiveChildren = getStashedControls(this.getId());
+			for (var i = 0, l = aInactiveChildren.length; i < l; i++) {
+					var oClonedChild = aInactiveChildren[i].clone(sIdSuffix);
+					oClonedChild.sParentId = sId;
+					oClonedChild.sParentAggregationName = aInactiveChildren[i].sParentAggregationName;
 			}
 
 			// Clone associations
@@ -35147,7 +35385,7 @@ sap.ui.predefine('sap/ui/base/ManagedObjectMetadata',['jquery.sap.global', './Da
 	 * </ul>
 	 *
 	 * @author Frank Weigel
-	 * @version 1.34.8
+	 * @version 1.36.5
 	 * @since 0.8.6
 	 * @alias sap.ui.base.ManagedObjectMetadata
 	 */
@@ -36008,6 +36246,25 @@ sap.ui.predefine('sap/ui/base/ManagedObjectMetadata',['jquery.sap.global', './Da
 
 	// ---- special settings ------------------------------------------------------------------
 
+
+	/**
+	 * Adds a new special setting.
+	 * Special settings are settings that are accepted in the mSettings
+	 * object at construction time or in an {@link sap.ui.base.ManagedObject.applySettings}
+	 * call but that are neither properties, aggregations, associations nor events.
+	 *
+	 * @param {string} sName name of the setting
+	 * @private
+	 * @experimental since 1.35.0
+	 */
+	ManagedObjectMetadata.prototype.addSpecialSetting = function (sName, oInfo) {
+		var oSS = this._mProperties[sName] = new SpecialSetting(this, sName, oInfo);
+		this._mSpecialSettings[sName] = oSS;
+		if (!this._mAllSpecialSettings[sName]) {
+			this._mAllSpecialSettings[sName] = oSS;
+		}
+	};
+
 	/**
 	 * Checks the existence of the given special setting.
 	 * Special settings are settings that are accepted in the mSettings
@@ -36301,7 +36558,7 @@ sap.ui.predefine('sap/ui/base/Metadata',['jquery.sap.global', 'jquery.sap.script
 	 *
 	 * @class Metadata for a class.
 	 * @author Frank Weigel
-	 * @version 1.34.8
+	 * @version 1.36.5
 	 * @since 0.8.6
 	 * @public
 	 * @alias sap.ui.base.Metadata
@@ -36688,7 +36945,7 @@ sap.ui.predefine('sap/ui/base/Object',['jquery.sap.global', './Interface', './Me
 	 * @class Base class for all SAPUI5 Objects
 	 * @abstract
 	 * @author Malte Wedel
-	 * @version 1.34.8
+	 * @version 1.36.5
 	 * @public
 	 * @alias sap.ui.base.Object
 	 */
@@ -36882,7 +37139,7 @@ sap.ui.predefine('sap/ui/base/ObjectPool',['./Object'],
 	 *
 	 * @extends sap.ui.base.Object
 	 * @author Malte Wedel
-	 * @version 1.34.8
+	 * @version 1.36.5
 	 * @constructor
 	 * @alias sap.ui.base.ObjectPool
 	 * @public
@@ -37061,7 +37318,7 @@ sap.ui.predefine('sap/ui/core/BusyIndicatorUtils',['jquery.sap.global', 'sap/ui/
 		// calculated the size of the indicator we need to know the pixel-size of
 		// 3rem, under which the indicator will animate differently
 		if ($control[0].offsetWidth < iWidth) {
-			vAnimation.className = "sapUiLocalBusyIndicatorAnimation sapUiLocalBusyIndicatorAnimStandard";
+			vAnimation.className = "sapUiLocalBusyIndicatorAnimation sapUiLocalBusyIndicatorAnimSmall";
 		}
 
 		//Set the actual DOM Element to 'aria-busy'
@@ -37201,7 +37458,7 @@ sap.ui.predefine('sap/ui/core/Component',['jquery.sap.global', 'sap/ui/base/Mana
 	 * @extends sap.ui.base.ManagedObject
 	 * @abstract
 	 * @author SAP SE
-	 * @version 1.34.8
+	 * @version 1.36.5
 	 * @alias sap.ui.core.Component
 	 * @since 1.9.2
 	 */
@@ -37513,7 +37770,7 @@ sap.ui.predefine('sap/ui/core/Component',['jquery.sap.global', 'sap/ui/base/Mana
 	 * {@link sap.ui.core.UIComponent.createContent constructed} or when a
 	 * {@link sap.ui.core.routing.Router Router} creates a new View and its content.
 	 *
-	 * <strong>Note</string>: This method does not guarantee that the returned owner ID belongs
+	 * <strong>Note</strong>: This method does not guarantee that the returned owner ID belongs
 	 * to a Component. Currently, it always does. But future versions of UI5 might introduce a
 	 * more fine grained ownership concept, e.g. taking Views into account. Callers that
 	 * want to deal only with components as owners, should use the following method:
@@ -38290,6 +38547,11 @@ sap.ui.predefine('sap/ui/core/Component',['jquery.sap.global', 'sap/ui/base/Mana
 	 *
 	 * If Components and/or libraries are listed in the hints section, all the corresponding preload files will
 	 * be requested in parallel. The constructor class will only be required after all of them are rejected or resolved.
+	 * Instead of specifing just the name of a component or library in the hints, an object might be given that contains a
+	 * mandatory <code>name</code> property and, optionally, an <code>url</code> that will be used for a <code>registerModulePath</code>
+	 * and/or a <code>lazy</code> property. When <code>lazy</code> is set to a truthy value, only a necessary <code>registerModulePath</code>
+	 * will be executed, but the corresponding component or lib won't be preloaded. For preload bundles, also an object might be given
+	 * instead of a simple name, but there only the <code>url</code> property is supported, not the <code>lazy</code> property.
 	 *
 	 * Note: so far, only the requests for the preload files (library and/or component) are executed asynchronously.
 	 * If a preload is deactivated by configuration (e.g. debug mode), then requests won't be asynchronous.
@@ -38388,7 +38650,11 @@ sap.ui.predefine('sap/ui/core/Component',['jquery.sap.global', 'sap/ui/base/Mana
 			return oClass;
 		}
 
-		function registerPath(vObj) {
+		/*
+		 * Process .url and .lazy options.
+		 * For preloadBundles, lazy will be ignored
+		 */
+		function processOptions(vObj, bIgnoreLazy) {
 
 			jQuery.sap.assert(
 				(typeof vObj === 'string' && vObj) ||
@@ -38399,7 +38665,7 @@ sap.ui.predefine('sap/ui/core/Component',['jquery.sap.global', 'sap/ui/base/Mana
 				if ( vObj.url ) {
 					jQuery.sap.registerModulePath(vObj.name, vObj.url);
 				}
-				return vObj.name;
+				return (vObj.lazy && bIgnoreLazy !== true) ? undefined : vObj.name; // expl. check for true to allow usage in Array.prototype.map below
 			}
 
 			return vObj;
@@ -38411,7 +38677,7 @@ sap.ui.predefine('sap/ui/core/Component',['jquery.sap.global', 'sap/ui/base/Mana
 				sPreloadName;
 
 			// only load the Component-preload file if the Component module is not yet available
-			if ( bComponentPreload && !jQuery.sap.isDeclared(sController, /* bIncludePreloaded=*/ true) ) {
+			if ( bComponentPreload && sComponentName != null && !jQuery.sap.isDeclared(sController, /* bIncludePreloaded=*/ true) ) {
 
 				if ( bAsync ) {
 					sPreloadName = jQuery.sap.getResourceName(sController, '-preload.js'); // URN
@@ -38485,18 +38751,19 @@ sap.ui.predefine('sap/ui/core/Component',['jquery.sap.global', 'sap/ui/base/Mana
 					if ( oPromise ) {
 						promises.push(oPromise);
 					}
-				};
+				},
+				identity = function($) { return $; };
 
 			// load any required preload bundles
 			if ( hints.preloadBundles ) {
 				jQuery.each(hints.preloadBundles, function(i, vBundle) {
-					collect(jQuery.sap._loadJSResourceAsync(registerPath(vBundle), true));
+					collect(jQuery.sap._loadJSResourceAsync(processOptions(vBundle, /* ignoreLazy */ true), /* ignoreErrors */ true));
 				});
 			}
 
 			// preload required libraries
 			if ( hints.libs ) {
-				collect(sap.ui.getCore().loadLibraries( hints.libs.map(registerPath) ));
+				collect(sap.ui.getCore().loadLibraries( hints.libs.map(processOptions).filter(identity) ));
 			}
 
 			// preload the component itself
@@ -38518,7 +38785,7 @@ sap.ui.predefine('sap/ui/core/Component',['jquery.sap.global', 'sap/ui/base/Mana
 			// if a hint about "used" components is given, preload those components
 			if ( hints.components ) {
 				jQuery.each(hints.components, function(i, vComp) {
-					collect(preload(registerPath(vComp), true));
+					collect(preload(processOptions(vComp), true));
 				});
 			}
 
@@ -38569,7 +38836,7 @@ sap.ui.predefine('sap/ui/core/ComponentMetadata',['jquery.sap.global', 'sap/ui/b
 	 * @public
 	 * @class
 	 * @author SAP SE
-	 * @version 1.34.8
+	 * @version 1.36.5
 	 * @since 1.9.2
 	 * @alias sap.ui.core.ComponentMetadata
 	 */
@@ -39951,7 +40218,8 @@ sap.ui.predefine('sap/ui/core/Configuration',['jquery.sap.global', '../Device', 
 		 *     bindings in existing Elements, Controls, UIAreas or Components</li>
 		 * <li>ResourceModels currently assigned to the Core, an UIArea, Component,
 		 *     Element or Control</li>
-		 * <li>Elements or Controls that implement the <code>onLocalizationChanged</code> hook.
+		 * <li>Elements or Controls that implement the <code>onlocalizationChanged</code> hook
+		 *     (note the lowercase 'l' in onlocalizationChanged)
 		 * </ul>
 		 *
 		 * It furthermore derives the RTL mode from the new language, if no explicit RTL
@@ -40034,8 +40302,15 @@ sap.ui.predefine('sap/ui/core/Configuration',['jquery.sap.global', '../Device', 
 			}
 
 			var sLegacyDateFormat = this.oFormatSettings.getLegacyDateFormat();
-			if (sLegacyDateFormat === "A" || sLegacyDateFormat === "B") {
-				return CalendarType.Islamic;
+
+			switch (sLegacyDateFormat) {
+				case "A":
+				case "B":
+					return CalendarType.Islamic;
+				case "7":
+				case "8":
+				case "9":
+					return CalendarType.Japanese;
 			}
 
 			return LocaleData.getInstance(this.getLocale()).getPreferredCalendarType();
@@ -40523,9 +40798,9 @@ sap.ui.predefine('sap/ui/core/Configuration',['jquery.sap.global', '../Device', 
 		"4": {pattern: "yyyy.MM.dd"},
 		"5": {pattern: "yyyy/MM/dd"},
 		"6": {pattern: "yyyy-MM-dd"},
-		"7": {pattern: "Gyy.MM.dd", ignore:true},
-		"8": {pattern: "Gyy/MM/dd", ignore:true},
-		"9": {pattern: "Gyy-MM-dd", ignore:true},
+		"7": {pattern: "Gyy.MM.dd"},
+		"8": {pattern: "Gyy/MM/dd"},
+		"9": {pattern: "Gyy-MM-dd"},
 		"A": {pattern: "yyyy/MM/dd"},
 		"B": {pattern: "yyyy/MM/dd"},
 		"C": {pattern: "yyyy/MM/dd", ignore:true}
@@ -40766,10 +41041,9 @@ sap.ui.predefine('sap/ui/core/Configuration',['jquery.sap.global', '../Device', 
 		 * specific parts of the UI. See the documentation of {@link sap.ui.core.Configuration#setLanguage}
 		 * for details and restrictions.
 		 *
-		 * Note: those date formats that are not based on the Gregorian calendar (Japanese date formats '7', '8' and '9',
-		 * Islamic date formats 'A' and 'B' and Iranian date format 'C') are not yet supported by UI5. They are accepted
-		 * by this method for convenience (user settings from ABAP system can be used without filtering), but they are
-		 * ignored. Instead, the formats from the current format locale will be used and a warning will be logged.
+		 * Note: Iranian date format 'C' is NOT yet supported by UI5. It's accepted by this method for convenience
+		 * (user settings from ABAP system can be used without filtering), but it's ignored. Instead, the formats
+		 * from the current format locale will be used and a warning will be logged.
 		 *
 		 * @param {string} sFormatId id of the ABAP data format (one of '1','2','3','4','5','6','7','8','9','A','B','C')
 		 * @return {sap.ui.core.Configuration.FormatSettings} Returns <code>this</code> to allow method chaining
@@ -40938,11 +41212,11 @@ sap.ui.predefine('sap/ui/core/Control',['jquery.sap.global', './CustomStyleClass
 	 * @extends sap.ui.core.Element
 	 * @abstract
 	 * @author Martin Schaus, Daniel Brinkmann
-	 * @version 1.34.8
+	 * @version 1.36.5
 	 * @alias sap.ui.core.Control
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	var Control = Element.extend("sap.ui.core.Control", /* @lends sap.ui.core.Control */ {
+	var Control = Element.extend("sap.ui.core.Control", /** @lends sap.ui.core.Control */ {
 
 		metadata : {
 			stereotype : "control",
@@ -41502,10 +41776,19 @@ sap.ui.predefine('sap/ui/core/Control',['jquery.sap.global', './CustomStyleClass
 			oBusyIndicatorDelegate = {
 				onAfterRendering: function() {
 					if (this.getBusy() && this.$() && !this._busyIndicatorDelayedCallId && !this.$("busyIndicator").length) {
-						// Also use the BusyIndicatorDelay when a control is initialized with "busy = true"
-						// If the delayed call was already initialized skip any further call if the control was re-rendered while
-						// the delay is on its way.
-						this._busyIndicatorDelayedCallId = jQuery.sap.delayedCall(this.getBusyIndicatorDelay(), this, fnAppendBusyIndicator);
+						// Also use the BusyIndicatorDelay when a control is initialized
+						// with "busy = true". If the delayed call was already initialized
+						// skip any further call if the control was re-rendered while
+						// the delay is running.
+						var iDelay = this.getBusyIndicatorDelay();
+
+						// Only do it via timeout if there is a delay. Otherwise append the
+						// BusyIndicator immediately
+						if (iDelay) {
+							this._busyIndicatorDelayedCallId = jQuery.sap.delayedCall(iDelay, this, fnAppendBusyIndicator);
+						} else {
+							fnAppendBusyIndicator.call(this);
+						}
 					}
 				}
 			},
@@ -41846,7 +42129,7 @@ sap.ui.predefine('sap/ui/core/Core',['jquery.sap.global', 'sap/ui/Device', 'sap/
 	 * @extends sap.ui.base.Object
 	 * @final
 	 * @author SAP SE
-	 * @version 1.34.8
+	 * @version 1.36.5
 	 * @constructor
 	 * @alias sap.ui.core.Core
 	 * @public
@@ -43904,26 +44187,27 @@ sap.ui.predefine('sap/ui/core/Core',['jquery.sap.global', 'sap/ui/Device', 'sap/
 	 * @private
 	 */
 	Core.prototype.registerElement = function(oElement) {
-		var oldElement = this.byId(oElement.getId());
+
+		var sId = oElement.getId(),
+			oldElement = this.mElements[sId];
+
 		if ( oldElement && oldElement !== oElement ) {
 			if ( oldElement._sapui_candidateForDestroy ) {
 				jQuery.sap.log.debug("destroying dangling template " + oldElement + " when creating new object with same ID");
 				oldElement.destroy();
-				oldElement = null;
-			}
-		}
-		if ( oldElement && oldElement !== oElement ) {
-
-			// duplicate ID detected => fail or at least log a warning
-			if (this.oConfiguration.getNoDuplicateIds()) {
-				jQuery.sap.log.error("adding element with duplicate id '" + oElement.getId() + "'");
-				throw new Error("Error: adding element with duplicate id '" + oElement.getId() + "'");
 			} else {
-				jQuery.sap.log.warning("adding element with duplicate id '" + oElement.getId() + "'");
+				// duplicate ID detected => fail or at least log a warning
+				if (this.oConfiguration.getNoDuplicateIds()) {
+					jQuery.sap.log.error("adding element with duplicate id '" + sId + "'");
+					throw new Error("Error: adding element with duplicate id '" + sId + "'");
+				} else {
+					jQuery.sap.log.warning("adding element with duplicate id '" + sId + "'");
+				}
 			}
 		}
 
-		this.mElements[oElement.getId()] = oElement;
+		this.mElements[sId] = oElement;
+
 	};
 
 	/**
@@ -45116,7 +45400,7 @@ sap.ui.predefine('sap/ui/core/Element',['jquery.sap.global', '../base/Object', '
 	 * @class Base Class for Elements.
 	 * @extends sap.ui.base.ManagedObject
 	 * @author SAP SE
-	 * @version 1.34.8
+	 * @version 1.36.5
 	 * @public
 	 * @alias sap.ui.core.Element
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
@@ -45305,7 +45589,7 @@ sap.ui.predefine('sap/ui/core/Element',['jquery.sap.global', '../base/Object', '
 	 * <li>events: map from event names to event names
 	 * </ul>
 	 *
-	 * @see sap.ui.core.Object.defineClass
+	 * @see sap.ui.base.Object.defineClass
 	 *
 	 * @param {string} sClassName name of the class to build the metadata for
 	 * @param {object} oStaticInfo static information used to build the metadata
@@ -45329,36 +45613,41 @@ sap.ui.predefine('sap/ui/core/Element',['jquery.sap.global', '../base/Object', '
 	};
 
 	/**
-	 * Handles the given browser event.
+	 * Dispatches the given event, usually a browser event or a UI5 pseudo event.
 	 * @private
 	 */
 	Element.prototype._handleEvent = function (oEvent) {
-		var sHandlerName = "on" + oEvent.type;
-			this._callEventHandles(this.aBeforeDelegates.slice(0), sHandlerName, oEvent, true);
-			this._callEventHandles([this], sHandlerName, oEvent);
-			this._callEventHandles(this.aDelegates.slice(0), sHandlerName, oEvent, true);
-	};
 
-	/**
-	 * Calls event handler of the given event handles with the given browser event.
-	 * @private
-	 */
-	Element.prototype._callEventHandles = function (aHandles, sHandlerName, oEvent, bDelegateHolder) {
-		if (aHandles.length > 0) {
-			for (var i = 0; i < aHandles.length; i++) {
-				if (oEvent.isImmediateHandlerPropagationStopped()) {
-					break;
-				}
-				var oHandle = bDelegateHolder ? aHandles[i].oDelegate : aHandles[i];
-				var oThis = (bDelegateHolder && aHandles[i].vThis) ? aHandles[i].vThis : oHandle;
-				if (oThis === true) { // special case, means the control should be the context
-					oThis = this;
-				}
-				if (oHandle[sHandlerName]) {
-					oHandle[sHandlerName].call(oThis, oEvent);
+		var that = this,
+			sHandlerName = "on" + oEvent.type;
+
+		function each(aDelegates) {
+			var i,l,oDelegate;
+			if ( aDelegates && (l = aDelegates.length) > 0 ) {
+				// To be robust against concurrent modifications of the delegates list, we loop over a copy.
+				// When there is only a single entry, the loop is safe without a copy (length is determined only once!)
+				aDelegates = l === 1 ? aDelegates : aDelegates.slice();
+				for (i = 0; i < l; i++ ) {
+					if (oEvent.isImmediateHandlerPropagationStopped()) {
+						return;
+					}
+					oDelegate = aDelegates[i].oDelegate;
+					if (oDelegate[sHandlerName]) {
+						oDelegate[sHandlerName].call(aDelegates[i].vThis === true ? that : aDelegates[i].vThis || oDelegate, oEvent);
+					}
 				}
 			}
 		}
+
+		each(this.aBeforeDelegates);
+		if ( oEvent.isImmediateHandlerPropagationStopped() ) {
+			return;
+		}
+		if ( this[sHandlerName] ) {
+			this[sHandlerName](oEvent);
+		}
+		each(this.aDelegates);
+
 	};
 
 
@@ -45629,17 +45918,22 @@ sap.ui.predefine('sap/ui/core/Element',['jquery.sap.global', '../base/Object', '
 	 * @return {sap.ui.core.Element} Returns <code>this</code> to allow method chaining
 	 * @protected
 	 */
-	Element.prototype.fireEvent = function(sEventId, mParameters) {
+	Element.prototype.fireEvent = function(sEventId, mParameters, bAllowPreventDefault, bEnableEventBubbling) {
 		if (this.hasListeners(sEventId)) {
 			jQuery.sap.interaction.notifyStepStart(this);
 		}
-		// clone 'arguments' and modify clone to be strict mode compatible
-		var aArgs = Array.prototype.slice.apply(arguments);
-		// TODO 'id' is somewhat redundant to getSource(), but it is commonly used - fade out with next major release?
-		aArgs[1] = mParameters = mParameters || {};
+
+		// get optional parameters right
+		if (typeof mParameters === 'boolean') {
+			bEnableEventBubbling = bAllowPreventDefault;
+			bAllowPreventDefault = mParameters;
+			mParameters = null;
+		}
+
+		mParameters = mParameters || {};
 		mParameters.id = mParameters.id || this.getId();
-		// 'aArgs' is necessary, as the ManagedObject.fireEvent signature has more parameters
-		return ManagedObject.prototype.fireEvent.apply(this, aArgs);
+
+		return ManagedObject.prototype.fireEvent.call(this, sEventId, mParameters, bAllowPreventDefault, bEnableEventBubbling);
 	};
 
 
@@ -46095,7 +46389,7 @@ sap.ui.predefine('sap/ui/core/Element',['jquery.sap.global', '../base/Object', '
 	};
 
 	/**
-	 * Allows the parent of a control to enhance the aria information during rendering
+	 * Allows the parent of a control to enhance the aria information during rendering.
 	 *
 	 * This function is called by the RenderManager's writeAccessibilityState method
 	 * for the parent of the currently rendered control - if the parent implements it.
@@ -46197,7 +46491,7 @@ sap.ui.predefine('sap/ui/core/ElementMetadata',['jquery.sap.global', 'sap/ui/bas
 	 *
 	 * @class
 	 * @author SAP SE
-	 * @version 1.34.8
+	 * @version 1.36.5
 	 * @since 0.8.6
 	 * @alias sap.ui.core.ElementMetadata
 	 */
@@ -46382,6 +46676,7 @@ sap.ui.predefine('sap/ui/core/FocusHandler',['jquery.sap.global', '../Device', '
 		 * @param {Element} oRootRef e.g. document.body
 		 * @param {sap.ui.core.Core} oCore Reference to the Core implementation
 		 * @alias sap.ui.core.FocusHandler
+		 * @extends sap.ui.base.Object
 		 * @private
 		 */
 		var FocusHandler = BaseObject.extend("sap.ui.core.FocusHandler", /** @lends sap.ui.core.FocusHandler.prototype */ {
@@ -46801,7 +47096,7 @@ sap.ui.predefine('sap/ui/core/LabelEnablement',['jquery.sap.global', '../base/Ma
 	 * @see sap.ui.core.LabelEnablement#enrich
 	 *
 	 * @author SAP SE
-	 * @version 1.34.8
+	 * @version 1.36.5
 	 * @protected
 	 * @alias sap.ui.core.LabelEnablement
 	 * @namespace
@@ -47014,7 +47309,7 @@ sap.ui.predefine('sap/ui/core/Locale',['jquery.sap.global', 'sap/ui/base/Object'
 		 *
 		 * @extends sap.ui.base.Object
 		 * @author SAP SE
-		 * @version 1.34.8
+		 * @version 1.36.5
 		 * @constructor
 		 * @public
 		 * @alias sap.ui.core.Locale
@@ -47449,7 +47744,7 @@ sap.ui.predefine('sap/ui/core/Manifest',['jquery.sap.global', 'sap/ui/base/Objec
 	 * @class The Manifest class.
 	 * @extends sap.ui.base.Object
 	 * @author SAP SE
-	 * @version 1.34.8
+	 * @version 1.36.5
 	 * @alias sap.ui.core.Manifest
 	 * @since 1.33.0
 	 */
@@ -47916,7 +48211,7 @@ sap.ui.predefine('sap/ui/core/RenderManager',[
 	 *
 	 * @extends sap.ui.base.Object
 	 * @author Jens Pflueger
-	 * @version 1.34.8
+	 * @version 1.36.5
 	 * @constructor
 	 * @alias sap.ui.core.RenderManager
 	 * @public
@@ -49262,8 +49557,9 @@ sap.ui.predefine('sap/ui/core/ResizeHandler',['jquery.sap.global', 'sap/ui/base/
 	 *
 	 * @namespace
 	 * @alias sap.ui.core.ResizeHandler
+	 * @extends sap.ui.base.Object
 	 * @author SAP SE
-	 * @version 1.34.8
+	 * @version 1.36.5
 	 * @public
 	 */
 
@@ -49891,7 +50187,7 @@ sap.ui.predefine('sap/ui/core/UIArea',['jquery.sap.global', 'sap/ui/base/Managed
 	 *
 	 * @extends sap.ui.base.ManagedObject
 	 * @author SAP SE
-	 * @version 1.34.8
+	 * @version 1.36.5
 	 * @param {sap.ui.core.Core} oCore internal API of the <core>Core</code> that manages this UIArea
 	 * @param {object} [oRootNode] reference to the Dom Node that should be 'hosting' the UI Area.
 	 * @public
@@ -50350,7 +50646,9 @@ sap.ui.predefine('sap/ui/core/UIArea',['jquery.sap.global', 'sap/ui/base/Managed
 		} else { // only partial update (invalidated controls)
 
 			var isRenderedTogetherWithAncestor = function(oCandidate) {
-				do {
+
+				for (;;) {
+
 					// Controls that implement marker interface sap.ui.core.PopupInterface are by contract not rendered by their parent.
 					// Therefore the search for to-be-rendered ancestors must be stopped when such a control is reached.
 					if ( oCandidate.getMetadata && oCandidate.getMetadata().isInstanceOf("sap.ui.core.PopupInterface") ) {
@@ -50359,13 +50657,24 @@ sap.ui.predefine('sap/ui/core/UIArea',['jquery.sap.global', 'sap/ui/base/Managed
 
 					oCandidate = oCandidate.getParent();
 
-					if ( oCandidate && mInvalidatedControls.hasOwnProperty(oCandidate.getId()) ) {
+					// If the candidate is null/undefined or the UIArea itself
+					// they do-while loop will be interrupted
+					if ( !oCandidate || oCandidate === that ) {
+						return false;
+					}
+
+					// If the candidate is listed in the invalidated controls map
+					// it will be re-rendered together with the UIArea. Inline
+					// templates are a special case because they share their ID
+					// with the UIArea and therefore the detection will ignore
+					// the inline templates since they should be re-rendered with
+					// their UIArea.
+					if ( mInvalidatedControls.hasOwnProperty(oCandidate.getId()) ) {
 						return true;
 					}
 
-				} while ( oCandidate && oCandidate !== that )
+				}
 
-				return false;
 			};
 
 			for (var n in mInvalidatedControls) {
@@ -50441,7 +50750,7 @@ sap.ui.predefine('sap/ui/core/UIArea',['jquery.sap.global', 'sap/ui/base/Managed
 		}
 	};
 
-	var rEvents = /^(mousedown|mouseup|click|keydown|keyup|keypress|touchstart|touchend|tap|mousewheel|scroll)$/;
+	var rEvents = /^(mousedown|mouseup|click|keydown|keyup|keypress|touchstart|touchend|tap)$/;
 
 	/**
 	 * Handles all incoming DOM events centrally and dispatches the event to the
@@ -50454,11 +50763,6 @@ sap.ui.predefine('sap/ui/core/UIArea',['jquery.sap.global', 'sap/ui/base/Managed
 		var oElement = null,
 			bInteractionRelevant;
 
-		// notify interaction tracing for relevant event
-		bInteractionRelevant = oEvent.type.match(rEvents);
-		if (bInteractionRelevant) {
-			jQuery.sap.interaction.notifyEventStart(oEvent);
-		}
 
 		// TODO: this should be the 'lowest' SAPUI5 Control of this very
 		// UIArea instance's scope -> nesting scenario
@@ -50504,6 +50808,15 @@ sap.ui.predefine('sap/ui/core/UIArea',['jquery.sap.global', 'sap/ui/base/Managed
 		// as control event afterwards!
 		if (this.bLocked || this.oCore.isLocked()) {
 			return;
+		}
+
+		// notify interaction tracing for relevant event - it is important to have evaluated all the previous switches
+		// in case the method would return before dispatching the event, we should not notify an event start
+		if (jQuery.sap.interaction.getActive()) {
+			bInteractionRelevant = oEvent.type.match(rEvents);
+			if (bInteractionRelevant) {
+				jQuery.sap.interaction.notifyEventStart(oEvent);
+			}
 		}
 
 		// retrieve the pseudo event types
@@ -50858,7 +51171,7 @@ sap.ui.predefine('sap/ui/core/message/ControlMessageProcessor',['jquery.sap.glob
 	 * @extends sap.ui.core.message.MessageProcessor
 	 *
 	 * @author SAP SE
-	 * @version 1.34.8
+	 * @version 1.36.5
 	 *
 	 * @constructor
 	 * @public
@@ -50959,19 +51272,19 @@ sap.ui.predefine('sap/ui/core/message/Message',['jquery.sap.global', 'sap/ui/bas
 	 * @extends sap.ui.base.Object
 	 *
 	 * @author SAP SE
-	 * @version 1.34.8
+	 * @version 1.36.5
 	 *
 	 * @constructor
 	 *
 	 * @param {object} [mParameters] (optional) a map which contains the following parameter properties:
-	 * {string} [mParameters.id] The message id: will be defaulted if no id is set
-	 * {string} [mParameters.message] The message text
-	 * {string} [mParameters.description] The message description
-	 * {sap.ui.core.MessageType} [mParameters.type] The message type
-	 * {string} [mParameters.code] The message code
-	 * {sap.ui.core.message.Messageprocessor} [mParameters.processor]
-	 * {string} [mParameters.target] The message target: The syntax MessageProcessor dependent. Read the documentation of the respective MessageProcessor.
-	 * {boolean} [mParameters.persistent] Sets message persistent: If persistent is set true the message
+	 * @param {string} [mParameters.id] The message id: will be defaulted if no id is set
+	 * @param {string} [mParameters.message] The message text
+	 * @param {string} [mParameters.description] The message description
+	 * @param {sap.ui.core.MessageType} [mParameters.type] The message type
+	 * @param {string} [mParameters.code] The message code
+	 * @param {sap.ui.core.message.Messageprocessor} [mParameters.processor]
+	 * @param {string} [mParameters.target] The message target: The syntax MessageProcessor dependent. Read the documentation of the respective MessageProcessor.
+	 * @param {boolean} [mParameters.persistent] Sets message persistent: If persistent is set <code>true</code> the message
 	 * lifecycle controlled by Application
 	 *
 	 * @public
@@ -51243,7 +51556,7 @@ sap.ui.predefine('sap/ui/core/message/MessageManager',[
 	 * @extends sap.ui.base.EventProvider
 	 *
 	 * @author SAP SE
-	 * @version 1.34.8
+	 * @version 1.36.5
 	 *
 	 * @constructor
 	 * @public
@@ -51384,7 +51697,8 @@ sap.ui.predefine('sap/ui/core/message/MessageManager',[
 			var vMessages = that.mMessages[sId] ? that.mMessages[sId] : {};
 			that._sortMessages(vMessages);
 			//push a copy
-			oProcessor.setMessages(jQuery.extend(true, {}, vMessages));
+			vMessages = Object.keys(vMessages).length === 0 ? null : jQuery.extend(true, {}, vMessages);
+			oProcessor.setMessages(vMessages);
 		});
 	};
 
@@ -51397,9 +51711,11 @@ sap.ui.predefine('sap/ui/core/message/MessageManager',[
 	MessageManager.prototype._sortMessages = function(mMessages) {
 		var mSortOrder = {'Error': 0,'Warning':1,'Success':2,'Info':3};
 		jQuery.each(mMessages, function(sTarget, aMessages){
-			aMessages.sort(function(a, b){
-				return mSortOrder[a.type] - mSortOrder[b.type];
-			});
+			if (!aMessages.length === 0) {
+				aMessages.sort(function(a, b){
+					return mSortOrder[a.type] - mSortOrder[b.type];
+				});
+			}
 		});
 	};
 
@@ -51438,7 +51754,8 @@ sap.ui.predefine('sap/ui/core/message/MessageManager',[
 	 * @public
 	 */
 	MessageManager.prototype.removeMessages = function(vMessages) {
-		this._removeMessages(vMessages);
+		// Do not expose bOnlyValidationMessages to public API
+		return this._removeMessages.apply(this, arguments);
 	};
 
 	/**
@@ -51631,7 +51948,7 @@ sap.ui.predefine('sap/ui/core/message/MessageProcessor',['jquery.sap.global', 's
 	 * @extends sap.ui.base.EventProvider
 	 *
 	 * @author SAP SE
-	 * @version 1.34.8
+	 * @version 1.36.5
 	 *
 	 * @constructor
 	 * @public
@@ -52105,47 +52422,6 @@ sap.ui.predefine('sap/ui/model/Binding',['jquery.sap.global', 'sap/ui/base/Event
 	};
 
 	/**
-	 * Checks whether an update of the data state of this binding is required.
-	 *
-	 * @private
-	 */
-	Binding.prototype.checkDataState = function() {
-		var oDataState = this._updateDataState();
-
-		if (oDataState && oDataState.changed()) {
-			this.fireEvent("DataStateChange", { dataState: oDataState });
-
-			if (!this._sDataStateTimout) {
-				this._sDataStateTimout = setTimeout(function() {
-					//console.info("[DS]" + JSON.stringify(jQuery.extend({}, oDataState), null, 4));
-					oDataState.calculateChanges();
-					this.fireEvent("AggregatedDataStateChange", { dataState: oDataState });
-					oDataState.changed(false);
-					this._sDataStateTimout = null;
-				}.bind(this), 0);
-			}
-		}
-	};
-
-	/**
-	 * Updates the data state and returns it.
-	 *
-	 * @returns {sap.ui.model.DataStata} The data state
-	 * @private
-	 */
-	Binding.prototype._updateDataState = function() {
-		var oDataState = this.getDataState();
-		if (this.oModel && this.sPath) {
-			var sResolvedPath = this.oModel.resolve(this.sPath, this.oContext);
-			if (sResolvedPath) {
-				oDataState.setModelMessages(this.oModel.getMessagesByPath(sResolvedPath));
-				oDataState.setLaundering(this.oModel.isLaundering(this.sPath, this.oContext));
-			}
-		}
-		return oDataState;
-	};
-
-	/**
 	 * Refreshes the binding, check whether the model data has been changed and fire change event
 	 * if this is the case. For server side models this should refetch the data from the server.
 	 * To update a control, even if no data has been changed, e.g. to reset a control after failed
@@ -52449,6 +52725,7 @@ sap.ui.predefine('sap/ui/model/ClientContextBinding',['./ContextBinding'],
 	 * @abstract
 	 * @public
 	 * @alias sap.ui.model.ClientContextBinding
+	 * @extends sap.ui.model.ContextBinding
 	 */
 	var ClientContextBinding = ContextBinding.extend("sap.ui.model.ClientContextBinding", /** @lends sap.ui.model.ClientContextBinding.prototype */ {
 
@@ -52799,7 +53076,7 @@ sap.ui.predefine('sap/ui/model/ClientModel',['jquery.sap.global', './ClientConte
 	 * @extends sap.ui.model.Model
 	 *
 	 * @author SAP SE
-	 * @version 1.34.8
+	 * @version 1.36.5
 	 *
 	 * @param {object} oData URL where to load the data from
 	 * @constructor
@@ -53318,6 +53595,10 @@ sap.ui.predefine('sap/ui/model/ClientTreeBinding',['jquery.sap.global', './Chang
 		var that = this,
 			aFilteredContexts = [];
 
+		if (jQuery.isEmptyObject(this.aAllFilters)) {
+			return;
+		}
+
 		this.bIsFiltering = true;
 		var aUnfilteredContexts = this.getNodeContexts(oParentContext);
 		this.bIsFiltering = false;
@@ -53326,10 +53607,6 @@ sap.ui.predefine('sap/ui/model/ClientTreeBinding',['jquery.sap.global', './Chang
 			jQuery.each(aUnfilteredContexts, function(i, oContext){
 				that._applyFilterRecursive(oContext);
 			});
-
-			if (jQuery.isEmptyObject(this.aAllFilters)) {
-				return;
-			}
 
 			aFilteredContexts = FilterProcessor.apply(aUnfilteredContexts, this.aAllFilters, function (oContext, sPath) {
 				return that.oModel.getProperty(sPath, oContext);
@@ -53544,6 +53821,18 @@ sap.ui.predefine('sap/ui/model/CompositeBinding',['jquery.sap.global', './Bindin
 
 		jQuery.each(this.aBindings, function(i, oBinding) {
 			oValue = oBinding.getValue();
+			aValues.push(oValue);
+		});
+
+		return aValues;
+	};
+
+	CompositeBinding.prototype.getOriginalValue = function() {
+		var aValues = [],
+		oValue;
+
+		jQuery.each(this.aBindings, function(i, oBinding) {
+			oValue = oBinding.getDataState().getOriginalValue();
 			aValues.push(oValue);
 		});
 
@@ -53882,79 +54171,29 @@ sap.ui.predefine('sap/ui/model/CompositeBinding',['jquery.sap.global', './Bindin
 	 * @param {boolean} bForceupdate
 	 *
 	 */
-	CompositeBinding.prototype.checkUpdate = function(bForceupdate){
+	CompositeBinding.prototype.checkUpdate = function(bForceUpdate){
+		var bChanged = false;
 		if (this.bPreventUpdate) {
 			return;
 		}
+		var oDataState = this.getDataState();
+		var aOriginalValues = this.getOriginalValue();
+		if (bForceUpdate || !jQuery.sap.equal(aOriginalValues, this.aOriginalValues)) {
+			this.aOriginalValues = aOriginalValues;
+			oDataState.setOriginalValue(aOriginalValues);
+			bChanged = true;
+		}
 		var aValues = this.getValue();
-		if (!jQuery.sap.equal(aValues, this.aValues) || bForceupdate) {// optimize for not firing the events when unneeded
+		if (!jQuery.sap.equal(aValues, this.aValues) || bForceUpdate) {// optimize for not firing the events when unneeded
 			this.aValues = aValues;
-			this.getDataState().setValue(aValues);
+			oDataState.setValue(aValues);
 			this._fireChange({reason: ChangeReason.Change});
+			bChanged = true;
+		}
+		if (bChanged) {
+			this.checkDataState();
 		}
 	};
-
-	CompositeBinding.prototype._updateDataState = function() {
-		var oDataState = PropertyBinding.prototype._updateDataState.apply(this, arguments);
-
-		var mChanges = oDataState.getChanges();
-
-		for (var sKey in mChanges) {
-			switch (sKey) {
-
-				case "originalValue":
-					oDataState.setOriginalValue(mChanges[sKey]);
-					break;
-
-				case "value":
-				case "invalidValue":
-				case "controlMessages":
-				case "modelMessages":
-				case "messages":
-				case "dirty":
-					// Ignore!!
-					break;
-
-				default:
-					oDataState.setProperty(sKey, mChanges[sKey]);
-					break;
-			}
-		}
-
-		if (!oDataState.getInvalidValue()) {
-			var aInvalidValues = oDataState.getInternalProperty("invalidValue");
-			if (aInvalidValues && containsValues(aInvalidValues)) {
-				oDataState.setInvalidValue(aInvalidValues);
-			} else {
-				oDataState.setInvalidValue(null);
-			}
-		}
-
-		return oDataState;
-	};
-
-
-	/**
-	 * Returns false if the given value is null, invalid or an array consisting entirely of null values
-	 *
-	 * @param {any} vValue - A value or an array of values
-	 * @returns {boolean} Whether there were any non-falsy values in the given argument
-	 * @private
-	 */
-	function containsValues(vValue) {
-		if (Array.isArray(vValue)) {
-			for (var i = 0; i < vValue.length; i++) {
-				if (vValue[i] !== null && vValue[i] !== undefined) {
-					return true;
-				}
-			}
-			return false;
-		} else {
-			return !!vValue;
-		}
-
-	}
-
 
 	return CompositeBinding;
 
@@ -54013,7 +54252,7 @@ sap.ui.predefine('sap/ui/model/CompositeDataState',[ 'jquery.sap.global', './Dat
 	 * @extends sap.ui.model.DataState
 	 *
 	 * @author SAP SE
-	 * @version 1.34.8
+	 * @version 1.36.5
 	 *
 	 * @constructor
 	 * @public
@@ -54028,6 +54267,8 @@ sap.ui.predefine('sap/ui/model/CompositeDataState',[ 'jquery.sap.global', './Dat
 			this.mProperties.value = [];
 			this.mProperties.invalidValue = null;
 			this.mProperties.internalValue = [];
+
+			this.mChangedProperties = jQuery.extend({},this.mProperties);
 
 			this.aDataStates = aDataStates;
 		}
@@ -54082,7 +54323,6 @@ sap.ui.predefine('sap/ui/model/CompositeDataState',[ 'jquery.sap.global', './Dat
 
 		var vReturnValue;
 		switch (sProperty) {
-			case "messages":
 			case "modelMessages":
 			case "controlMessages":
 				vReturnValue = vValue;
@@ -54092,12 +54332,137 @@ sap.ui.predefine('sap/ui/model/CompositeDataState',[ 'jquery.sap.global', './Dat
 				break;
 
 			default:
-				vReturnValue = vValue;
+				vReturnValue = aInnerValues || vValue;
 		}
 
 		return vReturnValue;
 	};
 
+	/**
+	 * Returns the array of state messages of the model or undefined
+	 *
+	 * @returns {sap.ui.core.Message[]} the array of messages of the model or null if no {link:sap.ui.core.messages.ModelManager ModelManager} is used.
+	 * @public
+	 */
+	CompositeDataState.prototype.getModelMessages = function() {
+		return this.getProperty("modelMessages");
+	};
+
+	/**
+	 * Sets an array of control state messages.
+	 *
+	 * @param {sap.ui.core.Message[]} the control messages
+	 * @return {sap.ui.model.DataState} <code>this</code> to allow method chaining
+	 * @protected
+	 */
+	CompositeDataState.prototype.getControlMessages = function() {
+		return this.getProperty("controlMessages");
+	};
+
+	/**
+	 * Returns the array of all state messages or null.
+	 * This combines the model and control messages.
+	 *
+	 * @returns {sap.ui.core.Message[]} the array of all messages or null if no {link:sap.ui.core.messages.ModelManager ModelManager} is used.
+	 * @public
+	 */
+	CompositeDataState.prototype.getMessages = function() {
+		return this.aDataStates.reduce(function(aMessages, oDataState) {
+			return aMessages.concat(oDataState.getMessages());
+		}, DataState.prototype.getMessages.apply(this, arguments));
+	};
+
+	/**
+	 * Check if an Array contains values
+	 *
+	 * @param {array} vValue Array for check
+	 * @returns {boolean} bContains Containing inner values
+	 * @private
+	 */
+	CompositeDataState.prototype.containsValues = function(vValue) {
+		if (Array.isArray(vValue)) {
+			for (var i = 0; i < vValue.length; i++) {
+				if (vValue[i] !== null && vValue[i] !== undefined) {
+					return true;
+				}
+			}
+			return false;
+		} else {
+			return !!vValue;
+		}
+	};
+
+	/**
+	 * Returns whether the data state is dirty.
+	 * A data state is dirty if the value was changed
+	 * but is not yet confirmed by a server or the entered value did not yet pass the type validation.
+	 *
+	 * @returns {boolean} true if the data state is dirty
+	 * @public
+	 */
+	CompositeDataState.prototype.isDirty = function() {
+		return this.aDataStates.reduce(function(bIsInvalid, oDataState) {
+			if (oDataState.isDirty()) {
+				return true;
+			} else {
+				return bIsInvalid;
+			}
+		}, DataState.prototype.isDirty.apply(this, arguments));
+	};
+
+	/**
+	 * Returns whether the data state is dirty in the UI control.
+	 * A data state is dirty in the UI control if the entered value did not yet pass the type validation.
+	 *
+	 * @returns {boolean} true if the data state is dirty
+	 * @public
+	 */
+	CompositeDataState.prototype.isControlDirty = function() {
+		return this.aDataStates.reduce(function(bIsInvalid, oDataState) {
+			if (oDataState.isControlDirty()) {
+				return true;
+			} else {
+				return bIsInvalid;
+			}
+		}, DataState.prototype.isControlDirty.apply(this, arguments));
+	};
+
+	/**
+	 * Returns whether the data state is in laundering.
+	 * If data is send to the server the data state becomes laundering until the
+	 * data was accepted or rejected.
+	 *
+	 * @returns {boolean} true if the data is laundering
+	 * @public
+	 */
+	CompositeDataState.prototype.isLaundering = function() {
+		return this.aDataStates.reduce(function(bIsInvalid, oDataState) {
+			if (oDataState.isLaundering()) {
+				return true;
+			} else {
+				return bIsInvalid;
+			}
+		}, DataState.prototype.isLaundering.apply(this, arguments));
+	};
+
+	/**
+	 * Returns the dirty value of a binding that was rejected by a type validation.
+	 * This value was of an incorrect type and could not be applied to the model. If the
+	 * value was not rejected it will return null. In this case the current
+	 * model value can be accessed using the <code>getValue</code> method.
+	 *
+	 * @returns {any} the value that was rejected or null
+	 * @public
+	 */
+	CompositeDataState.prototype.getInvalidValue = function() {
+		var vValue = this.mChangedProperties["invalidValue"];
+		var aInvalidValues = this.getInternalProperty("invalidValue");
+		if (aInvalidValues && this.containsValues(aInvalidValues)) {
+			vValue = aInvalidValues;
+			this.setInvalidValue(aInvalidValues);
+		}
+		return vValue;
+	};
 	/**
 	 * Returns or sets whether the data state is changed.
 	 * As long as changed was not set to false the data state is dirty
@@ -54110,7 +54475,7 @@ sap.ui.predefine('sap/ui/model/CompositeDataState',[ 'jquery.sap.global', './Dat
 	CompositeDataState.prototype.changed = function(bNewState) {
 		if (bNewState === false) {
 			//clear the changed properties as changed was reset;
-			this.mChangedProperties = {};
+			this.mProperties = jQuery.extend({},this.mChangedProperties);
 
 			this.aDataStates.forEach(function(oDataState) {
 				oDataState.changed(false);
@@ -54124,11 +54489,8 @@ sap.ui.predefine('sap/ui/model/CompositeDataState',[ 'jquery.sap.global', './Dat
 			} else {
 				return oDataState.changed();
 			}
-		}, !jQuery.isEmptyObject(this.mChangedProperties));
+		}, !jQuery.sap.equal(this.mProperties, this.mChangedProperties));
 	};
-
-
-
 
 	/**
 	 * Returns the changes of the data state in a map that the control can use in the
@@ -54152,7 +54514,6 @@ sap.ui.predefine('sap/ui/model/CompositeDataState',[ 'jquery.sap.global', './Dat
 
 		var aInnerChanges = [];
 		for (i = 0; i < this.aDataStates.length; ++i) {
-			this.aDataStates[i].calculateChanges();
 			mChanges = this.aDataStates[i].getChanges();
 
 			for (sKey in mChanges) {
@@ -54186,6 +54547,21 @@ sap.ui.predefine('sap/ui/model/CompositeDataState',[ 'jquery.sap.global', './Dat
 			}
 		}
 
+		jQuery.each(this.mChangedProperties,function(sProperty, vValue) {
+			if (this.mChangedProperties[sProperty] &&
+					!jQuery.sap.equal(this.mChangedProperties[sProperty],this.mProperties[sProperty])) {
+				mAllChanges[sProperty] = {};
+				mAllChanges[sProperty].value = this.mChangedProperties[sProperty];
+				mAllChanges[sProperty].oldValue = this.mProperties[sProperty];
+			}
+		}.bind(this));
+		var aMessages = this.getMessages();
+		var aOldMessages = this._getOldMessages();
+		if (aMessages.length > 0 || aOldMessages.length > 0) {
+			mAllChanges["messages"] = {};
+			mAllChanges["messages"].oldValue = aOldMessages;
+			mAllChanges["messages"].value = aMessages;
+		}
 		return mAllChanges;
 	};
 
@@ -54218,7 +54594,7 @@ sap.ui.predefine('sap/ui/model/CompositeType',['./FormatException', './ParseExce
 	 * @extends sap.ui.model.SimpleType
 	 *
 	 * @author SAP SE
-	 * @version 1.34.8
+	 * @version 1.36.5
 	 *
 	 * @constructor
 	 * @param {object} [oFormatOptions] options as provided by concrete subclasses
@@ -54325,6 +54701,7 @@ sap.ui.predefine('sap/ui/model/Context',['sap/ui/base/Object'],
 	 * @abstract
 	 * @public
 	 * @alias sap.ui.model.Context
+	 * @extends sap.ui.base.Object
 	 */
 	var Context = BaseObject.extend("sap.ui.model.Context", /** @lends sap.ui.model.Context.prototype */ {
 
@@ -54525,7 +54902,7 @@ sap.ui.predefine('sap/ui/model/DataState',[ 'jquery.sap.global', '../base/Object
 	 * @extends sap.ui.base.Object
 	 *
 	 * @author SAP SE
-	 * @version 1.34.8
+	 * @version 1.36.5
 	 *
 	 * @constructor
 	 * @public
@@ -54543,10 +54920,12 @@ sap.ui.predefine('sap/ui/model/DataState',[ 'jquery.sap.global', '../base/Object
 				value : null,
 				invalidValue: null,
 				internalValue: null,
-				dirty: false
+				dirty: false,
+				messages: []
+
 			};
 			//the resolved path of the binding to check for binding context changes
-			this.mChangedProperties = {};
+			this.mChangedProperties = jQuery.extend({},this.mProperties);
 		}
 	});
 
@@ -54572,47 +54951,7 @@ sap.ui.predefine('sap/ui/model/DataState',[ 'jquery.sap.global', '../base/Object
 	 * @private
 	 */
 	DataState.prototype.setProperty = function(sProperty, vValue) {
-		if (sProperty === "modelMessages" || sProperty === "controlMessages") {
-			vValue = vValue || [];
-		}
-
-		vValue = vValue === undefined ? null : vValue;
-
-		if (jQuery.sap.equal(this.mProperties[sProperty], vValue)) {
-			delete this.mChangedProperties[sProperty];
-		} else {
-			if (!this.mChangedProperties[sProperty]) {
-				this.mChangedProperties[sProperty] = {};
-			}
-
-			this.mChangedProperties[sProperty] = {
-				oldValue : jQuery.isArray(this.mProperties[sProperty]) ? this.mProperties[sProperty].slice(0) : this.mProperties[sProperty],
-				value: vValue
-			};
-		}
-
-		if (sProperty === "modelMessages" || sProperty === "controlMessages") {
-			var aOldMessages = [].concat(this.mProperties["modelMessages"], this.mProperties["controlMessages"]);
-			this._sortMessages(aOldMessages);
-			this.mChangedProperties["messages"] = {
-				oldValue : aOldMessages,
-				value: this.getMessages().slice(0)
-			};
-
-			if (this.mChangedProperties["messages"].oldValue.length === 0 && this.mChangedProperties["messages"].value.length === 0) {
-				delete this.mChangedProperties["messages"];
-			}
-		}
-
-		if (this.isDirty() !== this.mProperties["dirty"]) {
-			this.mChangedProperties.dirty = {
-				oldValue: !this.isDirty(),
-				value: this.isDirty()
-			};
-		} else {
-			delete this.mChangedProperties.dirty;
-		}
-
+		this.mChangedProperties[sProperty] = vValue;
 		return this;
 	};
 
@@ -54639,39 +54978,7 @@ sap.ui.predefine('sap/ui/model/DataState',[ 'jquery.sap.global', '../base/Object
 	 * @private
 	 */
 	DataState.prototype.getProperty = function(sProperty) {
-		var vReturnValue;
-		var vControlDirty;
-
-		var fnGetCurrentValue = function(sName) {
-			return ((this.mChangedProperties[sName] && "value" in this.mChangedProperties[sName]) ? this.mChangedProperties[sName].value : this.mProperties[sName]);
-		}.bind(this);
-
-		switch (sProperty) {
-			case 'messages':
-				var aMessages = [],
-					aControlMessages = fnGetCurrentValue('controlMessages'),
-					aModelMessages = fnGetCurrentValue('modelMessages');
-
-				if (aModelMessages || aControlMessages) {
-					aMessages = aMessages.concat(aModelMessages ? aModelMessages : [], aControlMessages ? aControlMessages : []);
-					this._sortMessages(aMessages);
-				}
-				vReturnValue = aMessages; //combine all messages
-				break;
-			case 'controlDirty':
-				vControlDirty = !!(this.mChangedProperties.invalidValue && this.mChangedProperties.invalidValue.value);
-				vReturnValue = vControlDirty;
-				break;
-			case 'dirty':
-				var vValue = this.mChangedProperties && this.mChangedProperties.value && ("value" in this.mChangedProperties.value) ? this.mChangedProperties.value.value : this.mProperties.value;
-				var vOriginalValue = this.mChangedProperties && this.mChangedProperties.originalValue && ("value" in this.mChangedProperties.originalValue) ? this.mChangedProperties.originalValue.value : this.mProperties.originalValue;
-				vControlDirty = !!(this.mChangedProperties.invalidValue && this.mChangedProperties.invalidValue.value);
-				vReturnValue = vControlDirty || !jQuery.sap.equal(vValue, vOriginalValue);
-				break;
-			default:
-				vReturnValue = fnGetCurrentValue(sProperty);
-		}
-		return vReturnValue;
+		return this.mChangedProperties[sProperty];
 	};
 
 	/**
@@ -54682,7 +54989,32 @@ sap.ui.predefine('sap/ui/model/DataState',[ 'jquery.sap.global', '../base/Object
 	 * @public
 	 */
 	DataState.prototype.getMessages = function() {
-		return this.getProperty("messages");
+		var aMessages = [];
+		var aControlMessages = this.mChangedProperties['controlMessages'];
+		var aModelMessages = this.mChangedProperties['modelMessages'];
+		if (aModelMessages || aControlMessages) {
+			aMessages = aMessages.concat(aModelMessages ? aModelMessages : [], aControlMessages ? aControlMessages : []);
+			this._sortMessages(aMessages);
+		}
+		return aMessages;
+	};
+
+	/**
+	 * Returns the array of all old state messages or null.
+	 * This combines the model and control messages.
+	 *
+	 * @returns {sap.ui.core.Message[]} the array of all messages or null if no {link:sap.ui.core.messages.ModelManager ModelManager} is used.
+	 * @private
+	 */
+	DataState.prototype._getOldMessages = function() {
+		var aMessages = [];
+		var aControlMessages = this.mProperties['controlMessages'];
+		var aModelMessages = this.mProperties['modelMessages'];
+		if (aModelMessages || aControlMessages) {
+			aMessages = aMessages.concat(aModelMessages ? aModelMessages : [], aControlMessages ? aControlMessages : []);
+			this._sortMessages(aMessages);
+		}
+		return aMessages;
 	};
 
 	/**
@@ -54693,7 +55025,8 @@ sap.ui.predefine('sap/ui/model/DataState',[ 'jquery.sap.global', '../base/Object
 	 * @public
 	 */
 	DataState.prototype.setModelMessages = function(aMessages) {
-		return this.setProperty("modelMessages", aMessages);
+		this.mChangedProperties["modelMessages"] = aMessages || [];
+		return this;
 	};
 
 	/**
@@ -54714,7 +55047,8 @@ sap.ui.predefine('sap/ui/model/DataState',[ 'jquery.sap.global', '../base/Object
 	 * @protected
 	 */
 	DataState.prototype.setControlMessages = function(aMessages) {
-		return this.setProperty("controlMessages", aMessages);
+		this.mChangedProperties["controlMessages"] = aMessages || [];
+		return this;
 	};
 
 	/**
@@ -54737,7 +55071,11 @@ sap.ui.predefine('sap/ui/model/DataState',[ 'jquery.sap.global', '../base/Object
 	 * @public
 	 */
 	DataState.prototype.isDirty = function() {
-		return this.getProperty("dirty");
+		var vValue = this.mChangedProperties["value"];
+		var vOriginalValue = this.mChangedProperties["originalValue"];
+		var vControlDirty = this.mChangedProperties["invalidValue"];
+
+		return !!vControlDirty || !jQuery.sap.equal(vValue, vOriginalValue);
 	};
 
 	/**
@@ -54748,9 +55086,8 @@ sap.ui.predefine('sap/ui/model/DataState',[ 'jquery.sap.global', '../base/Object
 	 * @public
 	 */
 	DataState.prototype.isControlDirty = function() {
-		return this.getProperty("controlDirty");
+		return !!this.mChangedProperties["invalidValue"];
 	};
-
 
 	/**
 	 * Returns whether the data state is in laundering.
@@ -54761,7 +55098,7 @@ sap.ui.predefine('sap/ui/model/DataState',[ 'jquery.sap.global', '../base/Object
 	 * @public
 	 */
 	 DataState.prototype.isLaundering = function() {
-		return this.getProperty("laundering");
+		return this.mChangedProperties["laundering"];
 	};
 
 	/**
@@ -54772,7 +55109,8 @@ sap.ui.predefine('sap/ui/model/DataState',[ 'jquery.sap.global', '../base/Object
 	 * @protected
 	 */
 	DataState.prototype.setLaundering = function(bLaundering) {
-		return this.setProperty("laundering",bLaundering);
+		this.mChangedProperties["laundering"] = bLaundering;
+		return this;
 	};
 
 	/**
@@ -54793,7 +55131,8 @@ sap.ui.predefine('sap/ui/model/DataState',[ 'jquery.sap.global', '../base/Object
 	 * @protected
 	 */
 	DataState.prototype.setValue = function(vValue) {
-		return this.setProperty("value", vValue);
+		this.mChangedProperties["value"] = vValue || null;
+		return this;
 	};
 
 	/**
@@ -54817,7 +55156,8 @@ sap.ui.predefine('sap/ui/model/DataState',[ 'jquery.sap.global', '../base/Object
 	 * @protected
 	 */
 	DataState.prototype.setInvalidValue = function(vInvalidValue) {
-		return this.setProperty("invalidValue",vInvalidValue);
+		this.mChangedProperties["invalidValue"] = vInvalidValue || null;
+		return this;
 	};
 
 	/**
@@ -54839,7 +55179,8 @@ sap.ui.predefine('sap/ui/model/DataState',[ 'jquery.sap.global', '../base/Object
 	 * @protected
 	 */
 	DataState.prototype.setOriginalValue = function(vOriginalValue) {
-		return this.setProperty("originalValue",vOriginalValue);
+		this.mChangedProperties["originalValue"] = vOriginalValue || null;
+		return this;
 	};
 
 	/**
@@ -54854,9 +55195,9 @@ sap.ui.predefine('sap/ui/model/DataState',[ 'jquery.sap.global', '../base/Object
 	DataState.prototype.changed = function(bNewState) {
 		if (bNewState === false) {
 			//clear the changed properties as changed was reset;
-			this.mChangedProperties = {};
+			this.mProperties = jQuery.extend({},this.mChangedProperties);
 		}
-		return !jQuery.isEmptyObject(this.mChangedProperties);
+		return !jQuery.sap.equal(this.mChangedProperties,this.mProperties);
 	};
 
 	/**
@@ -54875,7 +55216,22 @@ sap.ui.predefine('sap/ui/model/DataState',[ 'jquery.sap.global', '../base/Object
 	 * @public
 	 */
 	DataState.prototype.getChanges = function() {
-		return this.mChangedProperties;
+		var mChanges = {};
+		jQuery.each(this.mChangedProperties,function(sProperty, vValue) {
+			if (!jQuery.sap.equal(this.mChangedProperties[sProperty],this.mProperties[sProperty])) {
+				mChanges[sProperty] = {};
+				mChanges[sProperty].value = this.mChangedProperties[sProperty];
+				mChanges[sProperty].oldValue = this.mProperties[sProperty];
+			}
+		}.bind(this));
+		var aMessages = this.getMessages();
+		var aOldMessages = this._getOldMessages();
+		if (aMessages.length > 0 || aOldMessages.length > 0) {
+			mChanges["messages"] = {};
+			mChanges["messages"].oldValue = aOldMessages;
+			mChanges["messages"].value = aMessages;
+		}
+		return mChanges;
 	};
 
 	return DataState;
@@ -54957,6 +55313,7 @@ sap.ui.predefine('sap/ui/model/Filter',['jquery.sap.global', 'sap/ui/base/Object
 	 * @param {any} [oValue2] Second value to use with the given filter operator (only for some operators)
 	 * @public
 	 * @alias sap.ui.model.Filter
+	 * @extends sap.ui.base.Object
 	 */
 	var Filter = BaseObject.extend("sap.ui.model.Filter", /** @lends sap.ui.model.Filter.prototype */ {
 		constructor : function(vFilterInfo, vOperator, oValue1, oValue2){
@@ -55124,12 +55481,13 @@ sap.ui.predefine('sap/ui/model/FilterProcessor',['jquery.sap.global'],
 	 * @param {array} aData the data array to be filtered
 	 * @param {array} aFilters the filter array
 	 * @param {function} fnGetValue the method to get the actual value to filter on
+	 * @return {array} a new array instance containing the filtered data set
 	 *
 	 * @public
 	 */
 	FilterProcessor.apply = function(aData, aFilters, fnGetValue){
 		if (!aFilters || aFilters.length == 0) {
-			return aData;
+			return aData.slice();
 		}
 		var that = this,
 			oFilterGroups = {},
@@ -55677,7 +56035,7 @@ sap.ui.predefine('sap/ui/model/Model',['jquery.sap.global', 'sap/ui/core/message
 	 * @extends sap.ui.core.message.MessageProcessor
 	 *
 	 * @author SAP SE
-	 * @version 1.34.8
+	 * @version 1.36.5
 	 *
 	 * @constructor
 	 * @public
@@ -56353,7 +56711,7 @@ sap.ui.predefine('sap/ui/model/Model',['jquery.sap.global', 'sap/ui/core/message
 	};
 
 	/**
-	 * Set the maximum number of entries which are used for for list bindings.
+	 * Set the maximum number of entries which are used for list bindings.
 	 * @param {int} iSizeLimit collection size limit
 	 * @public
 	 */
@@ -56404,7 +56762,6 @@ sap.ui.predefine('sap/ui/model/Model',['jquery.sap.global', 'sap/ui/core/message
 		var aBindings = this.aBindings.slice(0);
 		jQuery.each(aBindings, function(iIndex, oBinding) {
 			oBinding.checkUpdate(bForceUpdate);
-			oBinding.checkDataState(bForceUpdate);
 		});
 	};
 
@@ -56415,8 +56772,12 @@ sap.ui.predefine('sap/ui/model/Model',['jquery.sap.global', 'sap/ui/core/message
 	 * @public
 	 */
 	Model.prototype.setMessages = function(mMessages) {
+		//jQuery.sap.assert(!jQuery.isEmptyObject(mMessages), this + ": mMessages passed as emptyObject( {} ). Use null instead!");
+
 		this.mMessages = mMessages || {};
-		this.checkMessages();
+		if (mMessages !== null || !jQuery.sap.equal(this.mMessages, mMessages)) {
+			this.checkMessages();
+		}
 	};
 
 	/**
@@ -56438,7 +56799,9 @@ sap.ui.predefine('sap/ui/model/Model',['jquery.sap.global', 'sap/ui/core/message
 	 */
 	Model.prototype.checkMessages = function() {
 		jQuery.each(this.aBindings, function(iIndex, oBinding) {
-			oBinding.checkDataState();
+			if (oBinding.checkDataState) {
+				oBinding.checkDataState();
+			}
 		});
 	};
 
@@ -56724,6 +57087,37 @@ sap.ui.predefine('sap/ui/model/PropertyBinding',['jquery.sap.global', './Binding
 		this.sMode = sBindingMode;
 	};
 
+	/**
+	 * Checks whether an update of the data state of this binding is required.
+	 *
+	 * @param {map} mPaths A Map of paths to check if update needed
+	 * @private
+	 */
+	PropertyBinding.prototype.checkDataState = function(mPaths) {
+		var sResolvedPath = this.oModel ? this.oModel.resolve(this.sPath, this.oContext) : null;
+		var that = this;
+		if (!mPaths || sResolvedPath && sResolvedPath in mPaths) {
+			var oDataState = this.getDataState();
+			if (sResolvedPath) {
+				oDataState.setModelMessages(this.oModel.getMessagesByPath(sResolvedPath));
+			}
+			if (oDataState && oDataState.changed()) {
+				if (this.mEventRegistry["DataStateChange"]) {
+					this.fireEvent("DataStateChange", { dataState: oDataState });
+				}
+				if (this.mEventRegistry["AggregatedDataStateChange"]) {
+					if (!this._sDataStateTimout) {
+						this._sDataStateTimout = setTimeout(function() {
+							that.fireEvent("AggregatedDataStateChange", { dataState: oDataState });
+							oDataState.changed(false);
+							that._sDataStateTimout = null;
+						}, 0);
+					}
+				}
+			}
+		}
+	};
+
 	return PropertyBinding;
 
 });
@@ -56750,7 +57144,7 @@ sap.ui.predefine('sap/ui/model/SimpleType',['sap/ui/base/DataType', './FormatExc
 	 * @extends sap.ui.model.Type
 	 *
 	 * @author SAP SE
-	 * @version 1.34.8
+	 * @version 1.36.5
 	 *
 	 * @constructor
 	 * @param {object} [oFormatOptions] options as provided by concrete subclasses
@@ -56881,23 +57275,27 @@ sap.ui.predefine('sap/ui/model/Sorter',['sap/ui/base/Object'],
 	 *
 	 * @param {String} sPath the binding path used for sorting
 	 * @param {boolean} [bDescending=false] whether the sort order should be descending
-	 * @param {boolean|function} vGroup configure grouping of the content, can either be true to enable grouping
+	 * @param {boolean|function} [vGroup] configure grouping of the content, can either be true to enable grouping
 	 *        based on the raw model property value, or a function which calculates the group value out of the
 	 *        context (e.g. oContext.getProperty("date").getYear() for year grouping). The control needs to
 	 *        implement the grouping behaviour for the aggregation which you want to group. In case a function
 	 *        is provided it must either return a primitive type value as the group key or an object containing
 	 *        a "key" property an may contain additional properties needed for group visualization.
+	 * @param {function} [fnComparator] a custom comparator function, which is used for clientside sorting instead
+	 *        of the default comparator method.
 	 * @public
 	 * @alias sap.ui.model.Sorter
+	 * @extends sap.ui.base.Object
 	 */
 	var Sorter = BaseObject.extend("sap.ui.model.Sorter", /** @lends sap.ui.model.Sorter.prototype */ {
 
-		constructor : function(sPath, bDescending, vGroup){
+		constructor : function(sPath, bDescending, vGroup, fnComparator){
 			if (typeof sPath === "object") {
 				var oSorterData = sPath;
 				sPath = oSorterData.path;
 				bDescending = oSorterData.descending;
 				vGroup = oSorterData.group;
+				fnComparator = oSorterData.comparator;
 			}
 			this.sPath = sPath;
 
@@ -56917,6 +57315,7 @@ sap.ui.predefine('sap/ui/model/Sorter',['sap/ui/base/Object'],
 			if (typeof vGroup == "function") {
 				this.fnGroup = vGroup;
 			}
+			this.fnCompare = fnComparator;
 		},
 
 		/**
@@ -56939,6 +57338,43 @@ sap.ui.predefine('sap/ui/model/Sorter',['sap/ui/base/Object'],
 
 	});
 
+	/**
+	 * Compares two values
+	 *
+	 * This is the default comparator function used for clientside sorting, if no custom comparator is given in the
+	 * constructor. It does compare just by using equal/less than/greater than with automatic type casting, except
+	 * for null values, which are always last, and string values where localeCompare is used.
+	 *
+	 * The comparator method returns -1, 0 or 1, depending on the order of the two items and is
+	 * suitable to be used as a comparator method for Array.sort.
+	 *
+	 * @param {any} a the first value to compare
+	 * @param {any} b the second value to compare
+	 * @returns {integer} -1, 0 or 1 depending on the compare result
+	 * @public
+	 */
+	Sorter.defaultComparator = function(a, b) {
+		if (a == b) {
+			return 0;
+		}
+		if (b == null) {
+			return -1;
+		}
+		if (a == null) {
+			return 1;
+		}
+		if (typeof a == "string" && typeof b == "string") {
+			return a.localeCompare(b);
+		}
+		if (a < b) {
+			return -1;
+		}
+		if (a > b) {
+			return 1;
+		}
+		return 0;
+	};
+
 	return Sorter;
 
 });
@@ -56948,8 +57384,8 @@ sap.ui.predefine('sap/ui/model/Sorter',['sap/ui/base/Object'],
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
-sap.ui.predefine('sap/ui/model/SorterProcessor',['jquery.sap.global'],
-	function(jQuery) {
+sap.ui.predefine('sap/ui/model/SorterProcessor',['jquery.sap.global', './Sorter'],
+	function(jQuery, Sorter) {
 	"use strict";
 
 	/**
@@ -56967,6 +57403,8 @@ sap.ui.predefine('sap/ui/model/SorterProcessor',['jquery.sap.global'],
 	 * @param {array} aSorters the sorter array
 	 * @param {function} fnGetValue the method to get the actual value use for sorting
 	 * @param {function} [fnGetKey] method to get a key value for the given data entry
+	 * @return {array} the given array instance after applying the sort order
+	 *
 	 * @public
 	 */
 	SorterProcessor.apply = function(aData, aSorters, fnGetValue, fnGetKey){
@@ -56980,35 +57418,10 @@ sap.ui.predefine('sap/ui/model/SorterProcessor',['jquery.sap.global'],
 			return aData;
 		}
 
-		function fnCompare(a, b) {
-			if (a == b) {
-				return 0;
-			}
-			if (b == null) {
-				return -1;
-			}
-			if (a == null) {
-				return 1;
-			}
-			if (typeof a == "string" && typeof b == "string") {
-				return a.localeCompare(b);
-			}
-			if (a < b) {
-				return -1;
-			}
-			if (a > b) {
-				return 1;
-			}
-			return 0;
-		}
-
 		for (var j = 0; j < aSorters.length; j++) {
 			oSorter = aSorters[j];
-			aCompareFunctions[j] = oSorter.fnCompare;
+			aCompareFunctions[j] = oSorter.fnCompare || Sorter.defaultComparator;
 
-			if (!aCompareFunctions[j]) {
-				aCompareFunctions[j] = fnCompare;
-			}
 			/*eslint-disable no-loop-func */
 			jQuery.each(aData, function(i, vRef) {
 				oValue = fnGetValue(vRef, oSorter.sPath);
@@ -57097,6 +57510,7 @@ sap.ui.predefine('sap/ui/model/TreeBinding',['./Binding'],
 	 *         [aSorters=null] predefined sap.ui.model.sorter/s contained in an array (optional)
 	 * @public
 	 * @alias sap.ui.model.TreeBinding
+	 * @extends sap.ui.model.Binding
 	 */
 	var TreeBinding = Binding.extend("sap.ui.model.TreeBinding", /** @lends sap.ui.model.TreeBinding.prototype */ {
 
@@ -57262,7 +57676,7 @@ sap.ui.predefine('sap/ui/model/Type',['sap/ui/base/Object'],
 	 * @extends sap.ui.base.Object
 	 *
 	 * @author SAP SE
-	 * @version 1.34.8
+	 * @version 1.36.5
 	 *
 	 * @constructor
 	 * @public
@@ -57355,7 +57769,7 @@ sap.ui.predefine('sap/ui/model/message/MessageListBinding',['jquery.sap.global',
 	 * @param {sap.ui.model.Filter|sap.ui.model.Filter[]} [aFilters] predefined filter/s (can be either a filter or an array of filters)
 	 * @param {object} [mParameters]
 	 * @alias sap.ui.model.message.MessageListBinding
-	 * @extends sap.ui.model.ListBinding
+	 * @extends sap.ui.model.ClientListBinding
 	 */
 	var MessageListBinding = ClientListBinding.extend("sap.ui.model.message.MessageListBinding");
 
@@ -57512,10 +57926,10 @@ sap.ui.predefine('sap/ui/model/message/MessageModel',['jquery.sap.global', 'sap/
 	 * @class
 	 * Model implementation for Messages
 	 * 	 *
-	 * @extends sap.ui.model.Model
+	 * @extends sap.ui.model.ClientModel
 	 *
 	 * @author SAP SE
-	 * @version 1.34.8
+	 * @version 1.36.5
 	 *
 	 * @param {sap.ui.core.message.MessageManager} oMessageManager The MessageManager instance
 	 * @constructor
@@ -57657,7 +58071,7 @@ sap.ui.predefine('sap/ui/model/message/MessagePropertyBinding',['jquery.sap.glob
 	 * @param {sap.ui.model.Context} oContext
 	 * @param {object} [mParameters]
 	 * @alias sap.ui.model.message.MessagePropertyBinding
-	 * @extends sap.ui.model.PropertyBinding
+	 * @extends sap.ui.model.ClientPropertyBinding
 	 */
 	var MessagePropertyBinding = ClientPropertyBinding.extend("sap.ui.model.message.MessagePropertyBinding");
 

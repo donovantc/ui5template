@@ -20,7 +20,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		 * @extends sap.ui.core.Control
 		 *
 		 * @author SAP SE
-		 * @version 1.34.9
+		 * @version 1.36.5
 		 *
 		 * @constructor
 		 * @public
@@ -160,7 +160,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				oDomRef.setAttribute("aria-checked", "false");
 			}
 
-			$Switch.addClass(CSS_CLASS + "Trans");
+			if (sap.ui.getCore().getConfiguration().getAnimation()) {
+				$Switch.addClass(CSS_CLASS + "Trans");
+			}
 
 			// remove inline styles
 			oSwitchInnerDomRef.style.cssText = "";

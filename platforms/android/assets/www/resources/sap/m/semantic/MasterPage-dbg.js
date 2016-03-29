@@ -24,6 +24,7 @@ sap.ui.define([ 'jquery.sap.global', "sap/m/semantic/SemanticPage", "sap/m/seman
 	 * 	<li>{@link sap.m.semantic.ForwardAction}</li>
 	 * 	<li>{@link sap.m.semantic.EditAction}</li>
 	 * 	<li>{@link sap.m.semantic.SaveAction}</li>
+	 * 	<li>{@link sap.m.semantic.DeleteAction}</li>
 	 * 	<li>{@link sap.m.semantic.CancelAction}</li>
 	 * 	<li>{@link sap.m.semantic.MultiSelectAction}</li>
 	 * 	<li>{@link sap.m.semantic.FlagAction}</li>
@@ -40,7 +41,7 @@ sap.ui.define([ 'jquery.sap.global', "sap/m/semantic/SemanticPage", "sap/m/seman
 	 * @extends sap.m.semantic.SemanticPage
 	 *
 	 * @author SAP SE
-	 * @version 1.34.9
+	 * @version 1.36.5
 	 *
 	 * @constructor
 	 * @public
@@ -50,6 +51,7 @@ sap.ui.define([ 'jquery.sap.global', "sap/m/semantic/SemanticPage", "sap/m/seman
 	 */
 	var MasterPage = SemanticPage.extend("sap.m.semantic.MasterPage", /** @lends sap.m.semantic.MasterPage.prototype */ {
 		metadata: {
+			library: "sap.m",
 			aggregations: {
 				/**
 				 * Add action
@@ -105,6 +107,13 @@ sap.ui.define([ 'jquery.sap.global', "sap/m/semantic/SemanticPage", "sap/m/seman
 				 */
 				saveAction: {
 					type: "sap.m.semantic.SaveAction",
+					multiple: false
+				},
+				/**
+				 * Delete action
+				 */
+				deleteAction: {
+					type: "sap.m.semantic.DeleteAction",
 					multiple: false
 				},
 				/**

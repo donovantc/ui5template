@@ -22,7 +22,7 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 	 * @extends sap.m.Input
 	 *
 	 * @author SAP SE
-	 * @version 1.34.8
+	 * @version 1.36.5
 	 *
 	 * @constructor
 	 * @public
@@ -40,7 +40,13 @@ sap.ui.define(['jquery.sap.global', './Input', './Token', './library', 'sap/ui/c
 			 * The default value is false.
 			 * @since 1.28
 			 */
-			enableMultiLineMode : {type : "boolean", group : "Behavior", defaultValue : false}
+			enableMultiLineMode : {type : "boolean", group : "Behavior", defaultValue : false},
+
+			/**
+			 * The max number of tokens that is allowed in MultiInput.
+			 * @since 1.36
+			 */
+			maxTokens: {type : "int", group : "Behavior"}
 		},
 		aggregations : {
 

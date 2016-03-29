@@ -19,16 +19,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType',
 	 * @namespace
 	 * @name sap.ui.layout
 	 * @author SAP SE
-	 * @version 1.34.8
+	 * @version 1.36.5
 	 * @public
 	 */
 
 	// delegate further initialization of this library to the Core
 	sap.ui.getCore().initLibrary({
 		name : "sap.ui.layout",
-		version: "1.34.8",
+		version: "1.36.5",
 		dependencies : ["sap.ui.core"],
 		types: [
+			"sap.ui.layout.BackgroundDesign",
 			"sap.ui.layout.GridIndent",
 			"sap.ui.layout.GridPosition",
 			"sap.ui.layout.GridSpan",
@@ -66,6 +67,35 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType',
 		]
 	});
 
+	/**
+	 * Available Background Design.
+	 *
+	 * @enum {string}
+	 * @public
+	 * @since 1.36.0
+	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	sap.ui.layout.BackgroundDesign = {
+
+		/**
+		 * A solid background color dependent on the theme.
+		 * @public
+		 */
+		Solid : "Solid",
+
+		/**
+		 * Transparent background.
+		 * @public
+		 */
+		Transparent : "Transparent",
+
+		/**
+		 * A translucent background depending on the opacity value of the theme.
+		 * @public
+		 */
+		Translucent : "Translucent"
+
+	};
 
 	/**
 	 * @classdesc A string type that represents Grid's indent values for large, medium and small screens. Allowed values are separated by space Letters L, M or S followed by number of columns from 1 to 11 that the container has to take, for example: "L2 M4 S6", "M11", "s10" or "l4 m4". Note that the parameters have to be provided in the order large  medium  small.
@@ -271,13 +301,35 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType',
 		OnMinimumWidth: "OnMinimumWidth"
 	};
 
+	/**
+	 * The position of the side content - End (default) and Begin.
+	 *
+	 * @enum {string}
+	 * @public
+	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	sap.ui.layout.SideContentPosition = {
+		/**
+		 * The side content is on the right side of the main container in left-to-right mode and on the left side in right-to-left mode.
+		 * @public
+		 */
+		End : "End",
+
+		/**
+		 * The side content is on the left side of the main container in left-to-right mode and on the right side in right-to-left mode.
+		 * @public
+		 */
+		Begin : "Begin"
+	};
+
 	// factory for Form to create labels an buttons to be overwritten by commons and mobile library
 	if (!sap.ui.layout.form.FormHelper) {
 		sap.ui.layout.form.FormHelper = {
 			createLabel: function(sText){ throw new Error("no Label control available!"); }, /* must return a Label control */
-			createButton: function(sId, fPressFunction, oThis){ throw new Error("no Button control available!"); }, /* must return a button control */
+			createButton: function(sId, fPressFunction){ throw new Error("no Button control available!"); }, /* must return a button control */
 			setButtonContent: function(oButton, sText, sTooltip, sIcon, sIconHovered){ throw new Error("no Button control available!"); },
 			addFormClass: function(){ return null; },
+			setToolbar: function(oToolbar){ return oToolbar; }, /* allow to overwrite toolbar settings */
 			bArrowKeySupport: true, /* enables the keyboard support for arrow keys */
 			bFinal: false /* if true, the helper must not be overwritten by an other library */
 		};

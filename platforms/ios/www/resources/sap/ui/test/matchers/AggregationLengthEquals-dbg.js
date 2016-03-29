@@ -8,16 +8,7 @@ sap.ui.define(['jquery.sap.global', './Matcher'], function (jQuery, Matcher) {
 	"use strict";
 
 	/**
-	 * AggregationLengthEquals - checks if an aggregation contains at least one entry
-	 *
-	 * 	 * The settings supported by AggregationLengthEquals are:
-	 * <ul>
-	 *	<li>Properties
-	 * 		<ul>
-	 *			<li>{@link #getName name} : string</li>
-	 * 		</ul>
-	 * </li>
-	 * </ul>
+	 * AggregationLengthEquals - checks if an aggregation contains at least one entry.
 	 *
 	 * @class AggregationLengthEquals - checks if an aggregation contains at least one entry
 	 * @param {object} [mSettings] optional map/JSON-object with initial settings for the new AggregationLengthEqualsMatcher
@@ -32,9 +23,15 @@ sap.ui.define(['jquery.sap.global', './Matcher'], function (jQuery, Matcher) {
 		metadata : {
 			publicMethods : [ "isMatching" ],
 			properties : {
+				/**
+				 * The name of the aggregation that is used for matching.
+				 */
 				name : {
 					type : "string"
 				},
+				/**
+				 * The length that aggregation <code>name</code> should have.
+				 */
 				length : {
 					type : "int"
 				}

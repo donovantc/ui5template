@@ -19,7 +19,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './P
 		 * @extends sap.m.ComboBoxBase
 		 *
 		 * @author SAP SE
-		 * @version 1.34.9
+		 * @version 1.36.5
 		 *
 		 * @constructor
 		 * @public
@@ -135,6 +135,20 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './P
 			}
 		};
 
+		ComboBox.prototype._getSelectedItemText = function(vItem) {
+			vItem = vItem || this.getSelectedItem();
+
+			if (!vItem) {
+				vItem = this.getDefaultSelectedItem();
+			}
+
+			if (vItem) {
+				return vItem.getText();
+			}
+
+			return "";
+		};
+
 		ComboBox.prototype._callMethodInControl = function(sFunctionName, aArgs) {
 			var oList = this.getList();
 
@@ -196,7 +210,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './P
 			// initialize Popover
 			var oPicker = new Popover({
 				showHeader: false,
-				placement: sap.m.PlacementType.Vertical,
+				placement: sap.m.PlacementType.VerticalPreferredBottom,
 				offsetX: 0,
 				offsetY: 0,
 				initialFocus: this,
@@ -216,30 +230,23 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './P
 		 */
 		ComboBox.prototype._decoratePopover = function(oPopover) {
 			var that = this;
-
-			oPopover._setMinWidth = function(sWidth) {
-				var oPickerDomRef = this.getDomRef();
-
-				if (oPickerDomRef) {
-					oPickerDomRef.style.minWidth = sWidth;
-				}
-			};
-
 			oPopover.open = function() {
 				return this.openBy(that);
 			};
 		};
 
 		/**
-		 * Required adaptations after rendering of the Popover.
+		 * Required adaptations before rendering of the popover.
 		 *
 		 * @private
 		 */
-		ComboBox.prototype.onAfterRenderingPopover = function() {
+		ComboBox.prototype.onBeforeRenderingPopover = function() {
 			var oPopover = this.getPicker(),
 				sWidth = (this.$().outerWidth() / parseFloat(sap.m.BaseFontSize)) + "rem";
 
-			oPopover._setMinWidth(sWidth);
+			if (oPopover) {
+				oPopover.setContentMinWidth(sWidth);
+			}
 		};
 
 		/* ----------------------------------------------------------- */
@@ -1188,18 +1195,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './P
 			}
 
 			this.setSelection(vItem);
-
-			// set the input value
-			if (vItem) {
-				this.setValue(vItem.getText());
-				/*eslint-disable no-cond-assign */
-			} else if (vItem = this.getDefaultSelectedItem()) {
-				/*eslint-enable no-cond-assign */
-				this.setValue(vItem.getText());
-			} else {
-				this.setValue("");
-			}
-
+			this.setValue(this._getSelectedItemText(vItem));
 			return this;
 		};
 
@@ -1224,18 +1220,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './P
 
 			this.setSelection(vItem);
 			vItem = this.getSelectedItem();
-
-			// set the input value
-			if (vItem) {
-				this.setValue(vItem.getText());
-				/*eslint-disable no-cond-assign */
-			} else if (vItem = this.getDefaultSelectedItem()) {
-				/*eslint-enable no-cond-assign */
-				this.setValue(vItem.getText());
-			} else {
-				this.setValue("");
-			}
-
+			this.setValue(this._getSelectedItemText(vItem));
 			return this;
 		};
 
@@ -1264,20 +1249,8 @@ sap.ui.define(['jquery.sap.global', './ComboBoxBase', './ComboBoxRenderer', './P
 			var oItem = this.getItemByKey(sKey);
 
 			if (oItem) {
-
 				this.setSelection(oItem);
-
-				// set the input value
-				if (oItem) {
-					this.setValue(oItem.getText());
-					/*eslint-disable no-cond-assign */
-				} else if (oItem = this.getDefaultSelectedItem()) {
-					/*eslint-enable no-cond-assign */
-					this.setValue(oItem.getText());
-				} else {
-					this.setValue("");
-				}
-
+				this.setValue(this._getSelectedItemText(oItem));
 				return this;
 			}
 

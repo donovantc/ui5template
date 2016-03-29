@@ -4,8 +4,8 @@
  * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
  */
 
-sap.ui.define(['jquery.sap.global', 'sap/m/PageAccessibleLandmarkInfo'],
-	function(jQuery, PageAccessibleLandmarkInfo) {
+sap.ui.define(['sap/m/PageAccessibleLandmarkInfo'],
+	function(PageAccessibleLandmarkInfo) {
 	"use strict";
 
 

@@ -67,7 +67,7 @@ var mSeverityMap = {
  * @extends sap.ui.core.message.MessageParser
  *
  * @author SAP SE
- * @version 1.34.9
+ * @version 1.36.5
  * @public
  * @abstract
  * @alias sap.ui.model.odata.ODataMessageParser
@@ -493,7 +493,18 @@ ODataMessageParser.prototype._createTarget = function(oMessageObject, mRequestIn
  */
 ODataMessageParser.prototype._parseHeader = function(/* ref: */ aMessages, oResponse, mRequestInfo) {
 	var sField = this.getHeaderField();
-	if (!oResponse.headers || !oResponse.headers[sField]) {
+	if (!oResponse.headers) {
+		// No header set, nothing to process
+		return;
+	}
+
+	for (var sKey in oResponse.headers) {
+		if (sKey.toLowerCase() === sField.toLowerCase()) {
+			sField = sKey;
+		}
+	}
+
+	if (!oResponse.headers[sField]) {
 		// No header set, nothing to process
 		return;
 	}

@@ -21,7 +21,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './ListI
 	 * @extends sap.m.ListItemBase
 	 *
 	 * @author SAP SE
-	 * @version 1.34.9
+	 * @version 1.36.5
 	 *
 	 * @constructor
 	 * @public
@@ -146,7 +146,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './ListI
 		});
 
 		/**
-		 * @type {sap.m.Link}
+		 * @type {sap.m.Button}
 		 * @private
 		 */
 		this._collapseButton = new sap.m.Button({

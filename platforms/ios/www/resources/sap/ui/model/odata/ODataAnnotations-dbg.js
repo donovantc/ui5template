@@ -22,12 +22,12 @@ sap.ui.define(['./AnnotationParser', 'jquery.sap.global', 'sap/ui/Device', 'sap/
 	 *
 	 * @author SAP SE
 	 * @version
-	 * 1.34.8
+	 * 1.36.5
 	 *
 	 * @constructor
 	 * @public
 	 * @alias sap.ui.model.odata.ODataAnnotations
-	 * @extends sap.ui.base.Object
+	 * @extends sap.ui.base.EventProvider
 	 */
 	var ODataAnnotations = EventProvider.extend("sap.ui.model.odata.ODataAnnotations", /** @lends sap.ui.model.odata.ODataAnnotations.prototype */
 	{
@@ -493,16 +493,16 @@ sap.ui.define(['./AnnotationParser', 'jquery.sap.global', 'sap/ui/Device', 'sap/
 							results: mResults
 						};
 
-						if (that.bAsync) {
-							that.fireLoaded(mSuccess);
-						} else {
-							that.oLoadEvent = jQuery.sap.delayedCall(0, that, that.fireLoaded, [ mSuccess ]);
-						}
+						that.fireLoaded(mSuccess);
 					}
 
 					if (mResults.success.length < aUris.length) {
 						// firefailed is called for every failed URL in _loadFromUrl
-						fnReject(mResults);
+						var oError = new Error("At least one annotation failed to load/parse/merge");
+						oError.annotations = mResults.annotations;
+						oError.success = mResults.success;
+						oError.fail = mResults.fail;
+						fnReject(oError);
 					} else {
 						// All URLs could be loaded and parsed
 						fnResolve(mResults);

@@ -87,6 +87,9 @@
         "sap/ui/unified/calendar/YearPicker.js",
         "sap/ui/core/date/UniversalDate.js",
         "sap/ui/unified/library.js"
+      ],
+      "condRequired": [
+        "sap/ui/core/Popup.js"
       ]
     },
     {
@@ -110,6 +113,9 @@
         "sap/ui/unified/calendar/YearPicker.js",
         "sap/ui/core/date/UniversalDate.js",
         "sap/ui/unified/library.js"
+      ],
+      "condRequired": [
+        "sap/ui/core/Popup.js"
       ]
     },
     {
@@ -216,6 +222,9 @@
         "sap/ui/unified/calendar/YearPicker.js",
         "sap/ui/core/date/UniversalDate.js",
         "sap/ui/unified/library.js"
+      ],
+      "condRequired": [
+        "sap/ui/core/Popup.js"
       ]
     },
     {
@@ -237,6 +246,9 @@
         "sap/ui/unified/calendar/YearPicker.js",
         "sap/ui/core/date/UniversalDate.js",
         "sap/ui/unified/library.js"
+      ],
+      "condRequired": [
+        "sap/ui/core/Popup.js"
       ]
     },
     {
@@ -334,6 +346,9 @@
         "sap/ui/unified/calendar/YearPicker.js",
         "sap/ui/core/date/UniversalDate.js",
         "sap/ui/unified/library.js"
+      ],
+      "condRequired": [
+        "sap/ui/core/Popup.js"
       ]
     },
     {
@@ -356,6 +371,9 @@
         "sap/ui/unified/calendar/YearPicker.js",
         "sap/ui/core/date/UniversalDate.js",
         "sap/ui/unified/library.js"
+      ],
+      "condRequired": [
+        "sap/ui/core/Popup.js"
       ]
     },
     {
@@ -761,6 +779,9 @@
       "required": [
         "jquery.sap.global.js",
         "sap/ui/unified/library.js"
+      ],
+      "condRequired": [
+        "sap/ui/core/theming/Parameters.js"
       ]
     },
     {
@@ -769,6 +790,9 @@
       "required": [
         "jquery.sap.global.js",
         "sap/ui/unified/library.js"
+      ],
+      "condRequired": [
+        "sap/ui/core/theming/Parameters.js"
       ]
     },
     {
@@ -1585,50 +1609,62 @@
     },
     {
       "name": "themes/base/Calendar.less",
+      "designtime": true,
       "theme": "base"
     },
     {
       "name": "themes/base/CalendarLegend.less",
+      "designtime": true,
       "theme": "base"
     },
     {
       "name": "themes/base/CalendarRow.less",
+      "designtime": true,
       "theme": "base"
     },
     {
       "name": "themes/base/ContentSwitcher.less",
+      "designtime": true,
       "theme": "base"
     },
     {
       "name": "themes/base/Currency.less",
+      "designtime": true,
       "theme": "base"
     },
     {
       "name": "themes/base/FileUploader.less",
+      "designtime": true,
       "theme": "base"
     },
     {
       "name": "themes/base/Menu.less",
+      "designtime": true,
       "theme": "base"
     },
     {
       "name": "themes/base/Shell.less",
+      "designtime": true,
       "theme": "base"
     },
     {
       "name": "themes/base/ShellHeader.less",
+      "designtime": true,
       "theme": "base"
     },
     {
       "name": "themes/base/ShellLayout.less",
+      "designtime": true,
       "theme": "base"
     },
     {
       "name": "themes/base/ShellOverlay.less",
+      "designtime": true,
       "theme": "base"
     },
     {
       "name": "themes/base/SplitContainer.less",
+      "designtime": true,
       "theme": "base"
     },
     {
@@ -1663,10 +1699,12 @@
     },
     {
       "name": "themes/base/library.less",
+      "designtime": true,
       "theme": "base"
     },
     {
       "name": "themes/base/library.source.less",
+      "designtime": true,
       "theme": "base"
     },
     {
@@ -1675,42 +1713,52 @@
     },
     {
       "name": "themes/sap_hcb/Calendar.less",
+      "designtime": true,
       "theme": "sap_hcb"
     },
     {
       "name": "themes/sap_hcb/CalendarLegend.less",
+      "designtime": true,
       "theme": "sap_hcb"
     },
     {
       "name": "themes/sap_hcb/CalendarRow.less",
+      "designtime": true,
       "theme": "sap_hcb"
     },
     {
       "name": "themes/sap_hcb/Currency.less",
+      "designtime": true,
       "theme": "sap_hcb"
     },
     {
       "name": "themes/sap_hcb/FileUploader.less",
+      "designtime": true,
       "theme": "sap_hcb"
     },
     {
       "name": "themes/sap_hcb/Menu.less",
+      "designtime": true,
       "theme": "sap_hcb"
     },
     {
       "name": "themes/sap_hcb/Shell.less",
+      "designtime": true,
       "theme": "sap_hcb"
     },
     {
       "name": "themes/sap_hcb/ShellHeader.less",
+      "designtime": true,
       "theme": "sap_hcb"
     },
     {
       "name": "themes/sap_hcb/ShellLayout.less",
+      "designtime": true,
       "theme": "sap_hcb"
     },
     {
       "name": "themes/sap_hcb/ShellOverlay.less",
+      "designtime": true,
       "theme": "sap_hcb"
     },
     {
@@ -1745,10 +1793,12 @@
     },
     {
       "name": "themes/sap_hcb/library.less",
+      "designtime": true,
       "theme": "sap_hcb"
     },
     {
       "name": "themes/sap_hcb/library.source.less",
+      "designtime": true,
       "theme": "sap_hcb"
     }
   ]

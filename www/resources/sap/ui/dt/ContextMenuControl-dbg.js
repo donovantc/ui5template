@@ -16,7 +16,7 @@ sap.ui.define([
 	 * @class Context - Menu for Design time
 	 * @extends sap.ui.unified.Menu
 	 * @author SAP SE
-	 * @version 1.34.9
+	 * @version 1.36.5
 	 * @constructor
 	 * @private
 	 * @since 1.34
@@ -89,8 +89,14 @@ sap.ui.define([
 		aMenuItems.forEach(function(oItem) {
 			if (!oItem.available || oItem.available(oElement)) {
 				var bEnabled = !oItem.enabled || oItem.enabled(oElement);
+
+				var sText = oItem.text;
+				if (typeof oItem.text === "function") {
+					sText = oItem.text(oElement);
+				}
+
 				var oMenuItem = new MenuItem({
-					text: oItem.text,
+					text: sText,
 					enabled: bEnabled
 				});
 				oMenuItem.data({

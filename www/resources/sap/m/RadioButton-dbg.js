@@ -25,7 +25,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.34.9
+	 * @version 1.36.5
 	 *
 	 * @constructor
 	 * @public
@@ -181,8 +181,43 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	RadioButton.prototype.ontouchend = function(oEvent) {
-
 		this.$().toggleClass("sapMRbBTouched", false);
+	};
+
+	RadioButton.prototype.onsapnext = function(oEvent) {
+		this._arrowsHandler("next");
+		return this;
+	};
+
+	RadioButton.prototype.onsapprevious = function(oEvent) {
+		this._arrowsHandler();
+		return this;
+	};
+
+	/**
+	 * Determines which button becomes focused after an arrow key is pressed.
+	 * @param {string} sPosition Button to be focused (next/previous)
+	 * @private
+	 */
+	RadioButton.prototype._arrowsHandler = function(sPosition) {
+		if (this.getParent() instanceof sap.m.RadioButtonGroup) {
+			return;
+		}
+
+		var aVisibleBtnsGroup = this._groupNames[this.getGroupName()].filter(function(oRB) {
+			return (oRB.getDomRef() && oRB.getEnabled());
+		});
+
+		var iButtonIndex = aVisibleBtnsGroup.indexOf(this);
+
+		if (sPosition === "next") {
+			var iNextPosition = (iButtonIndex + 1) % aVisibleBtnsGroup.length;
+			aVisibleBtnsGroup[iNextPosition].focus();
+		} else {
+			iButtonIndex = iButtonIndex - 1;
+			var iPreviousPosition = iButtonIndex < 0 ? aVisibleBtnsGroup.length - 1 : iButtonIndex;
+			aVisibleBtnsGroup[iPreviousPosition].focus();
+		}
 	};
 
 	// #############################################################################
@@ -307,8 +342,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 */
 	RadioButton.prototype.setGroupName = function(sGroupName) {
 		this._changeGroupName(sGroupName, this.getGroupName());
-
 		return this.setProperty("groupName", sGroupName, true);
+	};
+
+	RadioButton.prototype.onBeforeRendering = function() {
+		return this._changeGroupName(this.getGroupName());
 	};
 
 	/**
@@ -387,6 +425,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		var aNewGroup = this._groupNames[sNewGroupName],
 			aOldGroup = this._groupNames[sOldGroupName];
 
+		if (aOldGroup && aOldGroup.indexOf(this) !== -1) {
+			aOldGroup.splice(aOldGroup.indexOf(this), 1);
+		}
+
 		if (!aNewGroup) {
 			aNewGroup = this._groupNames[sNewGroupName] = [];
 		}
@@ -395,9 +437,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			aNewGroup.push(this);
 		}
 
-		if (aOldGroup && aOldGroup.indexOf(this) !== -1) {
-			aOldGroup.splice(aOldGroup.indexOf(this), 1);
-		}
 	};
 
 	return RadioButton;

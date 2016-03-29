@@ -48,7 +48,7 @@ sap.ui.define([
 		},
 
 		/**
-		 * Checks if the control has a filled aggregation with at least one control that have a property equaling propertyName/Value
+		 * Checks if the control has a filled aggregation with at least one control that have a property equaling propertyName/Value.
 		 *
 		 * @param {sap.ui.core.Control} oControl the control that is checked by the matcher
 		 * @return {boolean} true if the Aggregation set in the property aggregationName is filled, false if it is not.

@@ -11,18 +11,15 @@ sap.ui.define([
 ], function(jQuery, Plugin, ViewSerializer, JSZip, Element, ElementMetadata, UIArea, View /*, Controller */) {
 	"use strict";
 
-
 	/*global Blob, Uint8Array, alert */
-
-
 
 		var $ = jQuery;
 		/**
 		 * Creates an instance of sap.ui.core.support.plugins.ControlTree.
 		 * @class This class represents the ControlTree plugin for the support tool functionality of UI5. This class is internal and all its functions must not be used by an application.
 		 * @abstract
-		 * @extends sap.ui.base.Object
-		 * @version 1.34.9
+		 * @extends sap.ui.core.support.Plugin
+		 * @version 1.36.5
 		 * @constructor
 		 * @private
 		 * @alias sap.ui.core.support.plugins.ControlTree

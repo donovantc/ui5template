@@ -28,7 +28,7 @@ sap.ui.define([
 	 * or plain HTML content to popup on the screen like menues, dialogs, drop down boxes.
 	 *
 	 * It allows the controls to be aligned to other dom elements
-	 * using the {@link sap.ui.core.Popup.Dock.html} method. With it you can define where
+	 * using the {@link sap.ui.core.Popup.Dock} method. With it you can define where
 	 * the popup should be docked. One can dock the popup to the top bottom left or right side
 	 * of a dom ref.
 	 *
@@ -60,6 +60,7 @@ sap.ui.define([
 	 * @constructor
 	 * @public
 	 * @alias sap.ui.core.Popup
+	 * @extends sap.ui.base.ManagedObject
 	 */
 	var Popup = ManagedObject.extend("sap.ui.core.Popup", /** @lends sap.ui.core.Popup.prototype */ {
 		constructor: function (oContent, bModal, bShadow, bAutoClose) {
@@ -848,7 +849,15 @@ sap.ui.define([
 		}.bind(this);
 
 		// and show the popup content
-		$Ref.toggleClass("sapUiShd", this._bShadow).hide().css("visibility", "visible");
+		$Ref.toggleClass("sapUiShd", this._bShadow);
+
+		var oDomRef = $Ref[0];
+
+		if (oDomRef) {
+			oDomRef.style.display = "none";
+			oDomRef.style.visibility = "visible";
+		}
+
 		if (iRealDuration == 0) { // do not animate if there is a duration == 0
 			fnDuringOpen();
 			fnOpened.apply(); // otherwise call after-opening functions directly

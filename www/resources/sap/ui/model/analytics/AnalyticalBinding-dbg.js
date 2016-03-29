@@ -39,6 +39,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 	 * @param {object}
 	 *            [mParameters=null] additional control parameters. Supported parameters are:
 	 *            <ul>
+	 *            <li>entitySet: if set, it explicitly specifies the entity set addressed by the last segment of the given binding path</li>
 	 *            <li>useBatchRequests: if true, multiple OData requests will be wrapped into a single batch request, wherever possible</li>
 	 *            <li>provideGrandTotals: if true, grand total values will be provided for all bound measure properties</li>
 	 *            <li>provideTotalResultSize: if true, the total number of matching entries in the bound OData entity set will be provided</li>
@@ -142,6 +143,23 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 		}
 
 	});
+
+	/**
+	 * Setter for context
+	 * @param {Object} oContext the new context object
+	 */
+	AnalyticalBinding.prototype.setContext = function (oContext) {
+		if (this.oContext !== oContext) {
+			this.oContext = oContext;
+			this.oDataState = null;
+
+			if (this.isRelative()) {
+				if (!this.bInitial) {
+					this.refresh();
+				}
+			}
+		}
+	};
 
 	/**
 	 * Initialize binding. Fires a change if data is already available ($expand) or a refresh.
@@ -2173,10 +2191,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 		}
 
 		function fnError (oError) {
-			that._deregisterHandleOfCompletedRequest(iRequestHandleId);
-			for (var j = -1, oExecutedRequestDetails; (oExecutedRequestDetails = aExecutedRequestDetails[++j]) !== undefined;) {
-				that._deregisterCompletedRequest(oExecutedRequestDetails.sRequestId);
-				that._cleanupGroupingForCompletedRequest(oExecutedRequestDetails.sRequestId);
+			// in case the error is triggered by an aborted request, don't cleanup the handle queue, as it is already cleaned-up by the abort call.
+			if (oError && oError.statusText != "abort") {
+				that._deregisterHandleOfCompletedRequest(iRequestHandleId);
+				for (var j = -1, oExecutedRequestDetails; (oExecutedRequestDetails = aExecutedRequestDetails[++j]) !== undefined;) {
+					that._deregisterCompletedRequest(oExecutedRequestDetails.sRequestId);
+					that._cleanupGroupingForCompletedRequest(oExecutedRequestDetails.sRequestId);
+				}
 			}
 			if (iCurrentAnalyticalInfoVersion != that.iAnalyticalInfoVersionNumber) {
 				// discard responses for outdated analytical infos
@@ -2319,11 +2340,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Ch
 			}
 		}
 
-		function fnError(oData) {
+		function fnError(oError) {
+			// in case the error is triggered by an aborted request, don't cleanup the request-handle queue, as it is already cleaned-up by the abort call
+			if (oError && oError.statusText == "abort") {
+				that.fireDataReceived();
+				return;
+			}
 
 			that._deregisterHandleOfCompletedRequest(iRequestHandleId);
 			that._deregisterCompletedRequest(oRequestDetails.sRequestId);
 			that._cleanupGroupingForCompletedRequest(oRequestDetails.sRequestId);
+
 			if (iCurrentAnalyticalInfoVersion != that.iAnalyticalInfoVersionNumber) {
 				// discard responses for outdated analytical infos
 				return;

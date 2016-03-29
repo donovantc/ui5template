@@ -19,10 +19,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ContextBinding'],
 	 * @param {sap.ui.model.Model} oModel
 	 * @param {String} sPath
 	 * @param {Object} oContext
-	 * @param {Object} [mParameters]
+	 * @param {map} [mParameters] a map which contains additional parameters for the binding.
+	 * @param {string} [mParameters.expand] for the OData <code>$expand</code> query option parameter which should be included in the request
+	 * @param {string} [mParameters.select] for the OData <code>$select</code> query option parameter which should be included in the request
+	 * @param {map} [mParameters.custom] an optional map of custom query parameters. Custom parameters must not start with <code>$</code>.
 	 * @abstract
 	 * @public
 	 * @alias sap.ui.model.odata.v2.ODataContextBinding
+	 * @extends sap.ui.model.ContextBinding
 	 */
 	var ODataContextBinding = ContextBinding.extend("sap.ui.model.odata.v2.ODataContextBinding", /** @lends sap.ui.model.odata.v2.ODataContextBinding.prototype */ {
 

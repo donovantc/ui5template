@@ -22,7 +22,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 	 * @extends sap.m.InputBase
 	 *
 	 * @author SAP SE
-	 * @version 1.34.8
+	 * @version 1.36.5
 	 *
 	 * @constructor
 	 * @public
@@ -1192,7 +1192,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 						oInput._$input.val(oInput
 								._getInputValue(oInput._oPopupInput
 										.getValue()));
-						oInput._changeProxy();
+						oInput.onChange();
 
 						if (oInput instanceof sap.m.MultiInput ) {
 							oInput._validateCurrentText();
@@ -1288,7 +1288,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 						} else {
 							// call _getInputValue to apply the maxLength to the typed value
 							oInput._$input.val(oInput._getInputValue(sNewValue));
-							oInput._changeProxy();
+							oInput.onChange();
 						}
 						oInput._iPopupListSelectedIndex = -1;
 						if (!(oInput._bUseDialog && oInput instanceof sap.m.MultiInput && oInput._isMultiLineMode)) {
@@ -1603,7 +1603,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 					} else {
 						// call _getInputValue to apply the maxLength to the typed value
 						that._$input.val(that._getInputValue(sNewValue));
-						that._changeProxy();
+						that.onChange();
 					}
 					that._iPopupListSelectedIndex = -1;
 

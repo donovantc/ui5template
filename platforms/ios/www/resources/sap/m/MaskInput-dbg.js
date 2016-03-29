@@ -21,7 +21,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInputRule', 'sap/ui/co
 	 *
 	 * @author SAP SE
 	 * @extends sap.m.InputBase
-	 * @version 1.34.8
+	 * @version 1.36.5
 	 *
 	 * @constructor
 	 * @public
@@ -197,21 +197,42 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInputRule', 'sap/ui/co
 	};
 
 	/**
-	 * Handles enter key. Shell subclasses override this method, bare in mind that [Enter] is not really handled here, but in {@link sap.m.MaskInput.prototype#onkeydown}.
-	 * @param {jQuery.Event} oEvent The event object.
+	 * Handles [Enter] key.
+	 * <b>Note:</b> If subclasses override this method, keep in mind that [Enter] is not really handled here, but in {@link sap.m.MaskInput.prototype#onkeydown}.
+	 * @param {jQuery.Event} oEvent The event object
 	 */
 	MaskInput.prototype.onsapenter = function(oEvent) {
 		//Nothing to do, [Enter] is already handled in onkeydown part.
 	};
 
 	/**
-	 * Handles the <code>sapfocusleave</code> event of the mask input.
-	 * Shell subclasses override this method, bare in mind that <code>sapfocusleave</code> is handled by {@link sap.m.MaskInput.prototype#onfocusout}.
-	 *
-	 * @param {jQuery.Event} oEvent The event object.
+	 * Handles the <code>sapfocusleave</code> event of the MaskInput.
+	 <b>Note:</b> If subclasses override this method, keep in mind that the <code>sapfocusleave</code> event is handled by {@link sap.m.MaskInput.prototype#onfocusout}.
+	 * @param {jQuery.Event} oEvent The event object
 	 * @private
 	 */
 	MaskInput.prototype.onsapfocusleave = function(oEvent) {
+	};
+
+	/**
+	 * Setter for property <code>value</code>.
+	 *
+	 * @param {string} sValue New value for property <code>value</code>.
+	 * @return {sap.m.MaskInput} <code>this</code> to allow method chaining.
+	 * @public
+	 */
+	MaskInput.prototype.setValue = function (sValue) {
+		InputBase.prototype.setValue.apply(this, arguments);
+		// We need this check in case when MaskInput is initialized with specific value
+		if (!this._oTempValue) {
+			this._setupMaskVariables();
+		}
+		// We don't need to validate the initial MaskInput placeholder value because this will break setting it to empty value on focusout
+		if (this._oTempValue._aInitial.join('') !== sValue) {
+			this._applyRules(sValue);
+		}
+
+		return this;
 	};
 
 	MaskInput.prototype.addAggregation = function (sAggregationName, oObject, bSuppressInvalidate) {

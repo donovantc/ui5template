@@ -58,6 +58,7 @@
         "sap/m/ToolbarRenderer.js",
         "sap/ui/core/Renderer.js",
         "sap/m/BarInPageEnabler.js",
+        "sap/uxap/AnchorBar.js",
         "sap/uxap/library.js"
       ]
     },
@@ -68,6 +69,7 @@
         "sap/m/ToolbarRenderer.js",
         "sap/ui/core/Renderer.js",
         "sap/m/BarInPageEnabler.js",
+        "sap/uxap/AnchorBar.js",
         "sap/uxap/library.js"
       ]
     },
@@ -285,7 +287,7 @@
         "sap/ui/core/IconPool.js",
         "sap/ui/core/CustomData.js",
         "sap/ui/Device.js",
-        "sap/uxap/BreadCrumbs.js",
+        "sap/m/Breadcrumbs.js",
         "sap/uxap/ObjectPageHeaderActionButton.js",
         "sap/ui/core/ResizeHandler.js",
         "sap/m/Text.js",
@@ -308,7 +310,7 @@
         "sap/ui/core/IconPool.js",
         "sap/ui/core/CustomData.js",
         "sap/ui/Device.js",
-        "sap/uxap/BreadCrumbs.js",
+        "sap/m/Breadcrumbs.js",
         "sap/uxap/ObjectPageHeaderActionButton.js",
         "sap/ui/core/ResizeHandler.js",
         "sap/m/Text.js",
@@ -605,8 +607,8 @@
         "sap/uxap/ObjectPageSubSectionMode.js",
         "sap/uxap/BlockBase.js",
         "sap/ui/layout/GridData.js",
-        "sap/ui/core/ResizeHandler.js",
         "sap/m/Button.js",
+        "sap/ui/Device.js",
         "sap/uxap/library.js"
       ]
     },
@@ -625,8 +627,8 @@
         "sap/uxap/ObjectPageSubSectionMode.js",
         "sap/uxap/BlockBase.js",
         "sap/ui/layout/GridData.js",
-        "sap/ui/core/ResizeHandler.js",
         "sap/m/Button.js",
+        "sap/ui/Device.js",
         "sap/uxap/library.js"
       ]
     },
@@ -858,6 +860,12 @@
       "raw": "i18n/i18n.properties"
     },
     {
+      "name": "i18n/i18n_kk.properties",
+      "module": "sap/uxap/i18n/i18n_kk.properties",
+      "locale": "kk",
+      "raw": "i18n/i18n.properties"
+    },
+    {
       "name": "i18n/i18n_ko.properties",
       "module": "sap/uxap/i18n/i18n_ko.properties",
       "locale": "ko",
@@ -1029,38 +1037,47 @@
     },
     {
       "name": "themes/base/AnchorBar.less",
+      "designtime": true,
       "theme": "base"
     },
     {
       "name": "themes/base/BlockBase.less",
+      "designtime": true,
       "theme": "base"
     },
     {
       "name": "themes/base/BreadCrumbs.less",
+      "designtime": true,
       "theme": "base"
     },
     {
       "name": "themes/base/HierarchicalSelect.less",
+      "designtime": true,
       "theme": "base"
     },
     {
       "name": "themes/base/ObjectPageHeader.less",
+      "designtime": true,
       "theme": "base"
     },
     {
       "name": "themes/base/ObjectPageHeaderContent.less",
+      "designtime": true,
       "theme": "base"
     },
     {
       "name": "themes/base/ObjectPageLayout.less",
+      "designtime": true,
       "theme": "base"
     },
     {
       "name": "themes/base/ObjectPageSection.less",
+      "designtime": true,
       "theme": "base"
     },
     {
       "name": "themes/base/ObjectPageSubSection.less",
+      "designtime": true,
       "theme": "base"
     },
     {
@@ -1087,10 +1104,12 @@
     },
     {
       "name": "themes/base/library.less",
+      "designtime": true,
       "theme": "base"
     },
     {
       "name": "themes/base/library.source.less",
+      "designtime": true,
       "theme": "base"
     },
     {
@@ -1099,38 +1118,47 @@
     },
     {
       "name": "themes/sap_hcb/AnchorBar.less",
+      "designtime": true,
       "theme": "sap_hcb"
     },
     {
       "name": "themes/sap_hcb/BreadCrumbs.less",
+      "designtime": true,
       "theme": "sap_hcb"
     },
     {
       "name": "themes/sap_hcb/HierarchicalSelect.less",
+      "designtime": true,
       "theme": "sap_hcb"
     },
     {
       "name": "themes/sap_hcb/IconTabBar.less",
+      "designtime": true,
       "theme": "sap_hcb"
     },
     {
       "name": "themes/sap_hcb/ObjectPageHeader.less",
+      "designtime": true,
       "theme": "sap_hcb"
     },
     {
       "name": "themes/sap_hcb/ObjectPageHeaderContent.less",
+      "designtime": true,
       "theme": "sap_hcb"
     },
     {
       "name": "themes/sap_hcb/ObjectPageLayout.less",
+      "designtime": true,
       "theme": "sap_hcb"
     },
     {
       "name": "themes/sap_hcb/ObjectPageSection.less",
+      "designtime": true,
       "theme": "sap_hcb"
     },
     {
       "name": "themes/sap_hcb/ObjectPageSubSection.less",
+      "designtime": true,
       "theme": "sap_hcb"
     },
     {
@@ -1157,10 +1185,12 @@
     },
     {
       "name": "themes/sap_hcb/library.less",
+      "designtime": true,
       "theme": "sap_hcb"
     },
     {
       "name": "themes/sap_hcb/library.source.less",
+      "designtime": true,
       "theme": "sap_hcb"
     }
   ]

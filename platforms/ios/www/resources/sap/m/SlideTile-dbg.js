@@ -18,7 +18,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/G
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.34.8
+	 * @version 1.36.5
 	 * @since 1.34
 	 *
 	 * @public
@@ -270,7 +270,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/G
 	 * @private
 	 */
 	SlideTile.prototype._setAriaDescriptor = function() {
-		this.$().attr("aria-label", this.getTiles()[this._iCurrentTile].getAltText().replace(/\s/g, " "));
+		this.$().attr("aria-label", this.getTiles()[this._iCurrentTile]._getAriaText().replace(/\s/g, " "));
 	};
 
 	/**

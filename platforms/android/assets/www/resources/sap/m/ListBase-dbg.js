@@ -24,7 +24,7 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.34.9
+	 * @version 1.36.5
 	 *
 	 * @constructor
 	 * @public
@@ -136,7 +136,7 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 
 			/**
 			 * If set to true, the user can scroll down to load more items. Otherwise a growing button is displayed at the bottom of the control.
-			 * <b>Note:</b> This property can only be used if the <code>growing</code> property is set to <code>true</code> and only if there is one instance of <code>sap.m.List</code> or <code>sap.m.Table</code> inside the scroll container (e.g <code>sap.m.Page</code>).
+			 * <b>Note:</b> This property can only be used if the <code>growing</code> property is set to <code>true</code> and only if there is one instance of <code>sap.m.List</code> or <code>sap.m.Table</code> inside the scrollable scroll container (e.g <code>sap.m.Page</code>).
 			 * @since 1.16
 			 */
 			growingScrollToLoad : {type : "boolean", group : "Behavior", defaultValue : false},
@@ -481,6 +481,7 @@ sap.ui.define(['jquery.sap.global', './GroupHeaderListItem', './library', 'sap/u
 		this._oSelectedItem = null;
 		return this.destroyAggregation("items");
 	};
+
 
 	ListBase.prototype.removeAllItems = function(sAggregationName) {
 		this._oSelectedItem = null;

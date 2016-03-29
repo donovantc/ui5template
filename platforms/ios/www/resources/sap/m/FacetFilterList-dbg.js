@@ -20,7 +20,7 @@ sap.ui.define(['jquery.sap.global', './List', './library'],
 	 * @class
 	 * FacetFilterList represents a list of values for the FacetFilter control.
 	 * @extends sap.m.List
-	 * @version 1.34.8
+	 * @version 1.36.5
 	 *
 	 * @constructor
 	 * @public
@@ -37,9 +37,9 @@ sap.ui.define(['jquery.sap.global', './List', './library'],
 			 */
 			title : {type : "string", group : "Appearance", defaultValue : null},
 			/**
-             * If set to <code>true</code>, the item text wraps when it is too long.
-             */
-             wordWrap: {type : "boolean", group : "Appearance", defaultValue : false},
+			 * If set to <code>true</code>, the item text wraps when it is too long.
+			 */
+			 wordWrap: {type : "boolean", group : "Appearance", defaultValue : false},
 
 			/**
 			 * Specifies whether multiple or single selection is used.
@@ -53,9 +53,9 @@ sap.ui.define(['jquery.sap.global', './List', './library'],
 			 */
 			active : {type : "boolean", group : "Behavior", defaultValue : true},
 
-            /**
-             * If set to <code>true</code>, enables case-insensitive search for OData.
-             */
+			/**
+			 * If set to <code>true</code>, enables case-insensitive search for OData.
+			 */
 			enableCaseInsensitiveSearch: {type : "boolean", group : "Behavior", defaultValue : false, deprecated: false},
 
 			/**
@@ -422,18 +422,18 @@ sap.ui.define(['jquery.sap.global', './List', './library'],
 
 	FacetFilterList.prototype._fireListCloseEvent = function() {
 
-	              var aSelectedItems = this.getSelectedItems();
-	       var oSelectedKeys = this.getSelectedKeys();
+				  var aSelectedItems = this.getSelectedItems();
+		   var oSelectedKeys = this.getSelectedKeys();
 
-	       var bAllSelected = aSelectedItems.length === 0;
+		   var bAllSelected = aSelectedItems.length === 0;
 
-	       this._firstTime = true;
+		   this._firstTime = true;
 
-	       this.fireListClose({
-	              selectedItems : aSelectedItems,
-	              selectedKeys : oSelectedKeys,
-	              allSelected : bAllSelected
-	       });
+		   this.fireListClose({
+				  selectedItems : aSelectedItems,
+				  selectedKeys : oSelectedKeys,
+				  allSelected : bAllSelected
+		   });
 
 	};
 
@@ -484,6 +484,11 @@ sap.ui.define(['jquery.sap.global', './List', './library'],
 		var bindingInfoaFilters;
 		var numberOfsPath = 0;
 
+		//Checks whether given model is one of the OData Model(s)
+		function isODataModel(oModel) {
+			return oModel instanceof sap.ui.model.odata.ODataModel || oModel instanceof sap.ui.model.odata.v2.ODataModel;
+		}
+
 		if (force || (sSearchVal !== this._searchValue)) {
 			this._searchValue = sSearchVal;
 			var oBinding = this.getBinding("items");
@@ -504,7 +509,7 @@ sap.ui.define(['jquery.sap.global', './List', './library'],
 					var path = this.getBindingInfo("items").template.getBindingInfo("text").parts[0].path;
 					if (path) {
 						var oUserFilter = new sap.ui.model.Filter(path, sap.ui.model.FilterOperator.Contains, sSearchVal);
-						if (oBinding.getModel() instanceof sap.ui.model.odata.ODataModel && this.getEnableCaseInsensitiveSearch()){
+						if (this.getEnableCaseInsensitiveSearch() && isODataModel(oBinding.getModel())){
 							 //notice the single quotes wrapping the value from the UI control!
 							var sEncodedString = "'" + String(sSearchVal).replace(/'/g, "''") + "'";
 							sEncodedString = sEncodedString.toLowerCase();

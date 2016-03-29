@@ -277,18 +277,22 @@
     },
     {
       "name": "themes/base/NavigationList.less",
+      "designtime": true,
       "theme": "base"
     },
     {
       "name": "themes/base/SideNavigation.less",
+      "designtime": true,
       "theme": "base"
     },
     {
       "name": "themes/base/ToolHeader.less",
+      "designtime": true,
       "theme": "base"
     },
     {
       "name": "themes/base/ToolPage.less",
+      "designtime": true,
       "theme": "base"
     },
     {
@@ -315,10 +319,12 @@
     },
     {
       "name": "themes/base/library.less",
+      "designtime": true,
       "theme": "base"
     },
     {
       "name": "themes/base/library.source.less",
+      "designtime": true,
       "theme": "base"
     },
     {
@@ -327,14 +333,17 @@
     },
     {
       "name": "themes/sap_hcb/NavigationList.less",
+      "designtime": true,
       "theme": "sap_hcb"
     },
     {
       "name": "themes/sap_hcb/SideNavigation.less",
+      "designtime": true,
       "theme": "sap_hcb"
     },
     {
       "name": "themes/sap_hcb/ToolHeader.less",
+      "designtime": true,
       "theme": "sap_hcb"
     },
     {
@@ -361,10 +370,12 @@
     },
     {
       "name": "themes/sap_hcb/library.less",
+      "designtime": true,
       "theme": "sap_hcb"
     },
     {
       "name": "themes/sap_hcb/library.source.less",
+      "designtime": true,
       "theme": "sap_hcb"
     }
   ]

@@ -19,7 +19,7 @@ sap.ui.define(['sap/m/ToolbarLayoutData', 'sap/m/OverflowToolbarPriority'],
 	 * Holds layout data for the OverflowToolbar items.
 	 * @extends sap.m.ToolbarLayoutData
 	 * @author SAP SE
-	 * @version 1.34.8
+	 * @version 1.36.5
 	 *
 	 * @constructor
 	 * @public

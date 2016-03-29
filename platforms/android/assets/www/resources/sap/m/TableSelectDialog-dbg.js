@@ -23,7 +23,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './SearchField', './
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.34.9
+	 * @version 1.36.5
 	 *
 	 * @constructor
 	 * @public
@@ -415,6 +415,19 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './SearchField', './
 	TableSelectDialog.prototype.setGrowingThreshold = function (iValue) {
 		this._oTable.setGrowingThreshold(iValue);
 		this.setProperty("growingThreshold", iValue, true);
+
+		return this;
+	};
+
+	/**
+	 * Sets the busyIndicatorDelay value to the internal table
+	 * @public
+	 * @param {int} iValue Value for the busyIndicatorDelay.
+	 * @returns {sap.m.TableSelectDialog} this pointer for chaining
+	 */
+	TableSelectDialog.prototype.setBusyIndicatorDelay = function (iValue) {
+		this._oTable.setBusyIndicatorDelay(iValue);
+		this.setProperty("busyIndicatorDelay", iValue, true);
 
 		return this;
 	};

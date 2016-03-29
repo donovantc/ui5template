@@ -20,7 +20,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.34.9
+	 * @version 1.36.5
 	 *
 	 * @constructor
 	 * @public
@@ -264,7 +264,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		if (this._bCheckDomValue && this._sDomValue !== this._getInputValue()) {
 
 			// so we should keep the dom up-to-date
-			this._$input.val(this._sDomValue);
+			this.$("inner").val(this._sDomValue);
 		}
 
 		// now dom value is up-to-date
@@ -849,7 +849,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 		var mDock = Popup.Dock;
 		var $Input = this.$("inner");
-		var bIsRightAligned = $Input.css("text-align") === "right";
 		var sClass = "sapMInputBaseMessage sapMInputBaseMessage" + sState;
 		var sTextClass = "sapMInputBaseMessageText";
 		var oRB = sap.ui.getCore().getLibraryResourceBundle("sap.m");
@@ -881,8 +880,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		this._popup.close(0);
 		this._popup.open(
 			this.iOpenMessagePopupDuration,
-			bIsRightAligned ? mDock.EndTop : mDock.BeginTop,
-			bIsRightAligned ? mDock.EndBottom : mDock.BeginBottom,
+			mDock.BeginTop,
+			mDock.BeginBottom,
 			this.getDomRefForValueStateMessage(),
 			null,
 			null,

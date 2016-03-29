@@ -20,11 +20,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
          * The flexible part has a scrollbar when the content is larger than the available space.
          * Whenever the height of the whole control is less than 256 pixels, the scrollbar becomes joint for the two parts.
          *
-         * <b>Note:</b> In order for the SideNavigation to stretch properly, its parent layout control should only be the sap.tnt.ToolLayout.
+         * <b>Note:</b> In order for the SideNavigation to stretch properly, its parent layout control should only be the sap.tnt.ToolPage.
          * @extends sap.ui.core.Control
          *
          * @author SAP SE
-         * @version 1.34.8
+         * @version 1.36.5
          *
          * @constructor
          * @public
@@ -94,9 +94,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
         };
 
         SideNavigation.prototype.setExpanded = function (isExpanded) {
-            if (sap.ui.Device.system.phone) {
-                isExpanded = true;
-            }
 
             if (this.getExpanded() === isExpanded) {
                 return this;

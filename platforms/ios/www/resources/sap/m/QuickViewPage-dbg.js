@@ -37,7 +37,7 @@ sap.ui.define([
 			* @extends sap.ui.core.Control
 			*
 			* @author SAP SE
-			* @version 1.34.8
+			* @version 1.36.5
 			*
 			* @constructor
 			* @public
@@ -442,7 +442,8 @@ sap.ui.define([
 						oCurrentGroupElementValue.attachPress(this._attachPressLink(this));
 					}
 
-					if (oCurrentGroupElement.getType() == QuickViewGroupElementType.mobile) {
+					if (oCurrentGroupElement.getType() == QuickViewGroupElementType.mobile &&
+						!sap.ui.Device.system.desktop) {
 						var oSmsLink = new Icon({
 							src: IconPool.getIconURI("post"),
 							tooltip : this._oResourceBundle.getText("QUICKVIEW_SEND_SMS"),
@@ -543,6 +544,9 @@ sap.ui.define([
 					this._bItemsChanged = true;
 
 					mNavContext.popover.focus();
+
+					mNavContext.quickView._clearContainerHeight();
+
 					this._createPage();
 					mNavContext.quickView._restoreFocus();
 				}

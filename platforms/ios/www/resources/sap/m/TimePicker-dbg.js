@@ -25,7 +25,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInput', './MaskInputRu
 		 * @extends sap.m.MaskInput
 		 *
 		 * @author SAP SE
-		 * @version 1.34.8
+		 * @version 1.36.5
 		 *
 		 * @constructor
 		 * @public
@@ -200,7 +200,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInput', './MaskInputRu
 			bIconClicked = jQuery(oEvent.target).hasClass("sapUiIcon");
 			bPickerOpened = this._getPicker() && this._getPicker().isOpen();
 
-			if (!bPickerOpened && (bIconClicked || !sap.ui.Device.system.desktop)) {
+			if (!bPickerOpened && bIconClicked) {
 				this._openPicker();
 			} else if (bIconClicked && !sap.ui.Device.system.phone) {
 				//phone check: it wont be possible to click the icon while the dialog is opened
@@ -217,11 +217,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInput', './MaskInputRu
 		 * @param {jQuery.Event} oEvent Event object
 		 */
 		TimePicker.prototype.onfocusin = function (oEvent) {
-			if (!sap.ui.Device.system.phone) {
-				MaskInput.prototype.onfocusin.apply(this, arguments);
-			} else {
-				InputBase.prototype.onfocusin.apply(this, arguments);
-			}
+			MaskInput.prototype.onfocusin.apply(this, arguments);
 		};
 
 		/**
@@ -229,11 +225,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInput', './MaskInputRu
 		 * @param oEvent {jQuery.Event} Event object
 		 */
 		TimePicker.prototype.oninput = function (oEvent) {
-			if (!sap.ui.Device.system.phone) {
-				MaskInput.prototype.oninput.apply(this, arguments);
-			} else {
-				InputBase.prototype.oninput.apply(this, arguments);
-			}
+			MaskInput.prototype.oninput.apply(this, arguments);
 		};
 
 		/**
@@ -244,11 +236,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInput', './MaskInputRu
 		TimePicker.prototype.onfocusout = function (oEvent) {
 			var oPicker = this._getPicker();
 
-			if (!sap.ui.Device.system.phone) {
-				MaskInput.prototype.onfocusout.apply(this, arguments);
-			} else {
-				InputBase.prototype.onfocusout.apply(this, arguments);
-			}
+			MaskInput.prototype.onfocusout.apply(this, arguments);
 
 			if (oPicker && !oPicker.isOpen() && !this._bPickerOpening) {
 				this.$().removeClass("sapMTPInputActive");
@@ -480,11 +468,7 @@ sap.ui.define(['jquery.sap.global', './InputBase', './MaskInput', './MaskInputRu
 			var oDate,
 				sOutputValue;
 
-			// to convert null and undefined to ""
-			sValue = this.validateProperty("value", sValue);
-
-			// set the property in any case but check validity on output
-			this.setProperty("value", sValue, true); // no rerendering
+			MaskInput.prototype.setValue.call(this, sValue, true);
 			this._bValid = true;
 
 			// convert to date object

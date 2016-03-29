@@ -22,19 +22,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './MessageProcessor'],
 	 * @extends sap.ui.base.Object
 	 *
 	 * @author SAP SE
-	 * @version 1.34.8
+	 * @version 1.36.5
 	 *
 	 * @constructor
 	 *
 	 * @param {object} [mParameters] (optional) a map which contains the following parameter properties:
-	 * {string} [mParameters.id] The message id: will be defaulted if no id is set
-	 * {string} [mParameters.message] The message text
-	 * {string} [mParameters.description] The message description
-	 * {sap.ui.core.MessageType} [mParameters.type] The message type
-	 * {string} [mParameters.code] The message code
-	 * {sap.ui.core.message.Messageprocessor} [mParameters.processor]
-	 * {string} [mParameters.target] The message target: The syntax MessageProcessor dependent. Read the documentation of the respective MessageProcessor.
-	 * {boolean} [mParameters.persistent] Sets message persistent: If persistent is set true the message
+	 * @param {string} [mParameters.id] The message id: will be defaulted if no id is set
+	 * @param {string} [mParameters.message] The message text
+	 * @param {string} [mParameters.description] The message description
+	 * @param {sap.ui.core.MessageType} [mParameters.type] The message type
+	 * @param {string} [mParameters.code] The message code
+	 * @param {sap.ui.core.message.Messageprocessor} [mParameters.processor]
+	 * @param {string} [mParameters.target] The message target: The syntax MessageProcessor dependent. Read the documentation of the respective MessageProcessor.
+	 * @param {boolean} [mParameters.persistent] Sets message persistent: If persistent is set <code>true</code> the message
 	 * lifecycle controlled by Application
 	 *
 	 * @public

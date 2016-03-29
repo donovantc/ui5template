@@ -496,10 +496,6 @@ sap.ui.define([
 
 	};
 
-	/**
-	 * @see sap.ui.model.ListBinding.prototype.getLength
-	 *
-	 */
 	ODataListBinding.prototype.getLength = function() {
 		// If length is not final and larger than zero, add some additional length to enable
 		// scrolling/paging for controls that only do this if more items are available
@@ -511,10 +507,6 @@ sap.ui.define([
 		}
 	};
 
-	/**
-	 * @see sap.ui.model.ListBinding.prototype.isLengthFinal
-	 *
-	 */
 	ODataListBinding.prototype.isLengthFinal = function() {
 		return this.bLengthFinal;
 	};

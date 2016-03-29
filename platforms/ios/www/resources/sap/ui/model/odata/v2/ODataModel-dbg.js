@@ -59,14 +59,14 @@ sap.ui.define([
 	 * @class
 	 * Model implementation for oData format
 	 *
-	 * @extends sap.ui.model.Model
 	 *
 	 * @author SAP SE
-	 * @version 1.34.8
+	 * @version 1.36.5
 	 *
 	 * @constructor
 	 * @public
 	 * @alias sap.ui.model.odata.v2.ODataModel
+	 * @extends sap.ui.model.Model
 	 */
 	var ODataModel = Model.extend("sap.ui.model.odata.v2.ODataModel", /** @lends sap.ui.model.odata.v2.ODataModel.prototype */ {
 
@@ -1302,7 +1302,6 @@ sap.ui.define([
 		jQuery.each(aBindings, function(iIndex, oBinding) {
 			if (!bMetaModelOnly || this.isMetaModelPath(oBinding.getPath())) {
 				oBinding.checkUpdate(bForceUpdate, mChangedEntities);
-				oBinding.checkDataState(bForceUpdate);
 			}
 		}.bind(this));
 		//handle calls after update
@@ -1319,10 +1318,12 @@ sap.ui.define([
 	 * @param {boolean} bForceUpdate force update of controls
 	 * @private
 	 */
-	ODataModel.prototype.checkDataState = function(bForceUpdate) {
+	ODataModel.prototype.checkDataState = function(mLaunderingState) {
 		var aBindings = this.aBindings.slice(0);
 		jQuery.each(aBindings, function(iIndex, oBinding) {
-			oBinding.checkDataState(bForceUpdate);
+			if (oBinding.checkDataState) {
+				oBinding.checkDataState(mLaunderingState);
+			}
 		});
 	};
 
@@ -1379,7 +1380,10 @@ sap.ui.define([
 	 * @see sap.ui.model.Model.prototype.createBindingContext
 	 * @param {string} sPath binding path
 	 * @param {object} [oContext] bindingContext
-	 * @param {map} [mParameters] map of parameters
+	 * @param {map} [mParameters] a map which contains additional parameters for the binding
+	 * @param {string} [mParameters.expand] Standing for OData <code>$expand</code> query option which should be included in the request
+	 * @param {string} [mParameters.select] Standing for OData <code>$select</code> query option parameter which should be included in the request
+	 * @param {map} [mParameters.custom] an optional map of custom query parameters. Custom parameters must not start with <code>$</code>.
 	 * @param {function} [fnCallBack] function called when context is created
 	 * @param {boolean} [bReload] reload of data
 	 * @return sap.ui.model.Context
@@ -1668,17 +1672,19 @@ sap.ui.define([
 	/**
 	 * Returns the key part from the entry URI or the given context or object
 	 *
-	 * @param {object|sap.ui.model.Context} oObject The context or entry object
+	 * @param {string|object|sap.ui.model.Context} vValue A string representation of an URI, the context or entry object
 	 * @returns {string} [sKey] key of the entry
 	 * @private
 	 */
-	ODataModel.prototype._getKey = function(oObject) {
+	ODataModel.prototype._getKey = function(vValue) {
 		var sKey, sURI;
-		if (oObject instanceof Context) {
-			sKey = oObject.getPath().substr(1);
-		} else if (oObject && oObject.__metadata && oObject.__metadata.uri) {
-			sURI = oObject.__metadata.uri;
+		if (vValue instanceof Context) {
+			sKey = vValue.getPath().substr(1);
+		} else if (vValue && vValue.__metadata && vValue.__metadata.uri) {
+			sURI = vValue.__metadata.uri;
 			sKey = sURI.substr(sURI.lastIndexOf("/") + 1);
+		} else if (typeof vValue === 'string') {
+			sKey = vValue.substr(vValue.lastIndexOf("/") + 1);
 		}
 		return sKey;
 	};
@@ -1686,12 +1692,12 @@ sap.ui.define([
 	/**
 	 * Returns the key part from the entry URI or the given context or object
 	 *
-	 * @param {object|sap.ui.model.Context} oObject The context or entry object
+	 * @param {string|object|sap.ui.model.Context} vValue A string representation of an URI, the context or entry object
 	 * @returns {string} [sKey] key of the entry
 	 * @public
 	 */
-	ODataModel.prototype.getKey = function(oObject) {
-		return this._getKey(oObject);
+	ODataModel.prototype.getKey = function(vValue) {
+		return this._getKey(vValue);
 	};
 
 	/**
@@ -1842,7 +1848,7 @@ sap.ui.define([
 			}
 		}
 		//if we have a changed Entity we need to extend it with the backend data
-		if (this._getKey(oChangedNode)) {
+		if (jQuery.isPlainObject(oChangedNode) && this._getKey(oChangedNode)) {
 			oNode =  bOriginalValue ? oOrigNode : jQuery.sap.extend(true, {}, oOrigNode, oChangedNode);
 		}
 		return oNode;
@@ -2568,7 +2574,7 @@ sap.ui.define([
 				}
 			});
 		}
-		this.checkDataState();
+		this.checkDataState(this.mLaunderingState);
 		return oRequestHandle.length == 1 ? oRequestHandle[0] : oRequestHandle;
 	};
 
@@ -2812,7 +2818,7 @@ sap.ui.define([
 		// remove metadata, navigation properties to reduce payload
 		if (oPayload && oPayload.__metadata) {
 			for (var n in oPayload.__metadata) {
-				if (n !== 'type' && n !== 'uri' && n !== 'etag') {
+				if (n !== 'type' && n !== 'uri' && n !== 'etag' && n !== 'content_type' && n !== 'media_src') {
 					delete oPayload.__metadata[n];
 				}
 			}
@@ -3030,6 +3036,21 @@ sap.ui.define([
 		}
 		return null;
 	};
+
+	/**
+	 * Force the update on the server of an entity by setting its ETag to '*'.
+	 * ETag handling must be active so the force update will work.
+	 * @param {string} sKey The key to an Entity e.g.: Customer(4711)
+	 * @public
+	 */
+	 ODataModel.prototype.forceEntityUpdate = function(sKey) {
+		 var oData = this.mChangedEntities[sKey];
+		 if (oData && oData.__metadata) {
+			 oData.__metadata.etag = '*';
+		 } else {
+			 jQuery.sap.log.error(this + " - Entity with key " + sKey + " does not exist or has no change");
+		 }
+	 };
 
 	/**
 	 * creation of a request object
@@ -4587,7 +4608,7 @@ sap.ui.define([
 	 * via a submitChanges call.
 	 *
 	 * @param {array} aGroupIds Array of batchGroupIds that should be set as deferred
-	 * @deprecated Deprecated since 1.32 use
+	 * @deprecated Since 1.32 use
 	 * @public
 	 */
 	ODataModel.prototype.setDeferredBatchGroups = function(aGroupIds) {
@@ -4613,7 +4634,7 @@ sap.ui.define([
 	 * Returns the array of batchGroupIds that are set as deferred
 	 *
 	 * @returns {array} aGroupIds The array of deferred batchGroupIds
-	 * @deprecated Deprecated since 1.32 use
+	 * @deprecated Since 1.32 use
 	 * @public
 	 */
 	ODataModel.prototype.getDeferredBatchGroups = function() {
@@ -4650,7 +4671,7 @@ sap.ui.define([
 	 * bacthGroupId: Defines the bacthGroup for changes of the defined EntityTypeName
 	 * changeSetId: Defines a changeSetId wich bundles the changes for the EntityType.
 	 * single: Defines if every change will get an own changeSet (true)
-	 * @deprecated Deprecated since 1.32 use
+	 * @deprecated Since 1.32 use
 	 * @public
 	 */
 	ODataModel.prototype.setChangeBatchGroups = function(mGroups) {
@@ -4819,7 +4840,7 @@ sap.ui.define([
 		while (aParts.length > 0)  {
 			var sEntryPath = aParts.join("/"),
 				oObject = this._getObject(sEntryPath);
-			if (oObject) {
+			if (jQuery.isPlainObject(oObject)) {
 				var sKey = this._getKey(oObject);
 				if (sKey) {
 					oEntity = oObject;

@@ -15,8 +15,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin', '../ToolsAPI',
 		 * @class This class represents the technical info plugin for the support tool functionality of UI5. This class is internal and all its functions must not be used by an application.
 		 *
 		 * @abstract
-		 * @extends sap.ui.base.Object
-		 * @version 1.34.9
+		 * @extends sap.ui.core.support.Plugin
+		 * @version 1.36.5
 		 * @constructor
 		 * @private
 		 * @alias sap.ui.core.support.plugins.TechInfo
@@ -112,10 +112,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin', '../ToolsAPI',
 				buffer.push("</div>");
 			});
 
-			line(html, true, true, "SAP-statistics for oData calls", function(buffer){
-				buffer.push((oData.statistics ? "ON" : "OFF"), "<a href='javascript:void(0);' id='", that.getId(), "-tggleStatistics' class='sapUiSupportLink'>Toggle</a>");
-			});
-
 			html.push("</table></div>");
 			this.$().html(html.join(""));
 
@@ -131,9 +127,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin', '../ToolsAPI',
 				this.select();
 			});
 
-			this.$("tggleStatistics").bind("click", function(){
-				sap.ui.core.support.Support.getStub().sendEvent(that.getId() + "ToggleStatistics", {});
-			});
 
 			this.$("startE2ETrace").bind("click", function() {
 				if (!that.e2eTraceStarted) {
@@ -300,9 +293,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin', '../ToolsAPI',
 				buffer.push("</table>");
 			});
 		}
-
-
-
 
 	return TechInfo;
 

@@ -19,7 +19,7 @@ sap.ui.define(['sap/m/semantic/SemanticToggleButton', 'sap/m/semantic/SemanticCo
 	 * @extends sap.m.semantic.SemanticToggleButton
 	 *
 	 * @author SAP SE
-	 * @version 1.34.9
+	 * @version 1.36.5
 	 *
 	 * @constructor
 	 * @public
@@ -29,7 +29,9 @@ sap.ui.define(['sap/m/semantic/SemanticToggleButton', 'sap/m/semantic/SemanticCo
 	 */
 
 	var MultiSelectAction = SemanticToggleButton.extend("sap.m.semantic.MultiSelectAction", /** @lends sap.m.semantic.MultiSelectAction.prototype */ {
-
+		metadata: {
+			library: "sap.m"
+		}
 	});
 
 	var oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");

@@ -19,7 +19,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat', 'sap/ui/m
 	 * @extends sap.ui.model.CompositeType
 	 *
 	 * @author SAP SE
-	 * @version 1.34.8
+	 * @version 1.36.5
 	 *
 	 * @constructor
 	 * @public
@@ -96,12 +96,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat', 'sap/ui/m
 	/**
 	 * @see sap.ui.model.SimpleType.prototype.validateValue
 	 */
-	Currency.prototype.validateValue = function(aValues) {
-		var iValue = aValues[0];
+	Currency.prototype.validateValue = function(vValue) {
 		if (this.oConstraints) {
 			var oBundle = sap.ui.getCore().getLibraryResourceBundle(),
 				aViolatedConstraints = [],
-				aMessages = [];
+				aMessages = [],
+				aValues = vValue,
+				iValue;
+			if (this.oInputFormat) {
+				aValues = this.oInputFormat.parse(vValue);
+			}
+			iValue = aValues[0];
 			jQuery.each(this.oConstraints, function(sName, oContent) {
 				switch (sName) {
 					case "minimum":

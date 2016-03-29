@@ -16,10 +16,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	 * Constructs an instance of a sap.ui.model.SelectionModel.
 	 *
 	 * @class
-	 * @extends sap.ui.base.Object
+	 * @extends sap.ui.base.EventProvider
 	 *
 	 * @author SAP SE
-	 * @version 1.34.8
+	 * @version 1.36.5
 	 *
 	 * @param {int} iSelectionMode <code>sap.ui.model.SelectionModel.SINGLE_SELECTION</code> or <code>sap.ui.model.SelectionModel.MULTI_SELECTION</code>
 	 *

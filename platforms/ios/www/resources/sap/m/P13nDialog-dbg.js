@@ -20,7 +20,7 @@ sap.ui.define([
 	 *        tables.
 	 * @extends sap.m.Dialog
 	 * @author SAP SE
-	 * @version 1.34.8
+	 * @version 1.36.5
 	 * @constructor
 	 * @public
 	 * @since 1.26.0
@@ -212,6 +212,7 @@ sap.ui.define([
 	P13nDialog.prototype._createDialog = function() {
 		if (sap.ui.Device.system.phone) {
 			var that = this;
+			this.setStretch(true);
 			this.setVerticalScrolling(false);
 			this.setHorizontalScrolling(false);
 			this.setCustomHeader(new sap.m.Bar({
@@ -294,7 +295,7 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	P13nDialog.prototype.showValidationDialog = function(fCallbackOK, aFailedPanelTypes, aValidationResult) {
+	P13nDialog.prototype.showValidationDialog = function(fCallbackIgnore, aFailedPanelTypes, aValidationResult) {
 		var sMessageText = "";
 		aFailedPanelTypes.forEach(function(sPanelType) {
 			switch (sPanelType) {
@@ -315,14 +316,14 @@ sap.ui.define([
 			icon: sap.m.MessageBox.Icon.WARNING,
 			title: sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("P13NDIALOG_VALIDATION_TITLE"),
 			actions: [
-				sap.m.MessageBox.Action.OK, sap.m.MessageBox.Action.CANCEL
+				sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("P13NDIALOG_VALIDATION_FIX"), sap.m.MessageBox.Action.IGNORE
 			],
 			onClose: function(oAction) {
-				// CANCLE: Stay on the current panel. There is incorrect entry and user decided to correct this.
-				// OK: Go to the chosen panel. Though the current panel has incorrect entry the user decided to
+				// Fix: Stay on the current panel. There is incorrect entry and user decided to correct this.
+				// Ignore: Go to the chosen panel. Though the current panel has incorrect entry the user decided to
 				// leave the current panel. Delete incorrect condition set.
-				if (oAction === sap.m.MessageBox.Action.OK) {
-					fCallbackOK();
+				if (oAction === sap.m.MessageBox.Action.IGNORE) {
+					fCallbackIgnore();
 				}
 			},
 			styleClass: !!this.$().closest(".sapUiSizeCompact").length ? "sapUiSizeCompact" : ""
@@ -346,7 +347,7 @@ sap.ui.define([
 		if (sap.ui.Device.system.phone) {
 			oNavigationItem = new sap.m.StandardListItem({
 				type: sap.m.ListType.Navigation,
-				text: oPanel.getBindingPath("title") ? jQuery.extend(true, {}, oPanel.getBindingInfo("title")) : oPanel.getTitle()
+				title: oPanel.getBindingPath("title") ? jQuery.extend(true, {}, oPanel.getBindingInfo("title")) : oPanel.getTitle()
 			});
 		} else {
 			oNavigationItem = new sap.m.Button({
@@ -362,7 +363,7 @@ sap.ui.define([
 			// if (oPanelVisible && oPanelVisible.onBeforeNavigationFrom && !oPanelVisible.onBeforeNavigationFrom()) {
 			// oEvent.stopImmediatePropagation(true);
 			// var that = this;
-			// var fCallbackOK = function() {
+			// var fCallbackIgnore = function() {
 			//
 			// oPanelVisible.onAfterNavigationFrom();
 			// if (that._getSegmentedButton()) {
@@ -370,7 +371,7 @@ sap.ui.define([
 			// }
 			// that._switchPanel(oButtonClicked);
 			// };
-			// this._showValidationDialog(fCallbackOK, [
+			// this._showValidationDialog(fCallbackIgnore, [
 			// oPanelVisible.getType()
 			// ]);
 			// }
@@ -379,7 +380,7 @@ sap.ui.define([
 		}
 		oPanel.setValidationExecutor(jQuery.proxy(this._callValidationExecutor, this));
 		oPanel.setValidationListener(jQuery.proxy(this._registerValidationListener, this));
-		oNavigationItem.setModel(oPanel.getModel());
+// oNavigationItem.setModel(oPanel.getModel("$sapmP13nPanel")); ---> is not yet needed as P13nDialog sets the model coming from controller
 		return oNavigationItem;
 	};
 
@@ -390,6 +391,7 @@ sap.ui.define([
 	 */
 	P13nDialog.prototype._switchPanel = function(oNavigationItem) {
 		var oPanel = this._getPanelByNavigationItem(oNavigationItem);
+		this.setVerticalScrolling(oPanel.getVerticalScrolling());
 		if (sap.ui.Device.system.phone) {
 			var oNavigationControl = this._getNavigationControl();
 			if (oNavigationControl) {
@@ -400,7 +402,6 @@ sap.ui.define([
 				this.getCustomHeader().getContentLeft()[0].setVisible(true);
 			}
 		} else {
-			this.setVerticalScrolling(oPanel.getVerticalScrolling());
 			this.getPanels().forEach(function(oPanel_) {
 				if (oPanel_ === oPanel) {
 					oPanel_.beforeNavigationTo();
@@ -500,7 +501,7 @@ sap.ui.define([
 			if (bVisible) {
 				oPanel.beforeNavigationTo();
 				if (!this.getModel()) {
-					this.setModel(oPanel.getModel());
+					this.setModel(oPanel.getModel("$sapmP13nPanel"), "$sapmP13nDialog");
 				}
 			}
 			oPanel.setVisible(bVisible);
@@ -511,7 +512,7 @@ sap.ui.define([
 			if (bVisible) {
 				oPanel.beforeNavigationTo();
 				if (!this.getModel()) {
-					this.setModel(oPanel.getModel());
+					this.setModel(oPanel.getModel("$sapmP13nPanel"), "$sapmP13nDialog");
 				}
 			}
 			oPanel.setVisible(bVisible);
@@ -573,6 +574,9 @@ sap.ui.define([
 					break;
 				case sap.m.P13nPanelType.columns:
 					sTitle = this._oResourceBundle.getText("P13NDIALOG_TITLE_COLUMNS");
+					break;
+				case sap.m.P13nPanelType.dimeasure:
+					sTitle = this._oResourceBundle.getText("P13NDIALOG_TITLE_DIMEASURE");
 					break;
 				default:
 					sTitle = oPanel.getTitleLarge() || this._oResourceBundle.getText("P13NDIALOG_VIEW_SETTINGS");
@@ -658,7 +662,7 @@ sap.ui.define([
 						payload: oPayload
 					});
 				};
-				var fCallbackOK = function() {
+				var fCallbackIgnore = function() {
 					that.getPanels().forEach(function(oPanel) {
 						if (aFailedPanelTypes.indexOf(oPanel.getType()) > -1) {
 							oPanel.onAfterNavigationFrom();
@@ -681,7 +685,7 @@ sap.ui.define([
 				});
 				// In case of invalid panels show the dialog
 				if (aFailedPanelTypes.length || aValidationResult.length) {
-					that.showValidationDialog(fCallbackOK, aFailedPanelTypes, aValidationResult);
+					that.showValidationDialog(fCallbackIgnore, aFailedPanelTypes, aValidationResult);
 				} else {
 					fFireOK();
 				}

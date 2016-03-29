@@ -71,7 +71,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 	 * @extends sap.ui.base.ManagedObject
 	 * @abstract
 	 * @author SAP SE
-	 * @version 1.34.8
+	 * @version 1.36.5
 	 * @alias sap.ui.core.Component
 	 * @since 1.9.2
 	 */
@@ -383,7 +383,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 	 * {@link sap.ui.core.UIComponent.createContent constructed} or when a
 	 * {@link sap.ui.core.routing.Router Router} creates a new View and its content.
 	 *
-	 * <strong>Note</string>: This method does not guarantee that the returned owner ID belongs
+	 * <strong>Note</strong>: This method does not guarantee that the returned owner ID belongs
 	 * to a Component. Currently, it always does. But future versions of UI5 might introduce a
 	 * more fine grained ownership concept, e.g. taking Views into account. Callers that
 	 * want to deal only with components as owners, should use the following method:
@@ -1160,6 +1160,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 	 *
 	 * If Components and/or libraries are listed in the hints section, all the corresponding preload files will
 	 * be requested in parallel. The constructor class will only be required after all of them are rejected or resolved.
+	 * Instead of specifing just the name of a component or library in the hints, an object might be given that contains a
+	 * mandatory <code>name</code> property and, optionally, an <code>url</code> that will be used for a <code>registerModulePath</code>
+	 * and/or a <code>lazy</code> property. When <code>lazy</code> is set to a truthy value, only a necessary <code>registerModulePath</code>
+	 * will be executed, but the corresponding component or lib won't be preloaded. For preload bundles, also an object might be given
+	 * instead of a simple name, but there only the <code>url</code> property is supported, not the <code>lazy</code> property.
 	 *
 	 * Note: so far, only the requests for the preload files (library and/or component) are executed asynchronously.
 	 * If a preload is deactivated by configuration (e.g. debug mode), then requests won't be asynchronous.
@@ -1258,7 +1263,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 			return oClass;
 		}
 
-		function registerPath(vObj) {
+		/*
+		 * Process .url and .lazy options.
+		 * For preloadBundles, lazy will be ignored
+		 */
+		function processOptions(vObj, bIgnoreLazy) {
 
 			jQuery.sap.assert(
 				(typeof vObj === 'string' && vObj) ||
@@ -1269,7 +1278,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 				if ( vObj.url ) {
 					jQuery.sap.registerModulePath(vObj.name, vObj.url);
 				}
-				return vObj.name;
+				return (vObj.lazy && bIgnoreLazy !== true) ? undefined : vObj.name; // expl. check for true to allow usage in Array.prototype.map below
 			}
 
 			return vObj;
@@ -1281,7 +1290,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 				sPreloadName;
 
 			// only load the Component-preload file if the Component module is not yet available
-			if ( bComponentPreload && !jQuery.sap.isDeclared(sController, /* bIncludePreloaded=*/ true) ) {
+			if ( bComponentPreload && sComponentName != null && !jQuery.sap.isDeclared(sController, /* bIncludePreloaded=*/ true) ) {
 
 				if ( bAsync ) {
 					sPreloadName = jQuery.sap.getResourceName(sController, '-preload.js'); // URN
@@ -1355,18 +1364,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 					if ( oPromise ) {
 						promises.push(oPromise);
 					}
-				};
+				},
+				identity = function($) { return $; };
 
 			// load any required preload bundles
 			if ( hints.preloadBundles ) {
 				jQuery.each(hints.preloadBundles, function(i, vBundle) {
-					collect(jQuery.sap._loadJSResourceAsync(registerPath(vBundle), true));
+					collect(jQuery.sap._loadJSResourceAsync(processOptions(vBundle, /* ignoreLazy */ true), /* ignoreErrors */ true));
 				});
 			}
 
 			// preload required libraries
 			if ( hints.libs ) {
-				collect(sap.ui.getCore().loadLibraries( hints.libs.map(registerPath) ));
+				collect(sap.ui.getCore().loadLibraries( hints.libs.map(processOptions).filter(identity) ));
 			}
 
 			// preload the component itself
@@ -1388,7 +1398,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 			// if a hint about "used" components is given, preload those components
 			if ( hints.components ) {
 				jQuery.each(hints.components, function(i, vComp) {
-					collect(preload(registerPath(vComp), true));
+					collect(preload(processOptions(vComp), true));
 				});
 			}
 

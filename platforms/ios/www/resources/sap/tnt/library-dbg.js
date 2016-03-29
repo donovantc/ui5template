@@ -19,14 +19,14 @@ sap.ui.define(['jquery.sap.global',
 	 * @namespace
 	 * @name sap.tnt
 	 * @author SAP SE
-	 * @version 1.34.8
+	 * @version 1.36.5
 	 * @public
 	 */
 
 	// delegate further initialization of this library to the Core
 	sap.ui.getCore().initLibrary({
 		name : 'sap.tnt',
-		version: '1.34.8',
+		version: '1.36.5',
 		dependencies : ['sap.ui.core','sap.m'],
 		types: [],
 		interfaces: [],

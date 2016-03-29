@@ -14,7 +14,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 	 *
 	 * @class Utility class to handle files
 	 * @author SAP SE
-	 * @version 1.34.8
+	 * @version 1.36.5
 	 * @static
 	 *
 	 * @public
@@ -95,8 +95,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 						}
 					}
 				}
-			} else if (Device.browser.internet_explorer && Device.browser.version <= 9) {
-				// iframe fallback for IE 8/9
+			} else if (Device.browser.internet_explorer && Device.browser.version === 9) {
+				// iframe fallback for IE9
 				var $body = jQuery(document.body);
 				var $iframe = jQuery('<iframe/>', {
 					style: 'display:none'

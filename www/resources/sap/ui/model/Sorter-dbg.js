@@ -31,6 +31,7 @@ sap.ui.define(['sap/ui/base/Object'],
 	 *        of the default comparator method.
 	 * @public
 	 * @alias sap.ui.model.Sorter
+	 * @extends sap.ui.base.Object
 	 */
 	var Sorter = BaseObject.extend("sap.ui.model.Sorter", /** @lends sap.ui.model.Sorter.prototype */ {
 

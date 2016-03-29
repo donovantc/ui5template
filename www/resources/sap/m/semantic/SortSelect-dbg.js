@@ -20,7 +20,7 @@ sap.ui.define(['sap/m/semantic/SemanticSelect'], function(SemanticSelect) {
 	 * @implements sap.m.semantic.ISort
 	 *
 	 * @author SAP SE
-	 * @version 1.34.9
+	 * @version 1.36.5
 	 *
 	 * @constructor
 	 * @public

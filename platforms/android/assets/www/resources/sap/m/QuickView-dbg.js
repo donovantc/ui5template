@@ -28,7 +28,7 @@ sap.ui.define([
 	 * @extends sap.m.QuickViewBase
 	 *
 	 * @author SAP SE
-	 * @version 1.34.9
+	 * @version 1.36.5
 	 *
 	 * @constructor
 	 * @public
@@ -153,6 +153,13 @@ sap.ui.define([
 
 		this._oNavContainer = new NavContainer(oNavConfig);
 
+		this._oNavContainer.invalidate = function (oSource) {
+			// suppress invalidation of the navContainer
+			if (!oSource) {
+				this.forceInvalidation();
+			}
+		};
+
 		var that = this;
 
 		this._oPopover = new ResponsivePopover(this.getId() + '-quickView', {
@@ -217,6 +224,7 @@ sap.ui.define([
 
 		// Update pages only if items aggregation is changed
 		if (this._bItemsChanged) {
+			this._clearContainerHeight();
 			this._initPages();
 
 			// add a close button on phone devices when there are no pages
@@ -294,6 +302,15 @@ sap.ui.define([
 		this._oNavContainer.addPage(oPage);
 	};
 
+	QuickView.prototype._clearContainerHeight = function() {
+		var oPopupControl = this._oPopover.getAggregation("_popup");
+		var $container = oPopupControl.$().find('.sapMPopoverCont');
+
+		if ($container[0] && $container[0].style.height) {
+			$container[0].style.height = '';
+		}
+	};
+
 	/**
 	 * Adjusts the popup height based on the QuickView's content.
 	 * @private
@@ -369,6 +386,7 @@ sap.ui.define([
 	 * @public
 	 */
 	QuickView.prototype.openBy = function(oControl) {
+		this._bItemsChanged = true;
 		this._oPopover.openBy(oControl);
 
 		return this;

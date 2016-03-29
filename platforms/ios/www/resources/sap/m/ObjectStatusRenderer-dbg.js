@@ -56,6 +56,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/ValueStateSupport'],
 
 			if (oObjStatus.getTitle()) {
 				oRm.write("<span");
+				oRm.writeAttributeEscaped("id", oObjStatus.getId() + "-title");
 				oRm.addClass("sapMObjStatusTitle");
 				oRm.writeClasses();
 				oRm.write(">");
@@ -65,6 +66,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/ValueStateSupport'],
 
 			if (oObjStatus.getIcon()) {
 				oRm.write("<span");
+				oRm.writeAttributeEscaped("id", oObjStatus.getId() + "-icon");
 				oRm.addClass("sapMObjStatusIcon");
 				oRm.writeClasses();
 				oRm.write(">");
@@ -74,6 +76,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/ValueStateSupport'],
 
 			if (oObjStatus.getText()) {
 				oRm.write("<span");
+				oRm.writeAttributeEscaped("id", oObjStatus.getId() + "-text");
 				oRm.addClass("sapMObjStatusText");
 
 				if (sTextDir && sTextDir !== sap.ui.core.TextDirection.Inherit) {

@@ -19,12 +19,15 @@ sap.ui.define(["./ObjectPageHeaderRenderer", "./ObjectPageLayout"], function (Ob
 			oHeader = (oParent && bParentLayout) ? oParent.getHeaderTitle() : false,
 			bRenderTitle = (oParent && bParentLayout) ? ((oParent instanceof ObjectPageLayout)
 			&& oParent.getShowTitleInHeaderContent()) : false,
-			bRenderEditBtn = bParentLayout && oParent.getShowEditHeaderButton();
+			bRenderEditBtn = bParentLayout && oParent.getShowEditHeaderButton() && oControl.getContent() && oControl.getContent().length > 0;
 
 		if (bRenderEditBtn) {
 			oRm.write("<div ");
 			oRm.addClass("sapUxAPObjectPageHeaderContentFlexBox");
 			oRm.addClass("sapUxAPObjectPageHeaderContentDesign-" + oControl.getContentDesign());
+			if (oHeader) {
+				oRm.addClass('sapUxAPObjectPageContentObjectImage-' + oHeader.getObjectImageShape());
+			}
 			oRm.writeClasses();
 			oRm.write(">");
 		}
@@ -34,6 +37,9 @@ sap.ui.define(["./ObjectPageHeaderRenderer", "./ObjectPageLayout"], function (Ob
 			oRm.addClass("sapUxAPObjectPageHeaderContentCellLeft");
 		} else {
 			oRm.addClass("sapUxAPObjectPageHeaderContentDesign-" + oControl.getContentDesign());
+			if (oHeader) {
+				oRm.addClass('sapUxAPObjectPageContentObjectImage-' + oHeader.getObjectImageShape());
+			}
 		}
 		oRm.addClass("ui-helper-clearfix");
 		oRm.addClass("sapUxAPObjectPageHeaderContent");

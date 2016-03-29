@@ -21,21 +21,22 @@ sap.ui.define([], function() {
 	 */
 	GenericTileRenderer.render = function(oRm, oControl) {
 		// Write the HTML into the render manager.
-		var sTooltip = oControl.getTooltip_AsString();
+		var sTooltipText = oControl._getTooltipText();
+		var sAriaText = oControl._getAriaText();
 		var sHeaderImage = oControl.getHeaderImage();
 
 		oRm.write("<div");
 
 		oRm.writeControlData(oControl);
-		if (sTooltip.trim()) {
-			oRm.writeAttributeEscaped("title", sTooltip);
+		if (sTooltipText) {
+			oRm.writeAttributeEscaped("title", sTooltipText);
 		}
 		oRm.addClass("sapMGT");
 		oRm.addClass(oControl.getSize());
 		oRm.addClass(oControl.getFrameType());
 
 		oRm.writeAttribute("role", "presentation");
-		oRm.writeAttributeEscaped("aria-label", oControl.getAltText());
+		oRm.writeAttributeEscaped("aria-label", sAriaText);
 
 		if (oControl.hasListeners("press") && oControl.getState() != sap.m.LoadState.Disabled) {
 			oRm.addClass("sapMPointer");
@@ -56,8 +57,8 @@ sap.ui.define([], function() {
 			oRm.addClass("sapMGTOverlay");
 			oRm.writeClasses();
 			oRm.writeAttribute("id", oControl.getId() + "-overlay");
-			if (sTooltip.trim()) {
-				oRm.writeAttributeEscaped("title", sTooltip);
+			if (sTooltipText) {
+				oRm.writeAttributeEscaped("title", sTooltipText);
 			}
 			oRm.write(">");
 			switch (sState) {
@@ -100,8 +101,8 @@ sap.ui.define([], function() {
 		oRm.addClass("sapMGTHdrContent");
 		oRm.addClass(oControl.getSize());
 		oRm.addClass(oControl.getFrameType());
-		if (sTooltip.trim()) {
-			oRm.writeAttributeEscaped("title", sTooltip);
+		if (sTooltipText) {
+			oRm.writeAttributeEscaped("title", sTooltipText);
 		}
 		oRm.writeClasses();
 		oRm.write(">");
@@ -124,6 +125,12 @@ sap.ui.define([], function() {
 		for (var i = 0; i < iLength; i++) {
 			oRm.renderControl(oControl.getTileContent()[i]);
 		}
+		oRm.write("</div>");
+		oRm.write("<div");
+		oRm.addClass("sapMGTFocusDiv");
+		oRm.writeClasses();
+		oRm.writeAttribute("id", oControl.getId() + "-focus");
+		oRm.write(">");
 		oRm.write("</div>");
 		oRm.write("</div>");
 	};

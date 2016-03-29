@@ -19,7 +19,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.34.8
+	 * @version 1.36.5
 	 *
 	 * @constructor
 	 * @public
@@ -185,7 +185,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 
 		events : {
 			/**
-			 * The event is triggered when files are selected. Applications can set parameters and headerParameters which will be dispatched to the embedded FileUploader control.
+			 * The event is triggered when files are selected in the FileUploader dialog. Applications can set parameters and headerParameters which will be dispatched to the embedded FileUploader control.
 			 * Limitation: parameters and headerParameters are not supported by Internet Explorer 9.
 			 */
 			change : {
@@ -415,6 +415,29 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 							headerParameterName: {type : "string"}
 						}
 					}
+				}
+			},
+
+			/**
+			 * Fires when selection is changed via user interaction inside the control.
+			 * @since 1.36.0
+			 */
+			selectionChange : {
+				parameters : {
+					/**
+					 * The item whose selection has changed. In <code>MultiSelect</code> mode, only the selected item upmost is returned. This parameter can be used for single-selection modes.
+					 */
+					selectedItem : {type : "sap.m.UploadCollectionItem"},
+
+					/**
+					 * Array of items whose selection has changed. This parameter can be used for <code>MultiSelect</code> mode.
+					 */
+					selectedItems : {type : "sap.m.UploadCollectionItem[]"},
+
+					/**
+					 * Indicates whether the <code>listItem</code> parameter is selected or not.
+					 */
+					selected : {type : "boolean"}
 				}
 			}
 		}
@@ -669,6 +692,24 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 		}
 		this._setSelectedForItems(this.getItems(), true);
 		return this;
+	};
+
+	/**
+	 * Downloads the given item.
+	 * This function delegates to {sap.m.UploadCollectionItem.download}.
+	 * @param {sap.m.UploadCollectionItem} uploadCollectionItem The item to download. This parameter is mandatory.
+	 * @param {boolean} askForLocation Decides whether to ask for a location to download or not.
+	 * @returns {boolean} True if the download has started successfully. False if the download couldn't be started.
+	 * @since 1.36.0
+	 * @public
+	 */
+	UploadCollection.prototype.downloadItem = function(uploadCollectionItem, askForLocation) {
+		if (!this.getInstantUpload()) {
+			jQuery.sap.log.info("Download is not possible on Pending Upload mode");
+			return false;
+		} else {
+			return uploadCollectionItem.download(askForLocation);
+		}
 	};
 
 	UploadCollection.prototype.removeAggregation = function(sAggregationName, vObject, bSuppressInvalidate) {
@@ -1392,9 +1433,10 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 			that._oList.addAggregation("items", oListItem, true); // note: suppress re-rendering
 
 			// Handles item selected event
-			that._oList.attachSelectionChange(that._handleItemSetSelected, that);
 			oItem.attachEvent("selected", that._handleItemSetSelected, that);
 		});
+		// Handles Upload Collection selection change event
+		that._oList.attachSelectionChange(that._handleSelectionChange, that);
 	};
 
 	/**
@@ -2598,6 +2640,7 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 	 * @description Split file name into name and extension.
 	 * @param {string} sFilename Full file name inclusive the extension
 	 * @returns {object} oResult Filename and Extension
+	 * @deprecated UploadCollectionItem._splitFileName method should be used instead
 	 * @private
 	 */
 	UploadCollection.prototype._splitFilename = function(sFilename) {
@@ -2715,16 +2758,18 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 		var aUploadCollectionItems = [];
 		var aLocalUploadCollectionItems = this.getItems();
 
-		for (var i = 0; i < listItems.length; i++) {
-			for (var j = 0; j < aLocalUploadCollectionItems.length; j++) {
-				if (listItems[i].getId().replace("-cli", "") === aLocalUploadCollectionItems[j].getId()) {
-					aUploadCollectionItems.push(aLocalUploadCollectionItems[j]);
-					break;
+		if (listItems) {
+			for (var i = 0; i < listItems.length; i++) {
+				for (var j = 0; j < aLocalUploadCollectionItems.length; j++) {
+					if (listItems[i].getId().replace("-cli", "") === aLocalUploadCollectionItems[j].getId()) {
+						aUploadCollectionItems.push(aLocalUploadCollectionItems[j]);
+						break;
+					}
 				}
 			}
+			return aUploadCollectionItems;
 		}
-
-		return aUploadCollectionItems;
+		return null;
 	};
 
 	/**
@@ -2760,11 +2805,21 @@ sap.ui.define(['jquery.sap.global', './MessageBox', './Dialog', './library', 'sa
 			if (oListItem) {
 				oListItem.setSelected(oItem.getSelected());
 			}
-		} else {
-			var oUploadCollectionItem = this._getUploadCollectionItemByListItem(oEvent.getParameter("listItem"));
-			if (oUploadCollectionItem) {
-				oUploadCollectionItem.setSelected(oEvent.getParameter("listItem").getSelected());
-			}
+		}
+	};
+
+	UploadCollection.prototype._handleSelectionChange = function(oEvent){
+		var oListItem = oEvent.getParameter("listItem");
+		var bSelected = oEvent.getParameter("selected");
+		var aUploadCollectionListItems = this._getUploadCollectionItemsByListItems(oEvent.getParameter("listItems"));
+		var oUploadCollectionItem = this._getUploadCollectionItemByListItem(oListItem);
+		if (oUploadCollectionItem && oListItem && aUploadCollectionListItems) {
+			this.fireSelectionChange({
+				selectedItem : oUploadCollectionItem,
+				selectedItems : aUploadCollectionListItems,
+				selected : bSelected
+			});
+			oUploadCollectionItem.setSelected(oListItem.getSelected());
 		}
 	};
 

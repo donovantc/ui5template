@@ -6,8 +6,8 @@
 
 // Provides control sap.m.P13nConditionPanel.
 sap.ui.define([
-	'jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/format/DateFormat', 'sap/ui/core/format/NumberFormat'
-], function(jQuery, library, Control, DateFormat, NumberFormat) {
+	'jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/format/DateFormat', 'sap/ui/core/format/NumberFormat', 'sap/ui/core/IconPool'
+], function(jQuery, library, Control, DateFormat, NumberFormat, IconPool) {
 	"use strict";
 
 	/**
@@ -16,8 +16,8 @@ sap.ui.define([
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 * @class The ConditionPanel Control will be used to implement the Sorting, Filtering and Grouping panel of the new Personalization dialog.
-	 * @extends sap.m.P13nPanel
-	 * @version 1.34.9
+	 * @extends sap.ui.core.Control
+	 * @version 1.36.5
 	 * @constructor
 	 * @public
 	 * @experimental since version 1.26 !!! THIS CONTROL IS ONLY FOR INTERNAL USE !!!
@@ -209,6 +209,7 @@ sap.ui.define([
 		}
 
 		this._oConditionsMap = {};
+		this._aConditionKeys = [];
 		this._iConditions = 0;
 		for (var i = 0; i < aConditions.length; i++) {
 			this._addCondition2Map(aConditions[i]);
@@ -226,6 +227,7 @@ sap.ui.define([
 	 */
 	P13nConditionPanel.prototype.removeAllConditions = function() {
 		this._oConditionsMap = {};
+		this._aConditionKeys = [];
 		this._iConditions = 0;
 
 		this._clearConditions();
@@ -282,11 +284,11 @@ sap.ui.define([
 		this._clearConditions();
 
 		if (typeof (vCondition) == "string") {
-			delete this._oConditionsMap[vCondition];
+			this._removeConditionFromMap(vCondition);
 		}
 
 		if (typeof (vCondition) == "object") {
-			delete this._oConditionsMap[vCondition.key];
+			this._removeConditionFromMap(vCondition.key);
 		}
 
 		this._fillConditions();
@@ -308,6 +310,17 @@ sap.ui.define([
 		}
 		this._iConditions++;
 		this._oConditionsMap[oCondition.key] = oCondition;
+		this._aConditionKeys.push(oCondition.key);
+	};
+
+	P13nConditionPanel.prototype._removeConditionFromMap = function(sKey) {
+		this._iConditions--;
+		delete this._oConditionsMap[sKey];
+
+		var i = this._aConditionKeys.indexOf(sKey);
+		if (i >= 0) {
+			this._aConditionKeys.splice(i, 1);
+		}
 	};
 
 	/**
@@ -518,7 +531,9 @@ sap.ui.define([
 	 * @since 1.30.0
 	 */
 	P13nConditionPanel.prototype.setContainerQuery = function(bEnabled) {
+		this._unregisterResizeHandler();
 		this.setProperty("containerQuery", bEnabled);
+		this._registerResizeHandler();
 
 		// we have to refill the content grids
 		this._clearConditions();
@@ -572,8 +587,6 @@ sap.ui.define([
 
 		// init some resources
 		this._oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
-		this._sBetweenOperation = this._oRb.getText("CONDITIONPANEL_OPTIONBT");
-		this._sInitialOperation = this._oRb.getText("CONDITIONPANEL_OPTIONInitial");
 		this._sFromLabelText = this._oRb.getText("CONDITIONPANEL_LABELFROM");
 		this._sToLabelText = this._oRb.getText("CONDITIONPANEL_LABELTO");
 		this._sValueLabelText = this._oRb.getText("CONDITIONPANEL_LABELVALUE");
@@ -590,6 +603,7 @@ sap.ui.define([
 
 		this._aKeyFields = [];
 		this._oConditionsMap = {};
+		this._aConditionKeys = [];
 		this._iConditions = 0;
 		this._sLayoutMode = "Desktop";
 		this._sConditionType = "Filter";
@@ -605,7 +619,13 @@ sap.ui.define([
 			vSpacing: 0
 		}).toggleStyleClass("conditionRootGrid", this.getLayoutMode() !== "Desktop"); // && !this.getAlwaysShowAddIcon());
 
+
+		this._iFirstConditionIndex = 0;
+		this._iConditionPageSize = 10;
+
 		this.addAggregation("content", this._oConditionsGrid);
+
+		this._registerResizeHandler();
 
 		this._aConditionsFields = [
 			{
@@ -681,17 +701,211 @@ sap.ui.define([
 		this._fillConditions();
 	};
 
+
 	/*
-	 * destroy and remove all internal references @private
+	 * create the paginator toolbar
+	 * @private
+	 */
+	P13nConditionPanel.prototype._createPaginatorToolbar = function() {
+		this._bPaginatorButtonsVisible = false;
+
+		var that = this;
+
+		this._oPrevButton = new sap.m.Button({
+			icon: sap.ui.core.IconPool.getIconURI("navigation-left-arrow"),
+			//tooltip: "Show Previous",
+			tooltip: this._oRb.getText("WIZARD_FINISH"), //TODO create new resoucre
+			visible: true,
+			press: function(oEvent) {
+				that._iFirstConditionIndex = Math.max(0, that._iFirstConditionIndex - that._iConditionPageSize);
+				that._clearConditions();
+				that._fillConditions();
+			},
+			layoutData: new sap.m.OverflowToolbarLayoutData( { priority: sap.m.OverflowToolbarPriority.NeverOverflow } )
+		});
+
+		this._oNextButton = new sap.m.Button({
+			icon: sap.ui.core.IconPool.getIconURI("navigation-right-arrow"),
+			//tooltip: "Show Next",
+			tooltip: this._oRb.getText("WIZARD_NEXT"), //TODO create new resoucre
+			visible: true,
+			press: function(oEvent) {
+				that._iFirstConditionIndex += that._iConditionPageSize;
+				that._clearConditions();
+				that._fillConditions();
+			},
+			layoutData: new sap.m.OverflowToolbarLayoutData( { priority: sap.m.OverflowToolbarPriority.NeverOverflow } )
+		});
+
+		this._oRemoveAllButton = new sap.m.Button({
+			text: this._oRb.getText("CONDITIONPANEL_REMOVE_ALL"), // "Remove All",
+			//icon: sap.ui.core.IconPool.getIconURI("sys-cancel"),
+			//tooltip: "Remove All",
+			visible: true,
+			press: function(oEvent) {
+
+				that._aConditionKeys.forEach( function(sKey, iIndex) {
+					if (iIndex >= 0) {
+						this.fireDataChange({
+							key: sKey,
+							index: iIndex,
+							operation: "remove",
+							newData: null
+						});
+					}
+				}, that);
+
+				this._iFirstConditionIndex = 0;
+				that.removeAllConditions();
+			},
+			layoutData: new sap.m.OverflowToolbarLayoutData( { priority: sap.m.OverflowToolbarPriority.Low } )
+		});
+
+		this._oAddButton = new sap.m.Button({
+			icon: sap.ui.core.IconPool.getIconURI("add"),
+			tooltip: this._oRb.getText("CONDITIONPANEL_ADD_TOOLTIP"),
+			visible: true,
+			press: function(oEvent) {
+				var oConditionGrid = that._createConditionRow(that._oConditionsGrid, undefined, null, 0);
+				that._changeField(oConditionGrid);
+
+				// set the focus in a fields of the newly added condition
+				setTimeout(function() {
+					oConditionGrid.keyField.focus();
+				});
+
+				that._updatePaginatorToolbar();
+			},
+			layoutData: new sap.m.OverflowToolbarLayoutData( { priority: sap.m.OverflowToolbarPriority.Low } )
+		});
+
+		this._oHeaderText = new sap.m.Text({
+			wrapping: false,
+			layoutData: new sap.m.OverflowToolbarLayoutData( { priority: sap.m.OverflowToolbarPriority.NeverOverflow } )
+		});
+
+		this._oPageText = new sap.m.Text({
+			wrapping: false,
+			textAlign: sap.ui.core.TextAlign.Center,
+			layoutData: new sap.m.OverflowToolbarLayoutData( { priority: sap.m.OverflowToolbarPriority.NeverOverflow } )
+		});
+
+		this._oFilterField = new sap.m.SearchField({
+			width: "12rem",
+			layoutData: new sap.m.OverflowToolbarLayoutData( { priority: sap.m.OverflowToolbarPriority.High } )
+		});
+
+		this._oPaginatorToolbar = new sap.m.OverflowToolbar({
+			height: "3rem",
+			design: sap.m.ToolbarDesign.Transparent,
+			content: [this._oHeaderText, new sap.m.ToolbarSpacer(), this._oFilterField, this._oPrevButton, this._oPageText, this._oNextButton, this._oRemoveAllButton, this._oAddButton]
+		});
+	};
+
+	/*
+	 * update the paginator toolbar element
+	 * @private
+	 */
+	P13nConditionPanel.prototype._updatePaginatorToolbar = function() {
+		if (this._sConditionType !== "Filter" || this.getMaxConditions() !== "-1")  {
+			return;
+		}
+
+		var iItems = this._aConditionKeys.length;
+		var iPages = 1 + Math.floor( Math.max(0, iItems - 1) / this._iConditionPageSize);
+		var iPage = 1 + Math.floor( this._iFirstConditionIndex / this._iConditionPageSize);
+
+		var oParent = this.getParent();
+
+		if (!this._oPaginatorToolbar) {
+			if (iItems > this._iConditionPageSize) {
+				this._createPaginatorToolbar();
+				this.insertAggregation("content", this._oPaginatorToolbar, 0);
+				this._onGridResize();
+			} else {
+				if (oParent && oParent.setHeaderText) {
+					if (this._sOrgHeaderText == undefined) {
+						this._sOrgHeaderText = oParent.getHeaderText();
+					}
+
+					oParent.setHeaderText(this._sOrgHeaderText + (iItems > 0 ? " (" + iItems + ")" : ""));
+				}
+				return;
+			}
+		}
+
+		this._oPrevButton.setEnabled(this._iFirstConditionIndex > 0);
+		this._oNextButton.setEnabled(this._iFirstConditionIndex + this._iConditionPageSize < iItems);
+
+		if (oParent && oParent.setHeaderToolbar) {
+			if (!oParent.getHeaderToolbar()) {
+				this.removeAggregation("content", this._oPaginatorToolbar);
+				oParent.setHeaderToolbar(this._oPaginatorToolbar);
+
+				oParent.attachExpand(function (oEvent){
+					this._setToolbarElementVisibility(oEvent.getSource().getExpanded() && this._bPaginatorButtonsVisible);
+				}.bind(this));
+			}
+		}
+
+		if (oParent && oParent.setHeaderText) {
+			if (this._sOrgHeaderText == undefined) {
+				this._sOrgHeaderText = oParent.getHeaderText();
+			}
+
+			var sHeader = this._sOrgHeaderText + (iItems > 0 ? " (" + iItems + ")" : "");
+			oParent.setHeaderText(sHeader);
+			this._oHeaderText.setText(sHeader);
+		} else {
+			this._oHeaderText.setText(iItems + " Conditions");
+		}
+
+		this._oPageText.setText(iPage + "/" + iPages);
+
+		this._bPaginatorButtonsVisible = this._bPaginatorButtonsVisible || iPages > 1;
+		this._setToolbarElementVisibility(this._bPaginatorButtonsVisible);
+
+		if (iPage > iPages) {
+			// update the FirstConditionIndex and rerender
+			this._iFirstConditionIndex -= Math.max(0, this._iConditionPageSize);
+			this._clearConditions();
+			this._fillConditions();
+		}
+
+		var nValidGrids = 0;
+		this._oConditionsGrid.getContent().forEach(function(oGrid) {
+			if (oGrid.select.getSelected()) {
+				nValidGrids++;
+			}
+		}, this);
+
+		if (iPages == iPage && (iItems - this._iFirstConditionIndex) > nValidGrids) {
+			// check if we have to rerender the current last page
+			this._clearConditions();
+			this._fillConditions();
+		}
+	};
+
+	/*
+	 * make all toolbar elements visible or invisible
+	 * @private
+	 */
+	P13nConditionPanel.prototype._setToolbarElementVisibility = function(bVisible) {
+		this._oPrevButton.setVisible(bVisible);
+		this._oNextButton.setVisible(bVisible);
+		this._oPageText.setVisible(bVisible);
+		this._oFilterField.setVisible(false); //bVisible);
+		this._oAddButton.setVisible(bVisible);
+		this._oRemoveAllButton.setVisible(bVisible);
+	};
+
+	/*
+	 * destroy and remove all internal references
+	 * @private
 	 */
 	P13nConditionPanel.prototype.exit = function() {
 
-		if (this._sContainerResizeListener) {
-			sap.ui.core.ResizeHandler.deregister(this._sContainerResizeListener);
-			this._sContainerResizeListener = null;
-		}
-
-		sap.ui.Device.media.detachHandler(this._handleMediaChange, this, sap.ui.Device.media.RANGESETS.SAP_STANDARD);
+		this._unregisterResizeHandler();
 
 		this._aConditionsFields = null;
 
@@ -701,14 +915,13 @@ sap.ui.define([
 
 		this._oRb = null;
 
-		this._sBetweenOperation = null;
-		this._sInitialOperation = null;
 		this._sFromLabelText = null;
 		this._sToLabelText = null;
 		this._sValueLabelText = null;
 		this._sValidationDialogFieldMessage = null;
 
 		this._oConditionsMap = null;
+		this._aConditionKeys = [];
 	};
 
 	/*
@@ -722,22 +935,23 @@ sap.ui.define([
 	 * creates all condition rows and updated the values of the fields. @private
 	 */
 	P13nConditionPanel.prototype._fillConditions = function() {
-		var i = 0;
-		var oCondition;
-		var iMaxConditions = this._getMaxConditionsAsNumber();
+		var oCondition, sConditionKey;
+		var i = 0,
+			iMaxConditions = this._getMaxConditionsAsNumber(),
+			n = this._aConditionKeys.length;
 
-		// init existing conditions
+		// fill existing conditions
 		if (this._oConditionsMap) {
-			for ( var conditionId in this._oConditionsMap) {
-				oCondition = this._oConditionsMap[conditionId];
-				if (i < iMaxConditions) {
-					this._createConditionRow(this._oConditionsGrid, oCondition, conditionId);
-				} else {
-					break;
-				}
-				i++;
+			var iPageSize = this._sConditionType !== "Filter" || this.getMaxConditions() !== "-1" ? 9999 : this._iConditionPageSize;
+			n = Math.min(n, Math.min(iMaxConditions, this._iFirstConditionIndex + iPageSize));
+			for (i = this._iFirstConditionIndex; i < n; i++) {
+				sConditionKey = this._aConditionKeys[i];
+				oCondition = this._oConditionsMap[sConditionKey];
+				this._createConditionRow(this._oConditionsGrid, oCondition, sConditionKey);
 			}
 		}
+
+		this._updatePaginatorToolbar();
 
 		// create empty Conditions row/fields
 		if ((this.getAutoAddNewRow() || this._oConditionsGrid.getContent().length === 0) && this._oConditionsGrid.getContent().length < iMaxConditions) {
@@ -752,6 +966,7 @@ sap.ui.define([
 		var i = 0;
 		var iMaxConditions = this._getMaxConditionsAsNumber();
 
+		//TODO page handling missing
 		if (this._oConditionsMap) {
 			for ( var conditionId in this._oConditionsMap) {
 				if (i < iMaxConditions && oCondition === this._oConditionsMap[conditionId]) {
@@ -760,10 +975,12 @@ sap.ui.define([
 				i++;
 			}
 		}
+
+		this._updatePaginatorToolbar();
 	};
 
 	P13nConditionPanel.prototype._getMaxConditionsAsNumber = function() {
-		return this.getMaxConditions() === "-1" ? 1000 : parseInt(this.getMaxConditions(), 10);
+		return this.getMaxConditions() === "-1" ? 9999 : parseInt(this.getMaxConditions(), 10);
 	};
 
 	P13nConditionPanel.prototype.onAfterRendering = function() {
@@ -771,7 +988,27 @@ sap.ui.define([
 			this._sLayoutMode = this.getLayoutMode();
 			return;
 		}
+	};
 
+	P13nConditionPanel.prototype._handleMediaChange = function(p) {
+		this._sLayoutMode = p.name;
+
+//		if (window.console) {
+//		 window.console.log(" ---> MediaChange " + p.name);
+//		}
+
+		this._updateLayout(p);
+	};
+
+	P13nConditionPanel.prototype._unregisterResizeHandler = function() {
+		if (this._sContainerResizeListener) {
+			sap.ui.core.ResizeHandler.deregister(this._sContainerResizeListener);
+			this._sContainerResizeListener = null;
+		}
+		sap.ui.Device.media.detachHandler(this._handleMediaChange, this, sap.ui.Device.media.RANGESETS.SAP_STANDARD);
+	};
+
+	P13nConditionPanel.prototype._registerResizeHandler = function() {
 		if (this.getContainerQuery()) {
 			this._sContainerResizeListener = sap.ui.core.ResizeHandler.register(this._oConditionsGrid, jQuery.proxy(this._onGridResize, this));
 			this._onGridResize();
@@ -780,27 +1017,7 @@ sap.ui.define([
 		}
 	};
 
-	P13nConditionPanel.prototype.onBeforeRendering = function() {
-		this._cleanup();
-	};
 
-	P13nConditionPanel.prototype._handeMediaChange = function(p) {
-		this._sLayoutMode = p.name;
-
-		// if (window.console) {
-		// console.log(" ---> MediaChange " + p.name);
-		// }
-
-		this._updateLayout(p);
-	};
-
-	P13nConditionPanel.prototype._cleanup = function() {
-		if (this._sContainerResizeListener) {
-			sap.ui.core.ResizeHandler.deregister(this._sContainerResizeListener);
-			this._sContainerResizeListener = null;
-		}
-		sap.ui.Device.media.detachHandler(this._handleMediaChange, this, sap.ui.Device.media.RANGESETS.SAP_STANDARD);
-	};
 
 	/**
 	 * returns the key of the condition grid or creates a new key
@@ -1029,7 +1246,7 @@ sap.ui.define([
 
 							aOperations.some(function(oOperation, index) {
 								if (oConditionGridData.operation === oOperation) {
-									oControl.setSelectedItem(oControl.getItems()[index]);
+									oControl.setSelectedKey(oOperation);
 									return true;
 								}
 							}, this);
@@ -1224,6 +1441,8 @@ sap.ui.define([
 				oConditionGrid.remove.focus();
 			});
 		}
+
+		this._updatePaginatorToolbar();
 	};
 
 	/**
@@ -1242,6 +1461,8 @@ sap.ui.define([
 		setTimeout(function() {
 			oConditionGrid.keyField.focus();
 		});
+
+		this._updatePaginatorToolbar();
 	};
 
 	/**
@@ -1356,6 +1577,68 @@ sap.ui.define([
 			default:
 				oConditionGrid.oFormatter = null;
 				oControl = new sap.m.Input(params);
+
+		}
+
+		if (sCtrlType !== "boolean" && sCtrlType !== "enum") {
+			oControl.onpaste = function (oEvent) {
+
+				var sOriginalText;
+				// for the purpose to copy from column in excel and paste in MultiInput/MultiComboBox
+				if (window.clipboardData) {
+					//IE
+					sOriginalText = window.clipboardData.getData("Text");
+				} else {
+					// Chrome, Firefox, Safari
+					sOriginalText =  oEvent.originalEvent.clipboardData.getData('text/plain');
+				}
+
+				var oConditionGrid = oEvent.srcControl.getParent();
+				var aSeparatedText = sOriginalText.split(/\r\n|\r|\n/g);
+
+				if (aSeparatedText) {
+					setTimeout(function() {
+						var iLength = aSeparatedText ? aSeparatedText.length : 0;
+						if (iLength > 1) {
+
+							var oKeyField = that._getCurrentKeyFieldItem(oConditionGrid.keyField);
+							var oOperation = oConditionGrid.operation;
+
+							for (var i = 0; i < iLength; i++) {
+								if (that._aConditionKeys.length >= that._getMaxConditionsAsNumber()) {
+									break;
+								}
+
+								if (aSeparatedText[i]) {
+									var oCondition = {
+									    "key" : that._createConditionKey(),
+										"exclude": that.getExclude(),
+										"operation": oOperation.getSelectedKey(),
+										"keyField": oKeyField.key,
+										"value1": aSeparatedText[i],
+										"value2": null //oOperation.getSelectedKey() === "BT" ? aSeparatedText[i + 1] : null
+									};
+									that._addCondition2Map(oCondition);
+
+//									if (oOperation.getSelectedKey() === "BT") {
+//										i++;
+//									}
+
+									that.fireDataChange({
+										key: oCondition.key,
+										index: oCondition.index,
+										operation: "add",
+										newData: oCondition
+									});
+								}
+							}
+
+							that._clearConditions();
+							that._fillConditions();
+						}
+					}, 0);
+				}
+			};
 		}
 
 		if (oCurrentKeyField && oCurrentKeyField.maxLength && oControl.setMaxLength) {
@@ -1575,6 +1858,7 @@ sap.ui.define([
 			this._sConditionType = "Group";
 		}
 
+		this._adjustValue1Span(oConditionGrid);
 	};
 
 	/**
@@ -1749,8 +2033,28 @@ sap.ui.define([
 				}
 			}
 		}
+
+		this._adjustValue1Span(oConditionGrid);
 	};
 
+	/**
+	 * toggle the value1 field span between L5 and L3 depending on the selected operation
+	 */
+	P13nConditionPanel.prototype._adjustValue1Span = function(oConditionGrid) {
+		if (this._sConditionType === "Filter" && oConditionGrid.value1 && oConditionGrid.operation) {
+			var oOperation = oConditionGrid.operation;
+
+			var sNewSpan = this._aConditionsFields[5]["Span" + this._sConditionType];
+			if (oOperation.getSelectedKey() !== "BT") {
+				sNewSpan = "L5 M10 S10";
+			}
+
+			var oLayoutData = oConditionGrid.value1.getLayoutData();
+			if (oLayoutData.getSpan() !== sNewSpan) {
+				oLayoutData.setSpan(sNewSpan);
+			}
+		}
+	};
 
 	/**
 	 * return the index of the oConditionGrid, the none valid condition will be ignored.
@@ -1765,7 +2069,7 @@ sap.ui.define([
 			return (oGrid === oConditionGrid);
 		}, this);
 
-		return iIndex;
+		return iIndex + this._iFirstConditionIndex;
 	};
 
 
@@ -1867,7 +2171,7 @@ sap.ui.define([
 			var aValues = oCurrentKeyField.values || this._oTypeValues[sCtrlType] || ["", false, true ];
 			var sTrueValue = aValues[aValues.length - 1].toString();
 			oValue1 = sValue1 === sTrueValue;
-			oValue2 = sValue2 === sTrueValue;
+			oValue2 = null; // for boolean we only support EQ and value2 can be null
 		}
 
 		var bShowIfGrouped = oConditionGrid.showIfGrouped.getSelected();
@@ -1880,7 +2184,7 @@ sap.ui.define([
 			// handling of "(none)" or wrong entered keyField value
 			sKeyField = null;
 			sKey = this._getKeyFromConditionGrid(oConditionGrid);
-			delete this._oConditionsMap[sKey];
+			this._removeConditionFromMap(sKey);
 
 			this._enableCondition(oConditionGrid, false);
 			var iIndex = this._getIndexOfCondition(oConditionGrid);
@@ -1917,15 +2221,21 @@ sap.ui.define([
 		sKey = this._getKeyFromConditionGrid(oConditionGrid);
 
 		if (sValue !== "") {
+			oSelectCheckbox.setSelected(true);
+			oSelectCheckbox.setEnabled(true);
+
 			var sOperation = "update";
 			if (!this._oConditionsMap[sKey]) {
 				sOperation = "add";
 			}
-			this._oConditionsMap[sKey] = oConditionData;
-			oConditionGrid.data("_key", sKey);
 
-			oSelectCheckbox.setSelected(true);
-			oSelectCheckbox.setEnabled(true);
+			this._oConditionsMap[sKey] = oConditionData;
+			if (sOperation === "add") {
+				this._aConditionKeys.splice(this._getIndexOfCondition(oConditionGrid), 0, sKey);
+			}
+			//this._addCondition2Map(oConditionData, this._getIndexOfCondition(oConditionGrid));
+
+			oConditionGrid.data("_key", sKey);
 
 			this.fireDataChange({
 				key: sKey,
@@ -1934,7 +2244,7 @@ sap.ui.define([
 				newData: oConditionData
 			});
 		} else if (this._oConditionsMap[sKey] !== undefined) {
-			delete this._oConditionsMap[sKey];
+			this._removeConditionFromMap(sKey);
 			oConditionGrid.data("_key", null);
 			var iIndex = this._getIndexOfCondition(oConditionGrid);
 
@@ -1953,6 +2263,7 @@ sap.ui.define([
 			}
 		}
 
+		this._updatePaginatorToolbar();
 	};
 
 	/**
@@ -2014,7 +2325,7 @@ sap.ui.define([
 			iIndex = this._getIndexOfCondition(oConditionGrid);
 		}
 
-		delete this._oConditionsMap[sKey];
+		this._removeConditionFromMap(sKey);
 		oConditionGrid.destroy();
 
 		if (oTargetGrid.getContent().length < 1) {
@@ -2387,6 +2698,20 @@ sap.ui.define([
 	};
 
 	P13nConditionPanel.prototype._onGridResize = function() {
+		// update the paginator toolbar width if exist
+		if (this._oPaginatorToolbar && this._oConditionsGrid && this._oConditionsGrid.getContent().length > 0) {
+			var oGrid = this._oConditionsGrid.getContent()[0];
+			if (oGrid.remove && oGrid.remove.$().position()) {
+				var w = 0;
+				if (this._oPaginatorToolbar.getParent() && this._oPaginatorToolbar.getParent().getExpandable && this._oPaginatorToolbar.getParent().getExpandable()) {
+					w = 48 - 4;
+				}
+				var iToolbarWidth = oGrid.remove.$().position().left - w + oGrid.remove.$().width();  //TODO - Panel expand button width + remove icon width
+				this._oPaginatorToolbar.setWidth(iToolbarWidth + "px");
+			}
+		}
+
+
 		var domElement = this._oConditionsGrid.getDomRef();
 		if (!domElement) {
 			return;
@@ -2405,9 +2730,9 @@ sap.ui.define([
 			oRangeInfo.name = "Desktop";
 		}
 
-// if (window.console) {
-// window.console.log(w + " resize ---> " + oRangeInfo.name);
-// }
+ //if (window.console) {
+ //window.console.log(w + " resize ---> " + oRangeInfo.name);
+ //}
 
 		if (oRangeInfo.name === "Phone" && this._sLayoutMode !== oRangeInfo.name) {
 			this._updateLayout(oRangeInfo);

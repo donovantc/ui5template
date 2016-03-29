@@ -8,6 +8,10 @@
       "name": ".theming"
     },
     {
+      "name": "BackgroundDesign.type",
+      "designtime": true
+    },
+    {
       "name": "BlockBackgroundType.type",
       "designtime": true
     },
@@ -117,6 +121,9 @@
         "jquery.sap.global.js",
         "sap/ui/core/Control.js",
         "sap/ui/core/ResizeHandler.js"
+      ],
+      "condRequired": [
+        "sap/ui/core/delegate/ScrollEnablement.js"
       ]
     },
     {
@@ -126,6 +133,9 @@
         "jquery.sap.global.js",
         "sap/ui/core/Control.js",
         "sap/ui/core/ResizeHandler.js"
+      ],
+      "condRequired": [
+        "sap/ui/core/delegate/ScrollEnablement.js"
       ]
     },
     {
@@ -359,6 +369,10 @@
     },
     {
       "name": "SideContentFallDown.type",
+      "designtime": true
+    },
+    {
+      "name": "SideContentPosition.type",
       "designtime": true
     },
     {
@@ -827,6 +841,14 @@
         "sap/ui/layout/form/FormElement.js",
         "sap/ui/layout/form/FormLayout.js",
         "sap/ui/layout/library.js"
+      ],
+      "condRequired": [
+        "sap/ui/layout/form/ResponsiveLayout.js",
+        "sap/ui/layout/form/GridLayout.js",
+        "sap/ui/layout/form/GridContainerData.js",
+        "sap/ui/layout/form/GridElementData.js",
+        "sap/ui/layout/form/ResponsiveGridLayout.js",
+        "sap/ui/layout/GridData.js"
       ]
     },
     {
@@ -845,6 +867,14 @@
         "sap/ui/layout/form/FormElement.js",
         "sap/ui/layout/form/FormLayout.js",
         "sap/ui/layout/library.js"
+      ],
+      "condRequired": [
+        "sap/ui/layout/form/ResponsiveLayout.js",
+        "sap/ui/layout/form/GridLayout.js",
+        "sap/ui/layout/form/GridContainerData.js",
+        "sap/ui/layout/form/GridElementData.js",
+        "sap/ui/layout/form/ResponsiveGridLayout.js",
+        "sap/ui/layout/GridData.js"
       ]
     },
     {
@@ -1166,66 +1196,82 @@
     },
     {
       "name": "themes/base/BlockLayout.less",
+      "designtime": true,
       "theme": "base"
     },
     {
       "name": "themes/base/BlockLayoutCell.less",
+      "designtime": true,
       "theme": "base"
     },
     {
       "name": "themes/base/BlockLayoutRow.less",
+      "designtime": true,
       "theme": "base"
     },
     {
       "name": "themes/base/DynamicSideContent.less",
+      "designtime": true,
       "theme": "base"
     },
     {
       "name": "themes/base/FixFlex.less",
+      "designtime": true,
       "theme": "base"
     },
     {
       "name": "themes/base/Form.less",
+      "designtime": true,
       "theme": "base"
     },
     {
       "name": "themes/base/FormLayout.less",
+      "designtime": true,
       "theme": "base"
     },
     {
       "name": "themes/base/Grid.less",
+      "designtime": true,
       "theme": "base"
     },
     {
       "name": "themes/base/GridLayout.less",
+      "designtime": true,
       "theme": "base"
     },
     {
       "name": "themes/base/HorizontalLayout.less",
+      "designtime": true,
       "theme": "base"
     },
     {
       "name": "themes/base/ResponsiveFlowLayout.less",
+      "designtime": true,
       "theme": "base"
     },
     {
       "name": "themes/base/ResponsiveGridLayout.less",
+      "designtime": true,
       "theme": "base"
     },
     {
       "name": "themes/base/ResponsiveLayout.less",
+      "designtime": true,
       "theme": "base"
     },
     {
       "name": "themes/base/SimpleForm.less",
+      "designtime": true,
       "theme": "base"
     },
     {
       "name": "themes/base/Splitter.less",
+      "designtime": true,
       "theme": "base"
     },
     {
       "name": "themes/base/VerticalLayout.less",
+      "designtime": true,
       "theme": "base"
     },
     {
@@ -1256,10 +1302,12 @@
     },
     {
       "name": "themes/base/library.less",
+      "designtime": true,
       "theme": "base"
     },
     {
       "name": "themes/base/library.source.less",
+      "designtime": true,
       "theme": "base"
     },
     {
@@ -1268,50 +1316,42 @@
     },
     {
       "name": "themes/sap_hcb/Form.less",
+      "designtime": true,
       "theme": "sap_hcb"
     },
     {
       "name": "themes/sap_hcb/FormLayout.less",
+      "designtime": true,
       "theme": "sap_hcb"
     },
     {
       "name": "themes/sap_hcb/GridLayout.less",
+      "designtime": true,
       "theme": "sap_hcb"
     },
     {
       "name": "themes/sap_hcb/ResponsiveFlowLayout.less",
+      "designtime": true,
       "theme": "sap_hcb"
     },
     {
       "name": "themes/sap_hcb/ResponsiveGridLayout.less",
+      "designtime": true,
       "theme": "sap_hcb"
     },
     {
       "name": "themes/sap_hcb/ResponsiveLayout.less",
+      "designtime": true,
       "theme": "sap_hcb"
     },
     {
       "name": "themes/sap_hcb/SimpleForm.less",
+      "designtime": true,
       "theme": "sap_hcb"
     },
     {
       "name": "themes/sap_hcb/Splitter.less",
-      "theme": "sap_hcb"
-    },
-    {
-      "name": "themes/sap_hcb/img-RTL/form/Maximize.png",
-      "theme": "sap_hcb"
-    },
-    {
-      "name": "themes/sap_hcb/img-RTL/form/Minimize.png",
-      "theme": "sap_hcb"
-    },
-    {
-      "name": "themes/sap_hcb/img/form/Maximize.png",
-      "theme": "sap_hcb"
-    },
-    {
-      "name": "themes/sap_hcb/img/form/Minimize.png",
+      "designtime": true,
       "theme": "sap_hcb"
     },
     {
@@ -1338,10 +1378,12 @@
     },
     {
       "name": "themes/sap_hcb/library.less",
+      "designtime": true,
       "theme": "sap_hcb"
     },
     {
       "name": "themes/sap_hcb/library.source.less",
+      "designtime": true,
       "theme": "sap_hcb"
     }
   ]

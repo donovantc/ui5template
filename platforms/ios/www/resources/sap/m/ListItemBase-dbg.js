@@ -22,7 +22,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
-	 * @version 1.34.8
+	 * @version 1.36.5
 	 *
 	 * @constructor
 	 * @public
@@ -224,7 +224,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			return;
 		}
 
-		var $Items = $This.parent().find(".sapMLIB");
+		var $Items = $This.parent().children(".sapMLIB");
 		$This.attr(jQuery.extend({
 			"aria-setsize": $Items.length,
 			"aria-posinset": $Items.index($This) + 1
@@ -409,7 +409,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		aControls.forEach(function(sControl) {
 			sControl = "_o" + sControl + "Control";
 			if (this[sControl]) {
-				this[sControl].destroy(true);
+				this[sControl].destroy("KeepDom");
 				this[sControl] = null;
 			}
 		}, this);

@@ -568,6 +568,7 @@
     },
     {
       "name": "themes/base/Overlay.less",
+      "designtime": true,
       "theme": "base"
     },
     {
@@ -594,14 +595,17 @@
     },
     {
       "name": "themes/base/library.less",
+      "designtime": true,
       "theme": "base"
     },
     {
       "name": "themes/base/library.source.less",
+      "designtime": true,
       "theme": "base"
     },
     {
       "name": "themes/base/shared.less",
+      "designtime": true,
       "theme": "base"
     },
     {
@@ -610,6 +614,7 @@
     },
     {
       "name": "themes/sap_hcb/Overlay.less",
+      "designtime": true,
       "theme": "sap_hcb"
     },
     {
@@ -636,14 +641,17 @@
     },
     {
       "name": "themes/sap_hcb/library.less",
+      "designtime": true,
       "theme": "sap_hcb"
     },
     {
       "name": "themes/sap_hcb/library.source.less",
+      "designtime": true,
       "theme": "sap_hcb"
     },
     {
       "name": "themes/sap_hcb/shared.less",
+      "designtime": true,
       "theme": "sap_hcb"
     }
   ]

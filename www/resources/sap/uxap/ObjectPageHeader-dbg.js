@@ -10,7 +10,7 @@ sap.ui.define([
 	"sap/ui/core/IconPool",
 	"sap/ui/core/CustomData",
 	"sap/ui/Device",
-	"./BreadCrumbs",
+	"sap/m/Breadcrumbs",
 	"./ObjectPageHeaderActionButton",
 	"sap/ui/core/ResizeHandler",
 	"sap/m/Text",
@@ -19,7 +19,7 @@ sap.ui.define([
 	"sap/m/Image",
 	"sap/ui/core/Icon",
 	"./library"
-], function (Control, IconPool, CustomData, Device, BreadCrumbs, ObjectPageHeaderActionButton,
+], function (Control, IconPool, CustomData, Device, Breadcrumbs, ObjectPageHeaderActionButton,
 			 ResizeHandler, Text, Button, ActionSheet, Image, Icon, library) {
 	"use strict";
 
@@ -154,7 +154,7 @@ sap.ui.define([
 				 *
 				 * Internal aggregation for the BreadCrumbs in the header.
 				 */
-				_breadCrumbs: {type: "sap.uxap.BreadCrumbs", multiple: false, visibility: "hidden"},
+				_breadCrumbs: {type: "sap.m.Breadcrumbs", multiple: false, visibility: "hidden"},
 
 				/**
 				 *
@@ -325,19 +325,15 @@ sap.ui.define([
 			return new ActionSheet({placement: sap.m.PlacementType.Bottom});
 		},
 		"_lockIconCont": function (oParent) {
-			return this._getButton(oParent, "sap-icon://locked", "lock-cont", oParent.oLibraryResourceBundleOP.getText("TOOLTIP_OP_LOCK_MARK_VALUE"));
+			return this._getButton(oParent, "sap-icon://locked", "lock-cont");
 		},
 		"_breadCrumbs": function (oParent) {
-			return new BreadCrumbs({
-				links: oParent.getAggregation("breadCrumbLinks"),
-				currentLocation: new Text({
-					text: oParent.getProperty("objectTitle")
-				}),
-				showCurrentLocation: false
+			return new Breadcrumbs({
+				links: oParent.getAggregation("breadCrumbLinks")
 			});
 		},
 		"_lockIcon": function (oParent) {
-			return this._getButton(oParent, "sap-icon://locked", "lock");
+			return this._getButton(oParent, "sap-icon://locked", "lock", oParent.oLibraryResourceBundleOP.getText("TOOLTIP_OP_LOCK_MARK_VALUE"));
 		},
 		"_titleArrowIconCont": function (oParent) {
 			return this._getButton(oParent, "sap-icon://arrow-down", "titleArrow-cont", oParent.oLibraryResourceBundleOP.getText("OP_SELECT_ARROW_TOOLTIP"));
@@ -463,11 +459,6 @@ sap.ui.define([
 	 * @return {*} this
 	 */
 	ObjectPageHeader.prototype.setObjectTitle = function (sTitle) {
-		var oBreadcrumbs = this._getInternalAggregation("_breadCrumbs");
-		if (oBreadcrumbs) {
-			oBreadcrumbs.getCurrentLocation().setText(sTitle);
-		}
-
 		return this._applyActionProperty("objectTitle", Array.prototype.slice.call(arguments));
 	};
 
@@ -649,6 +640,7 @@ sap.ui.define([
 		if (!this._iResizeId) {
 			this._iResizeId = ResizeHandler.register(this, this._onHeaderResize.bind(this));
 		}
+		this._shiftHeaderTitle();
 
 		this._attachDetachActionButtonsHandler(true);
 	};
@@ -765,6 +757,7 @@ sap.ui.define([
 	ObjectPageHeader.prototype._adaptObjectPageHeaderIndentifierLine = function () {
 		var iIdentifierContWidth = this.$("identifierLine").width(),
 			$subtitle = this.$("subtitle"),
+			$identifierLineContainer = this.$("identifierLineContainer"),
 			iSubtitleBottom,
 			iTitleBottom,
 			iActionsAndImageWidth = this.$("actions").width() + this.$().find(".sapUxAPObjectPageHeaderObjectImageContainer").width(),
@@ -783,7 +776,7 @@ sap.ui.define([
 			}
 		}
 
-		this.$("identifierLineContainer").width((0.95 - (iActionsAndImageWidth / iIdentifierContWidth)) * 100 + "%");
+		$identifierLineContainer.width((0.95 - (iActionsAndImageWidth / iIdentifierContWidth)) * 100 + "%");
 	};
 
 	/**

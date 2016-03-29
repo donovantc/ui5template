@@ -21,7 +21,7 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 	 * The FacetFilter control is used to provide filtering functionality with multiple parameters.
 	 * @extends sap.ui.core.Control
 	 * @implements sap.ui.core.IShrinkable
-	 * @version 1.34.9
+	 * @version 1.36.5
 	 *
 	 * @constructor
 	 * @public
@@ -383,8 +383,8 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 			oText.setTooltip(this._getSummaryText());
 		}
 
-		// Detach the interval timer attached in onAfterRendering
-		sap.ui.getCore().detachIntervalTimer(this._checkOverflow, this);
+			// Detach the interval timer attached in onAfterRendering
+			sap.ui.getCore().detachIntervalTimer(this._checkOverflow, this);
 	};
 
 	/**
@@ -392,7 +392,7 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 	 */
 	FacetFilter.prototype.onAfterRendering = function() {
 
-		if (!sap.ui.Device.system.phone) {
+		if (this.getType() !== sap.m.FacetFilterType.Light && !sap.ui.Device.system.phone) {
 			// Attach a interval timer that periodically checks overflow of the "head" div in the event that the window is resized or the device orientation is changed. This is ultimately to
 			// see if carousel arrows should be displayed.
 			sap.ui.getCore().attachIntervalTimer(this._checkOverflow, this); // proxy() is needed for the additional parameters, not for "this"

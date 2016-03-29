@@ -364,9 +364,11 @@
     "sapMTitleFontFamily": "Arial, Helvetica, sans-serif",
     "sapMTitleFontWeight": "normal",
     "navHeight": "4rem",
-    "listHeight": "2.25rem",
-    "stepWidth": "2.25rem",
+    "listHeight": "2rem",
+    "stepWidth": "2rem",
+    "stepPadding": "0.5rem",
+    "smallSeparator": "0.25rem",
     "stepUnderlineHeight": "0.125rem",
     "stepUnderlineWidth": "3rem",
-    "stepOverlapOnPhone": "1rem"
+    "stepOverlapOnPhone": "1.75rem"
 }

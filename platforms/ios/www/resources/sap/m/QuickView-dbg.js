@@ -28,7 +28,7 @@ sap.ui.define([
 	 * @extends sap.m.QuickViewBase
 	 *
 	 * @author SAP SE
-	 * @version 1.34.8
+	 * @version 1.36.5
 	 *
 	 * @constructor
 	 * @public
@@ -151,17 +151,21 @@ sap.ui.define([
 			afterNavigate: this._afterNavigate.bind(this)
 		};
 
-		if (!sap.ui.Device.system.phone) {
-			oNavConfig.width = this.getWidth();
-		}
-
 		this._oNavContainer = new NavContainer(oNavConfig);
+
+		this._oNavContainer.invalidate = function (oSource) {
+			// suppress invalidation of the navContainer
+			if (!oSource) {
+				this.forceInvalidation();
+			}
+		};
 
 		var that = this;
 
 		this._oPopover = new ResponsivePopover(this.getId() + '-quickView', {
 			placement: this.getPlacement(),
 			content: [this._oNavContainer],
+			contentWidth: this.getWidth(),
 			showHeader: false,
 			showCloseButton : false,
 			afterOpen: function (oEvent) {
@@ -220,6 +224,7 @@ sap.ui.define([
 
 		// Update pages only if items aggregation is changed
 		if (this._bItemsChanged) {
+			this._clearContainerHeight();
 			this._initPages();
 
 			// add a close button on phone devices when there are no pages
@@ -297,6 +302,15 @@ sap.ui.define([
 		this._oNavContainer.addPage(oPage);
 	};
 
+	QuickView.prototype._clearContainerHeight = function() {
+		var oPopupControl = this._oPopover.getAggregation("_popup");
+		var $container = oPopupControl.$().find('.sapMPopoverCont');
+
+		if ($container[0] && $container[0].style.height) {
+			$container[0].style.height = '';
+		}
+	};
+
 	/**
 	 * Adjusts the popup height based on the QuickView's content.
 	 * @private
@@ -357,8 +371,8 @@ sap.ui.define([
 	 * @public
 	 */
 	QuickView.prototype.setWidth = function (sWidth) {
-		if (this._oNavContainer) {
-			this._oNavContainer.setWidth(sWidth);
+		if (this._oPopover) {
+			this._oPopover.setContentWidth(sWidth);
 			this.setProperty('width', sWidth, true);
 		}
 
@@ -372,6 +386,7 @@ sap.ui.define([
 	 * @public
 	 */
 	QuickView.prototype.openBy = function(oControl) {
+		this._bItemsChanged = true;
 		this._oPopover.openBy(oControl);
 
 		return this;

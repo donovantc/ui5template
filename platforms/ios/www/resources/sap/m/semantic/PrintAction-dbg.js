@@ -19,7 +19,7 @@ sap.ui.define(['sap/m/semantic/SemanticButton'], function(SemanticButton) {
 	 * @extends sap.m.semantic.SemanticButton
 	 *
 	 * @author SAP SE
-	 * @version 1.34.8
+	 * @version 1.36.5
 	 *
 	 * @constructor
 	 * @public
@@ -29,7 +29,9 @@ sap.ui.define(['sap/m/semantic/SemanticButton'], function(SemanticButton) {
 	 */
 
 	var PrintAction = SemanticButton.extend("sap.m.semantic.PrintAction", /** @lends sap.m.semantic.PrintAction.prototype */ {
-
+		metadata: {
+			library: "sap.m"
+		}
 	});
 
 	return PrintAction;

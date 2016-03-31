@@ -1,0 +1,8 @@
+<Dialog
+	xmlns="sap.m"
+	resizable="false"
+	type="Message">
+	<content>
+		
+	</content>
+</Dialog>

@@ -1,5 +1,5 @@
 sap.ui.define([
-	"sap/ui/core/mvc/Controller"
+	"controller/BaseController"
 ], function(Controller) {
 	"use strict";
 	return Controller.extend("controller.MainView", {

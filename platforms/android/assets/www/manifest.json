@@ -72,8 +72,9 @@
 			"config": {
 				"routerClass": "sap.m.routing.Router",
 				"viewType": "XML",
-				"viewPath": "/view",
-				"controlId": "app"
+				"viewPath": "ui5/view",
+				"controlId": "app",
+                "controlAggregation": "pages"
 			},
 			"routes": [
 				{

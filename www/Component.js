@@ -1,11 +1,14 @@
 sap.ui.define([
 	"sap/ui/core/UIComponent",
 	"sap/ui/Device",
-	"sdc/model/models"
+	"model/models",
+    "controller/MessageDialog",
+    "constants/service",
+    "constants/values"
 ], function(UIComponent, Device, models) {
 	"use strict";
 
-	return UIComponent.extend("Component", {
+	return UIComponent.extend("ui5.Component", {
 
 		metadata: {
 			manifest: "json"
@@ -22,6 +25,9 @@ sap.ui.define([
 
 			// set the device model
 			this.setModel(models.createDeviceModel(), "device");
+            
+             // set the dialog for displaying messages throughout the application
+			this.messageDialog = new controller.MessageDialog();
 			
 			//initialise navigation
 			this.getRouter().initialize();
